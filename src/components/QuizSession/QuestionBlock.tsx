@@ -1,0 +1,88 @@
+import React from 'react';
+
+interface Option {
+    optionLabel: string;
+    optionText: string;
+    isCorrect: boolean;
+}
+
+interface Question {
+    questionNumber: number;
+    questionText: string;
+    options: Option[];
+}
+
+interface Props {
+    question: Question;
+    selectedOption: string;
+    submitted: boolean;
+    isCorrect: boolean | null;
+    onSelect: (label: string) => void;
+}
+
+const QuestionBlock: React.FC<Props> = ({
+                                            question,
+                                            selectedOption,
+                                            submitted,
+                                            isCorrect,
+                                            onSelect
+                                        }) => {
+    return (
+        <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg text-gray-900">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                Fråga {question.questionNumber}
+            </h2>
+            <p className="mb-6 text-lg font-medium text-gray-900">{question.questionText}</p>
+            <ul className="space-y-2">
+                {question.options.map((option) => {
+                    let buttonClass =
+                        'block w-full text-left p-3 rounded-xl border transition shadow-md hover:shadow-lg ';
+                    let icon = '';
+
+                    if (submitted) {
+                        if (option.optionLabel === selectedOption && isCorrect) {
+                            buttonClass += 'border-green-500 bg-green-100';
+                            icon = '✅';
+                        } else if (option.optionLabel === selectedOption && !isCorrect) {
+                            buttonClass += 'border-red-500 bg-red-100';
+                            icon = '❌';
+                        } else if (option.isCorrect && !isCorrect) {
+                            buttonClass += 'border-green-300 border-2';
+                        } else {
+                            buttonClass += 'border-gray-300';
+                        }
+                    } else {
+                        buttonClass += 'border-gray-300 hover:bg-gray-300';
+                    }
+
+                    return (
+                        <li key={option.optionLabel}>
+                            <button
+                                disabled={submitted}
+                                className={[
+                                    buttonClass,
+                                    [
+                                        selectedOption === option.optionLabel && submitted && option.isCorrect
+                                            ? 'bg-green-200 text-green-900 font-bold'
+                                            : selectedOption === option.optionLabel && submitted && !option.isCorrect
+                                            ? 'bg-red-200 text-red-900 font-bold'
+                                            : selectedOption === option.optionLabel
+                                            ? 'bg-blue-100 text-blue-900'
+                                            : 'bg-gray-100 text-gray-900',
+                                    ].filter(Boolean).join(' ')
+                                ].filter(Boolean).join(' ')}
+                                onClick={() => onSelect(option.optionLabel)}
+                            >
+                                <span className="font-bold mr-2">{option.optionLabel}.</span>
+                                {option.optionText}
+                                {icon && <span className="float-right">{icon}</span>}
+                            </button>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
+    );
+};
+
+export default QuestionBlock;
