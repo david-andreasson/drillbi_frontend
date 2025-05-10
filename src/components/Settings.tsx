@@ -35,34 +35,34 @@ const Settings: React.FC<SettingsProps> = ({ theme, setTheme }) => {
         return <div className="flex items-center justify-center px-4 py-10 w-full">Laddar användare...</div>;
     }
     return (
-        <>
+        <div className="flex items-center justify-center min-h-screen bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
+            <div className="w-full max-w-xl p-6">
+                <h1 className="text-3xl font-bold mb-8 text-left">{t('settings.title')}</h1>
 
-            <div>
-                <div
-                    className="flex items-center justify-center px-4 py-10 w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-                >
-                    <div className="w-full max-w-xl">
-                        <h1 className="text-3xl font-bold mb-6">{t('settings.title')}</h1>
-
-                        <div className="mb-6">
-                            <label className="block mb-2 font-semibold">{t('settings.theme')}</label>
+                    <div className="mb-6">
+                        <div className="bg-gray-200 rounded-lg shadow-md px-6 py-5">
+                            <label className="block mb-2 font-semibold text-lg text-left">{t('settings.theme')}</label>
                             <PrimaryButton onClick={toggleTheme} className="w-full">
                                 {theme === 'light' ? t('settings.light') : t('settings.dark')}
                             </PrimaryButton>
                         </div>
+                    </div>
 
-                        <div className="mb-6">
-                            <label className="block mb-2 font-semibold">{t('settings.language')}</label>
-                            <PrimaryButton onClick={toggleLanguage}>
+                    <div className="mb-6">
+                        <div className="bg-gray-200 rounded-lg shadow-md px-6 py-5">
+                            <label className="block mb-2 font-semibold text-lg text-left">{t('settings.language')}</label>
+                            <PrimaryButton onClick={toggleLanguage} className="w-full">
                                 {i18n.language === 'sv' ? 'Svenska' : 'English'}
                             </PrimaryButton>
                         </div>
+                    </div>
 
-                        {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
-                            <div className="mb-6">
-                                <label className="block mb-2 font-semibold">AI-modell</label>
+                    {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
+                        <div className="mb-6">
+                            <div className="bg-gray-200 rounded-lg shadow-md px-6 py-5">
+                                <label className="block mb-2 font-semibold text-lg text-left">AI-modell</label>
                                 <select
-                                    className="w-full px-3 py-2 border rounded bg-gray-100 dark:bg-neutral-800 dark:text-neutral-100"
+                                    className="w-full px-3 py-2 border rounded bg-gray-100 dark:bg-neutral-800 dark:text-neutral-100 mt-1"
                                     value={aiModel}
                                     onChange={e => setAiModel(e.target.value)}
                                 >
@@ -70,11 +70,10 @@ const Settings: React.FC<SettingsProps> = ({ theme, setTheme }) => {
                                     <option value="claude">Claude 3 Haiku</option>
                                 </select>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
-        </>
     );
 };
 

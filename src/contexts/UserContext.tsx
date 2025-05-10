@@ -12,18 +12,20 @@ interface User {
 interface UserContextValue {
     user: User | null;
     loading: boolean;
+    token: string | null;
 }
 
-const UserContext = createContext<UserContextValue>({ user: null, loading: true });
+const UserContext = createContext<UserContextValue>({ user: null, loading: true, token: null });
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            // no token → not logged in
+        const storedToken = localStorage.getItem('token');
+        setToken(storedToken);
+        if (!storedToken) {
             setUser(null);
             setLoading(false);
             return;
@@ -43,7 +45,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading }}>
+        <UserContext.Provider value={{ user, loading, token }}>
             {children}
         </UserContext.Provider>
     );

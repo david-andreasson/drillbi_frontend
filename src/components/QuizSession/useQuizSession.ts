@@ -20,20 +20,20 @@ export interface UseQuizSessionParams {
     orderType: 'ORDER' | 'RANDOM' | 'REVERSE';
     startQuestion: number;
     parentSessionId?: string;
+    setError?: (err: string) => void;
 }
 
 type AiState = 'idle' | 'preparing' | 'display';
 
 const API_BASE = `/api/v2/quiz`;
 
-export function useQuizSession({
-                                   courseName,
-                                   orderType,
-                                   startQuestion,
-                                   parentSessionId
-                               }: UseQuizSessionParams) {
+export function useQuizSession(args: UseQuizSessionParams) {
+    const { courseName, orderType, startQuestion, parentSessionId, setError } = args;
     // Session identifier
     const [sessionId, setSessionId] = useState<string | undefined>(parentSessionId);
+
+    // Error state
+    const [error, setLocalError] = useState<string | null>(null);
 
     // State for the current question
     const [question, setQuestion] = useState<any>(null);
@@ -81,54 +81,85 @@ export function useQuizSession({
         setIsCorrect(null);
         setDetailedFeedback(undefined);
         setStats(undefined);
-
-        const url = `${API_BASE}/start?courseName=${encodeURIComponent(
-            course
-        )}&orderType=${order}&startQuestion=${startIdx - 1}`;
-        const res = await fetchWithAuth(url, { method: 'POST' });
-        if (!res.ok) {
-            throw new Error(`Failed to start quiz: ${res.status}`);
+        try {
+            const url = `${API_BASE}/start?courseName=${encodeURIComponent(
+                course
+            )}&orderType=${order}&startQuestion=${startIdx - 1}`;
+            const res = await fetchWithAuth(url, { method: 'POST' });
+            if (!res.ok) {
+                const msg = `Failed to start quiz: ${res.status}`;
+                if (typeof setError === 'function') setError(msg);
+                setLocalError(msg);
+                console.error(msg);
+                return;
+            }
+            const session = await res.json();
+            setSessionId(session.sessionId);
+            await getNextQuestion(session.sessionId);
+        } catch (e: any) {
+            const msg = `Quiz start error: ${e?.message || e}`;
+            if (typeof setError === 'function') setError(msg);
+            setLocalError(msg);
+            console.error(msg);
         }
-        const session = await res.json();
-        setSessionId(session.sessionId);
-        await getNextQuestion(session.sessionId);
     };
 
     // Get the next question in the session
     const getNextQuestion = async (sessId: string) => {
-        const url = `${API_BASE}/next?sessionId=${encodeURIComponent(sessId)}`;
-        const res = await fetchWithAuth(url);
-        if (!res.ok) {
-            throw new Error(`Failed to get next question: ${res.status}`);
+        try {
+            const url = `${API_BASE}/next?sessionId=${encodeURIComponent(sessId)}`;
+            const res = await fetchWithAuth(url);
+            if (!res.ok) {
+                const msg = `Failed to get next question: ${res.status}`;
+                if (typeof setError === 'function') setError(msg);
+                setLocalError(msg);
+                console.error(msg);
+                return;
+            }
+            const data = await res.json();
+            console.log('Question data:', data);
+            setQuestion(data);
+            setSelectedOption('');
+            setSubmitted(false);
+            setIsCorrect(null);
+            setDetailedFeedback(undefined);
+            setAiExplanation('');
+            setAiState('idle');
+        } catch (e: any) {
+            const msg = `Get next question error: ${e?.message || e}`;
+            if (typeof setError === 'function') setError(msg);
+            setLocalError(msg);
+            console.error(msg);
         }
-        const data = await res.json();
-        console.log('Question data:', data);
-        setQuestion(data);
-        setSelectedOption('');
-        setSubmitted(false);
-        setIsCorrect(null);
-        setDetailedFeedback(undefined);
-        setAiExplanation('');
-        setAiState('idle');
     };
 
     // Submit the user's answer
     const submitAnswer = async (sessId: string, answer: string) => {
         if (!question) return;
         setSubmitted(true);
-
-        const url = `${API_BASE}/submit?sessionId=${encodeURIComponent(
-            sessId
-        )}&answer=${encodeURIComponent(answer)}`;
-        const res = await fetchWithAuth(url, { method: 'POST' });
-        if (!res.ok) {
-            throw new Error(`Failed to submit answer: ${res.status}`);
+        try {
+            const url = `${API_BASE}/submit?sessionId=${encodeURIComponent(
+                sessId
+            )}&answer=${encodeURIComponent(answer)}`;
+            const res = await fetchWithAuth(url, { method: 'POST' });
+            if (!res.ok) {
+                const msg = `Failed to submit answer: ${res.status}`;
+                if (typeof setError === 'function') setError(msg);
+                setLocalError(msg);
+                console.error(msg);
+                return;
+            }
+            const feedback: AnswerResponseDTO = await res.json();
+            console.log('Submit answer feedback:', feedback);
+            setIsCorrect(feedback.correct);
+            setDetailedFeedback(feedback.feedbackKey);
+            setStats(feedback.stats);
+        } catch (e: any) {
+            const msg = `Submit answer error: ${e?.message || e}`;
+            if (typeof setError === 'function') setError(msg);
+            setLocalError(msg);
+            console.error(msg);
         }
-        const feedback: AnswerResponseDTO = await res.json();
-        console.log('Submit answer feedback:', feedback);
-        setIsCorrect(feedback.correct);
-        setDetailedFeedback(feedback.feedbackKey);
-        setStats(feedback.stats);
     };
 
     // Fetch AI explanation when the answer is incorrect
@@ -140,25 +171,36 @@ export function useQuizSession({
         lang: 'sv' | 'en' = 'sv'
     ) => {
         setAiState('preparing');
-        const url = `/api/v2/explain`;
-        const res = await fetchWithAuth(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                question,            // the entire question object
-                selectedOption,      // label, e.g. "A"
-                language: lang,
-                aiModel: localStorage.getItem('aiModel') || 'openai',
-            }),
-        });
-        if (!res.ok) {
+        try {
+            const url = `/api/v2/explain`;
+            const res = await fetchWithAuth(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question,            // the entire question object
+                    selectedOption,      // label, e.g. "A"
+                    language: lang,
+                    aiModel: localStorage.getItem('aiModel') || 'openai',
+                }),
+            });
+            if (!res.ok) {
+                setAiState('idle');
+                const msg = `Failed to fetch AI explanation: ${res.status}`;
+                if (typeof setError === 'function') setError(msg);
+                setLocalError(msg);
+                console.error(msg);
+                return;
+            }
+            const text = await res.text();
+            setAiExplanation(text);
+            setAiState('display');
+        } catch (e: any) {
             setAiState('idle');
-            // Fel visas för användaren på annat sätt, ingen logg behövs här.
-            return;
+            const msg = `AI explanation error: ${e?.message || e}`;
+            if (typeof setError === 'function') setError(msg);
+            setLocalError(msg);
+            console.error(msg);
         }
-        const text = await res.text();
-        setAiExplanation(text);
-        setAiState('display');
     };
 
     return {
@@ -172,6 +214,7 @@ export function useQuizSession({
         loggedInUser,
         aiState,
         aiExplanation,
+        error,
 
         setSelectedOption,
         startQuiz,
@@ -179,4 +222,5 @@ export function useQuizSession({
         submitAnswer,
         handleAiExplanation,
     };
+
 }

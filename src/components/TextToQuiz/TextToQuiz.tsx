@@ -8,7 +8,7 @@ import QuestionPreviewList from './QuestionPreviewList';
 import LanguageSelector from './LanguageSelector';
 import { QuestionSessionProvider, useQuestionSession } from './QuestionSessionContext';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+
 
 interface UserInfo {
   role: string;
@@ -26,9 +26,12 @@ const toSlug = (input: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-const InnerTextToQuiz: React.FC = () => {
+interface InnerTextToQuizProps {
+  onReview: (courseName: string) => void;
+}
+
+const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview }) => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<'sv' | 'en'>(i18n.language as 'sv' | 'en');
@@ -144,7 +147,7 @@ const InnerTextToQuiz: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
       );
       toast.success(t('textToQuiz.saveSuccess'));
-      navigate(`/review?courseName=${encodeURIComponent(name.trim())}`);
+      onReview(name.trim());
     } catch (err: any) {
       toast.error(err.response?.data || t('textToQuiz.saveError'));
     }
@@ -269,10 +272,15 @@ const InnerTextToQuiz: React.FC = () => {
   );
 };
 
-const TextToQuiz: React.FC = () => (
-  <QuestionSessionProvider>
-    <InnerTextToQuiz />
-  </QuestionSessionProvider>
-);
+interface TextToQuizProps {
+  onReview: (courseName: string) => void;
+}
 
+const TextToQuiz: React.FC<TextToQuizProps> = ({ onReview }) => {
+  return (
+    <QuestionSessionProvider>
+      <InnerTextToQuiz onReview={onReview} />
+    </QuestionSessionProvider>
+  );
+};
 export default TextToQuiz;
