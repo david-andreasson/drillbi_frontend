@@ -155,12 +155,12 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview }) => {
 
   const handleRegenerateQuestion = async (index: number) => {
     setRegeneratingQuestionIndex(index);
-    try { await onRegenerateQuestion(index); } finally { setRegeneratingQuestionIndex(null); }
+    try { await onRegenerateQuestion(index, language); } finally { setRegeneratingQuestionIndex(null); }
   };
 
   const handleRegenerateOptions = async (index: number) => {
     setRegeneratingOptionsIndex(index);
-    try { await onRegenerateOptions(index, aiModel); } finally { setRegeneratingOptionsIndex(null); }
+    try { await onRegenerateOptions(index, language, aiModel); } finally { setRegeneratingOptionsIndex(null); }
   };
 
   if (loadingUser) return null;

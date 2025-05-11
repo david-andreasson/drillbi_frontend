@@ -131,10 +131,17 @@ const App: React.FC = () => {
 
 
     const handleOrderChange = () => {
-        setOrderType(prev =>
-            prev === 'ORDER' ? 'REVERSE' : prev === 'REVERSE' ? 'RANDOM' : 'ORDER'
-        );
+        // Byt ordning och starta om quizet helt
+        setOrderType(prev => {
+            const newOrder = prev === 'ORDER' ? 'REVERSE' : prev === 'REVERSE' ? 'RANDOM' : 'ORDER';
+            // Rensa sessionId och starta om quizet
+            localStorage.removeItem('sessionId');
+            setContinueQuiz(false);
+            setTimeout(() => setContinueQuiz(true), 0); // Tvinga QuizSession att mounta om
+            return newOrder;
+        });
     };
+
 
     if (userLoading) return null;
     if (!user && !isLoggedOut) return <Login />;
