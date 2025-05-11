@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { createContext } from 'react';
+
+export const AppContext = createContext<{ triggerPaywall: () => void }>({ triggerPaywall: () => {} });
+
 import { useTranslation } from 'react-i18next';
 
 import ProfilePage from './components/ProfilePage';
@@ -14,12 +18,26 @@ import Settings from './components/Settings';
 import { useUser } from './contexts/UserContext';
 import { Toaster } from 'react-hot-toast';
 import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
+import Paywall from './components/Paywall';
+import EducatorContact from './components/EducatorContact';
 
 type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
 
 const App: React.FC = () => {
-    // ...
+    const [showPaywall, setShowPaywall] = useState<boolean>(false);
+    const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
+
+    // Hjälpfunktion för att visa paywall
+    const triggerPaywall = () => {
+        setShowPaywall(true);
+        setShowEducatorContact(false);
+    };
+    // Hjälpfunktion för att visa educator-contact
+    const triggerEducatorContact = () => {
+        setShowEducatorContact(true);
+        setShowPaywall(false);
+    };
 
     const { i18n } = useTranslation();
     const { user, loading: userLoading } = useUser();
@@ -29,7 +47,6 @@ const App: React.FC = () => {
     if (!hasToken || (!userLoading && !user)) {
         return <Login />;
     }
-
 
     const [theme, setTheme] = useState<ThemeType>('light');
     const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
@@ -102,6 +119,8 @@ const App: React.FC = () => {
     const handleNavigate = (destination: string) => {
         setSidebarOpen(false);
         resetAllViews();
+        setShowPaywall(false);
+        setShowEducatorContact(false);
         switch (destination) {
             case 'logout':
                 handleLogout();
@@ -122,6 +141,12 @@ const App: React.FC = () => {
                 setWelcomeDone(true);
                 setContinueQuiz(false);
                 setCourse(null);
+                break;
+            case 'paywall':
+                setShowPaywall(true);
+                break;
+            case 'educator-contact':
+                setShowEducatorContact(true);
                 break;
             default:
                 break;
@@ -151,7 +176,11 @@ const App: React.FC = () => {
     const role = user?.role || 'ROLE_USER';
 
     let content = null;
-    if (showProfile) {
+    if (showPaywall) {
+        content = <Paywall />;
+    } else if (showEducatorContact) {
+        content = <EducatorContact />;
+    } else if (showProfile) {
         content = <ProfilePage onDone={() => {
             setShowProfile(false);
             setWelcomeDone(false);
@@ -214,14 +243,16 @@ const App: React.FC = () => {
     }
 
     return (
-        <div
-            className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-        >
-            <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
-            <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
-            {content}
-        </div>
+        <AppContext.Provider value={{ triggerPaywall }}>
+            <div
+                className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+            >
+                <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
+                <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
+                {content}
+            </div>
+        </AppContext.Provider>
     );
 };
 

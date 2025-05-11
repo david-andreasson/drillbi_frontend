@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppContext } from '../../App'; // Justera sökvägen om det behövs
 import { useTranslation } from 'react-i18next';
 import { useQuizSession } from './useQuizSession';
 import QuestionBlock from './QuestionBlock';
@@ -45,6 +46,9 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         aiExplanation,
         stats,
         loggedInUser,
+        // If loggedInUser is missing the correct type, we can cast it here:
+        // const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
+
         detailedFeedback,
         setSelectedOption,
         getNextQuestion,
@@ -128,21 +132,35 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     </div>
                 )}
 
-                <AiExplanation
-                    submitted={submitted}
-                    isCorrect={isCorrect}
-                    aiState={aiState}
-                    aiExplanation={aiExplanation}
-                    onExplain={() => question && sessionId && handleAiExplanation(
-                        sessionId,
-                        question.questionText,
-                        question.options.find((o: any) => o.isCorrect)?.optionText || '',
-                        courseName,
-                        i18n.language as 'sv' | 'en'
-                    )}
-                    label={t('explainWithAI')}
-                    loadingLabel={t('aiThinking')}
-                />
+                {/* Endast premium-medlemmar får använda AI-förklaringen */}
+                {/* Knappen synlig för alla, men olika onExplain beroende på medlemskap */}
+                <AppContext.Consumer>
+                  {({ triggerPaywall }) => (
+                    <AiExplanation
+                      submitted={submitted}
+                      isCorrect={isCorrect}
+                      aiState={aiState}
+                      aiExplanation={aiExplanation}
+                      onExplain={() => {
+                        // Cast loggedInUser if needed
+                        const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
+                        if (userWithPremium?.isPremium) {
+                          question && sessionId && handleAiExplanation(
+                            sessionId,
+                            question.questionText,
+                            question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                            courseName,
+                            i18n.language as 'sv' | 'en'
+                          );
+                        } else {
+                          triggerPaywall();
+                        }
+                      }}
+                      label={t('explainWithAI')}
+                      loadingLabel={t('aiThinking')}
+                    />
+                  )}
+                </AppContext.Consumer>
 
                 {stats && (
                     <p className="mt-2 text-sm text-gray-600 dark:text-neutral-100">

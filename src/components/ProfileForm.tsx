@@ -10,8 +10,14 @@ interface ProfileFormProps {
   onDone: () => void;
 }
 
+import { useLocation } from "react-router-dom";
+
 const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
   // Alla hooks först!
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const paymentSuccess = params.get("success");
+  const paymentCanceled = params.get("canceled");
   const [profile, setProfile] = useState({
     username: "",
     email: "",
@@ -92,10 +98,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
 
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-      <h2>{getLabel('profile.title', 'Dina användaruppgifter')}</h2>
-      {error && <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Misslyckades att spara profilen.')}</div>}
-      {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profilen har uppdaterats!')}</div>}
+    <>
+      {paymentSuccess && (
+        <div className="payment-success-message">
+          {t('profile.paymentSuccess')}
+        </div>
+      )}
+      {paymentCanceled && (
+        <div className="payment-canceled-message">
+          {t('profile.paymentCanceled')}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
+        <h2>{getLabel('profile.title', 'Dina användaruppgifter')}</h2>
+      {error && <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>}
+      {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
       <div style={{ marginBottom: 16 }}>
         <label>{getLabel('profile.username', 'Användarnamn')}<br />
           <TextInput
@@ -159,7 +177,28 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
           )}
         </div>
       </div>
-    </form>
+      {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
+        <button
+          type="button"
+          style={{ width: "100%", marginTop: 24, background: '#635bff', color: 'white', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
+          onClick={async () => {
+            try {
+              const res = await api.post("/api/v2/stripe/create-checkout-session");
+              if (res.data && res.data.url) {
+                window.location.href = res.data.url;
+              } else {
+                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+              }
+            } catch (err) {
+              toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+            }
+          }}
+        >
+          {getLabel('profile.becomePremium', 'Bli betalande medlem')}
+        </button>
+      )}
+      </form>
+    </>
   );
 };
 

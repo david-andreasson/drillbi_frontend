@@ -19,6 +19,11 @@
   "aiThinking": "AI tänker",
   "correctFeedback": "Bra jobbat!",
   "incorrectFeedback": "Det var inte rätt.",
+  "profile.paymentSuccess": "Betalning lyckades! Du är nu premium-medlem.",
+  "profile.paymentCanceled": "Betalningen avbröts eller misslyckades.",
+  "profile.updated": "Profilen har uppdaterats!",
+  "profile.saveError": "Misslyckades att spara profilen.",
+  "profile.title": "Dina användaruppgifter",
   "stats": "Poäng: {{score}} / {{total}}, Felprocent: {{errorRate}}%",
   "loggedInUser": "Inloggad som",
   "courseSelection": {
