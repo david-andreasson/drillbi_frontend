@@ -13,6 +13,7 @@ interface QuizSessionProps {
     sessionId?: string;
     onOrderChange: () => void;
     onDone?: () => void;
+    onSessionId?: (id: string) => void;
 }
 
 function getOrderTranslationKey(orderType: 'ORDER' | 'RANDOM' | 'REVERSE'): string {
@@ -28,7 +29,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     startQuestion,
     sessionId: parentSessionId,
     onOrderChange,
-    onDone
+    onDone,
+    onSessionId
 }) => {
     const [error, setError] = React.useState<string | null>(null);
     const { t, i18n } = useTranslation();
@@ -56,6 +58,13 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         parentSessionId,
         setError,
     });
+
+    // Spara sessionId i localStorage när det ändras och är nytt
+    React.useEffect(() => {
+        if (sessionId && onSessionId) {
+            onSessionId(sessionId);
+        }
+    }, [sessionId, onSessionId]);
 
     const { courses } = useCourses();
     const selectedCourse = courses.find(c => c.name === courseName);

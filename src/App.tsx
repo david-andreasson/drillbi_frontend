@@ -179,18 +179,23 @@ const App: React.FC = () => {
                 }}
             />
         );
-    } else if (continueQuiz && localStorage.getItem('sessionId')) {
+    } else if (continueQuiz && course) {
+        // sessionId sätts av QuizSession när backend svarat
+        const sessionId = localStorage.getItem('sessionId');
         content = (
             <QuizSession
-                sessionId={localStorage.getItem('sessionId')!}
+                sessionId={sessionId || undefined}
                 courseName={course || ''}
                 orderType={orderType}
                 startQuestion={startQuestion}
                 onOrderChange={handleOrderChange}
                 onDone={() => {
+                    // Rensa sessionId när quizet är klart
+                    localStorage.removeItem('sessionId');
                     setContinueQuiz(false);
                     setWelcomeDone(false);
                 }}
+                onSessionId={(id: string) => localStorage.setItem('sessionId', id)}
             />
         );
     } else if (!course) {

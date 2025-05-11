@@ -116,7 +116,21 @@ export function useQuizSession(args: UseQuizSessionParams) {
                 console.error(msg);
                 return;
             }
-            const data = await res.json();
+            // Försök tolka som JSON, annars som text
+            let data;
+            const text = await res.text();
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                // Om det inte är JSON, visa ett användarvänligt felmeddelande
+                const msg = text && text.includes('Quiz finished')
+                    ? 'Quizet är slut!'
+                    : `Kunde inte läsa nästa fråga: ${text}`;
+                if (typeof setError === 'function') setError(msg);
+                setLocalError(msg);
+                setQuestion(null);
+                return;
+            }
             console.log('Question data:', data);
             setQuestion(data);
             setSelectedOption('');
