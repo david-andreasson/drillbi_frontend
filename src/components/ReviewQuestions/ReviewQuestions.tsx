@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+
 import { QuestionDTO } from '../../types/QuestionDTO';
 import { fetchWithAuth } from '../../utils/auth';
 import PrimaryButton from '../ui/PrimaryButton';
@@ -8,14 +8,16 @@ import { useCourses } from '../CourseSelection/useCourses';
 
 interface ReviewQuestionsProps {
     courseName: string;
+    onDone: () => void;
+    onAddMore: () => void;
 }
 
-const ReviewQuestions: React.FC<ReviewQuestionsProps> = ({ courseName }) => {
+const ReviewQuestions: React.FC<ReviewQuestionsProps> = ({ courseName, onDone, onAddMore }) => {
     const { t } = useTranslation();
     const [questions, setQuestions] = useState<QuestionDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
+
 
     const { courses } = useCourses();
     // Find the correct course
@@ -41,14 +43,11 @@ const ReviewQuestions: React.FC<ReviewQuestionsProps> = ({ courseName }) => {
     }, [courseName, t]);
 
     const handleAddMore = () => {
-        navigate('/');
-        setTimeout(() => {
-            navigate('/texttoquiz');
-        }, 0);
+        onAddMore();
     };
 
     const handleDone = () => {
-        navigate('/');
+        onDone();
     };
 
     if (loading) return <p className="text-center mt-8">{t('textToQuiz.loading')}</p>;

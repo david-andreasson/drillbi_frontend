@@ -1,6 +1,6 @@
-// src/components/ui/Sidebar.tsx
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -41,15 +41,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                 <button onClick={() => onNavigate('courses')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.selectCourse')}
                 </button>
-                <button onClick={() => { console.log('Sidebar: Inställningar klickad'); onNavigate('settings'); }} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={() => { console.log('Sidebar: Settings clicked'); onNavigate('settings'); }} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.settings')}
                 </button>
 
-                {(userRole === 'ROLE_ADMIN' || userRole === 'ROLE_EDUCATOR') && (
-                    <button onClick={() => onNavigate('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                        {t('menu.textToQuiz')}
-                    </button>
-                )}
+                <button onClick={() => onNavigate('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                    {t('menu.textToQuiz')}
+                </button>
+
+                <button onClick={() => onNavigate('profile')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                    Profile
+                </button>
 
                 <button
                     onClick={() => onNavigate('logout')}

@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onLogout, onMenuClick 
                 <button className="text-xl text-gray-900 dark:text-neutral-100" onClick={onMenuClick} aria-label="Open menu">
                     <FaBars />
                 </button>
-                <span className="font-semibold">Noeeta</span>
+                <span className="font-semibold">drillbi</span>
             </div>
 
             <div className="flex items-center gap-4">

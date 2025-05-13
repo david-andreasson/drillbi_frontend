@@ -19,6 +19,11 @@
   "aiThinking": "AI is thinking",
   "correctFeedback": "Great job!",
   "incorrectFeedback": "That was incorrect.",
+  "profile.paymentSuccess": "Payment successful! You are now a premium member.",
+  "profile.paymentCanceled": "Payment was canceled or failed.",
+  "profile.updated": "Profile updated!",
+  "profile.saveError": "Failed to save profile.",
+  "profile.title": "Your profile information",
   "stats": "Score: {{score}} / {{total}}, Error rate: {{errorRate}}%",
   "loggedInUser": "Logged in as",
   "courseSelection": {

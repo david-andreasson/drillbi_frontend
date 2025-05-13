@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { createContext } from 'react';
+
+export const AppContext = createContext<{ triggerPaywall: () => void }>({ triggerPaywall: () => {} });
+
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+
+import ProfilePage from './components/ProfilePage';
 import Login from './components/Login';
 import CourseSelection from './components/CourseSelection/CourseSelection';
 import QuizSession from './components/QuizSession/QuizSession';
@@ -13,14 +18,35 @@ import Settings from './components/Settings';
 import { useUser } from './contexts/UserContext';
 import { Toaster } from 'react-hot-toast';
 import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
+import Paywall from './components/Paywall';
+import EducatorContact from './components/EducatorContact';
 
 type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
 
 const App: React.FC = () => {
+    const [showPaywall, setShowPaywall] = useState<boolean>(false);
+    const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
+
+    // Hjälpfunktion för att visa paywall
+    const triggerPaywall = () => {
+        setShowPaywall(true);
+        setShowEducatorContact(false);
+    };
+    // Hjälpfunktion för att visa educator-contact
+    const triggerEducatorContact = () => {
+        setShowEducatorContact(true);
+        setShowPaywall(false);
+    };
+
     const { i18n } = useTranslation();
     const { user, loading: userLoading } = useUser();
-    const location = useLocation();
+
+    // If no token or user is not loaded, always show Login
+    const hasToken = !!localStorage.getItem('token');
+    if (!hasToken || (!userLoading && !user)) {
+        return <Login />;
+    }
 
     const [theme, setTheme] = useState<ThemeType>('light');
     const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
@@ -29,12 +55,14 @@ const App: React.FC = () => {
     const [startQuestion, setStartQuestion] = useState<number>(1);
     const [welcomeDone, setWelcomeDone] = useState<boolean>(false);
     const [continueQuiz, setContinueQuiz] = useState<boolean>(false);
-    const [showTextToQuiz, setShowTextToQuiz] = useState<boolean>(false);
-    const [showSettings, setShowSettings] = useState<boolean>(false);
-    const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+    const [reviewCourseName, setReviewCourseName] = useState<string | null>(null);
 
-    const showReviewPage = location.pathname === '/review';
-    const reviewCourseName = new URLSearchParams(location.search).get('courseName');
+    const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+    const [showProfile, setShowProfile] = useState<boolean>(false);
+    const [showSettings, setShowSettings] = useState<boolean>(false);
+    const [showTextToQuiz, setShowTextToQuiz] = useState<boolean>(false);
+
+
 
     useEffect(() => {
         const storedTheme = localStorage.getItem('theme');
@@ -73,22 +101,26 @@ const App: React.FC = () => {
         localStorage.removeItem('token');
         setIsLoggedOut(true);
         setCourse(null);
-        window.history.replaceState({}, document.title, '/logged-out');
-    };
+        // Instead of redirect, just reload so App will show <Login />
+        window.location.reload();
+    }
+
+
 
     const resetAllViews = () => {
-        setShowTextToQuiz(false);
+        setShowProfile(false);
         setShowSettings(false);
+        setShowTextToQuiz(false);
         setCourse(null);
         setWelcomeDone(false);
         setContinueQuiz(false);
     };
 
     const handleNavigate = (destination: string) => {
-        console.log('[App] Navigerar till:', destination);
         setSidebarOpen(false);
         resetAllViews();
-
+        setShowPaywall(false);
+        setShowEducatorContact(false);
         switch (destination) {
             case 'logout':
                 handleLogout();
@@ -99,6 +131,9 @@ const App: React.FC = () => {
             case 'settings':
                 setShowSettings(true);
                 break;
+            case 'profile':
+                setShowProfile(true);
+                break;
             case 'home':
                 setWelcomeDone(false);
                 break;
@@ -107,31 +142,64 @@ const App: React.FC = () => {
                 setContinueQuiz(false);
                 setCourse(null);
                 break;
+            case 'paywall':
+                setShowPaywall(true);
+                break;
+            case 'educator-contact':
+                setShowEducatorContact(true);
+                break;
             default:
                 break;
         }
     };
 
+
+
     const handleOrderChange = () => {
-        setOrderType(prev =>
-            prev === 'ORDER' ? 'REVERSE' : prev === 'REVERSE' ? 'RANDOM' : 'ORDER'
-        );
+        // Byt ordning och starta om quizet helt
+        setOrderType(prev => {
+            const newOrder = prev === 'ORDER' ? 'REVERSE' : prev === 'REVERSE' ? 'RANDOM' : 'ORDER';
+            // Rensa sessionId och starta om quizet
+            localStorage.removeItem('sessionId');
+            setContinueQuiz(false);
+            setTimeout(() => setContinueQuiz(true), 0); // Tvinga QuizSession att mounta om
+            return newOrder;
+        });
     };
+
 
     if (userLoading) return null;
     if (!user && !isLoggedOut) return <Login />;
-    if (isLoggedOut) return <LoggedOutScreen onLoginAgain={() => window.location.href = '/login'} />;
+    if (isLoggedOut) return <LoggedOutScreen onLoginAgain={() => { setIsLoggedOut(false); }} />;
 
     const firstName = user?.firstName || '';
     const role = user?.role || 'ROLE_USER';
 
     let content = null;
-    if (showReviewPage && reviewCourseName) {
-        content = <ReviewQuestions courseName={reviewCourseName} />;
-    } else if (showTextToQuiz) {
-        content = <TextToQuiz />;
+    if (showPaywall) {
+        content = <Paywall />;
+    } else if (showEducatorContact) {
+        content = <EducatorContact />;
+    } else if (showProfile) {
+        content = <ProfilePage onDone={() => {
+            setShowProfile(false);
+            setWelcomeDone(false);
+        }} />;
     } else if (showSettings) {
         content = <Settings theme={theme} setTheme={setTheme} />;
+    } else if (showTextToQuiz) {
+        content = <TextToQuiz onReview={courseName => {
+            setShowTextToQuiz(false);
+            setReviewCourseName(courseName);
+        }} />;
+    } else if (reviewCourseName) {
+        content = <ReviewQuestions courseName={reviewCourseName} onDone={() => {
+            setReviewCourseName(null);
+            setWelcomeDone(false);
+        }} onAddMore={() => {
+            setReviewCourseName(null);
+            setShowTextToQuiz(true);
+        }} />;
     } else if (!welcomeDone) {
         content = (
             <WelcomeScreen
@@ -147,41 +215,44 @@ const App: React.FC = () => {
                 }}
             />
         );
-    } else if (continueQuiz && localStorage.getItem('sessionId')) {
+    } else if (continueQuiz && course) {
+        // sessionId sätts av QuizSession när backend svarat
+        const sessionId = localStorage.getItem('sessionId');
         content = (
             <QuizSession
-                sessionId={localStorage.getItem('sessionId')!}
-                courseName=""
+                sessionId={sessionId || undefined}
+                courseName={course || ''}
                 orderType={orderType}
                 startQuestion={startQuestion}
                 onOrderChange={handleOrderChange}
+                onDone={() => {
+                    // Rensa sessionId när quizet är klart
+                    localStorage.removeItem('sessionId');
+                    setContinueQuiz(false);
+                    setWelcomeDone(false);
+                }}
+                onSessionId={(id: string) => localStorage.setItem('sessionId', id)}
             />
         );
     } else if (!course) {
-        content = <CourseSelection onSelectCourse={setCourse} />;
-    } else {
-        content = (
-            <QuizSession
-                key={`${course}-${orderType}-${startQuestion}`}
-                sessionId={localStorage.getItem('sessionId')!}
-                courseName={course}
-                orderType={orderType}
-                startQuestion={startQuestion}
-                onOrderChange={handleOrderChange}
-            />
-        );
+        content = <CourseSelection onSelectCourse={name => {
+            setCourse(name);
+            setContinueQuiz(true);
+            setWelcomeDone(true);
+        }} />;
     }
 
-    console.log('[App] Vad renderas?', { showSettings, showTextToQuiz, showReviewPage, welcomeDone, continueQuiz, course });
     return (
-        <div
-            className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-        >
-            <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
-            <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
-            {content}
-        </div>
+        <AppContext.Provider value={{ triggerPaywall }}>
+            <div
+                className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+            >
+                <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
+                <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
+                {content}
+            </div>
+        </AppContext.Provider>
     );
 };
 

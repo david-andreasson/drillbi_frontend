@@ -10,8 +10,8 @@ interface QuestionSessionContextProps {
     savedFlags: boolean[];
     setQuestions: (questions: QuestionDTO[] | null, sourceText?: string) => void;
     onToggleSave: (index: number) => void;
-    onRegenerateQuestion: (index: number) => Promise<void>;
-    onRegenerateOptions: (index: number, aiModel?: string) => Promise<void>;
+    onRegenerateQuestion: (index: number, language: 'sv' | 'en', aiModel?: string) => Promise<void>;
+    onRegenerateOptions: (index: number, language: 'sv' | 'en', aiModel?: string) => Promise<void>;
 }
 
 const QuestionSessionContext = createContext<QuestionSessionContextProps | undefined>(undefined);
@@ -45,7 +45,7 @@ export const QuestionSessionProvider: React.FC<{ children: React.ReactNode }> = 
         }
     };
 
-    const onRegenerateQuestion = async (index: number, aiModel?: string): Promise<void> => {
+    const onRegenerateQuestion = async (index: number, language: 'sv' | 'en', aiModel?: string): Promise<void> => {
         if (!questions) return;
         const original = questions[index];
         const token = localStorage.getItem('token');
@@ -56,7 +56,7 @@ export const QuestionSessionProvider: React.FC<{ children: React.ReactNode }> = 
                 {
                     text: sourceText,
                     courseName: original.courseName,
-                    language: original.language || 'sv',
+                    language: language || 'sv',
                     originalQuestion: original.questionText,
                     aiModel: aiModel || localStorage.getItem('aiModel') || 'openai',
                 },
@@ -76,7 +76,7 @@ export const QuestionSessionProvider: React.FC<{ children: React.ReactNode }> = 
     };
 
 
-    const onRegenerateOptions = async (index: number, aiModel?: string): Promise<void> => {
+    const onRegenerateOptions = async (index: number, language: 'sv' | 'en', aiModel?: string): Promise<void> => {
         if (!questions) return;
         const q = questions[index];
         try {
@@ -85,7 +85,7 @@ export const QuestionSessionProvider: React.FC<{ children: React.ReactNode }> = 
                 `${import.meta.env.VITE_API_BASE_URL}/api/v2/questions/regenerate-options`,
                 {
                     questionText: q.questionText,
-                    language: q.language || 'sv',
+                    language: language || 'sv',
                     courseName: q.courseName,
                     sourceText,
                     aiModel: aiModel || localStorage.getItem('aiModel') || 'openai',

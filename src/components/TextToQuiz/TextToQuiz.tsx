@@ -8,7 +8,7 @@ import QuestionPreviewList from './QuestionPreviewList';
 import LanguageSelector from './LanguageSelector';
 import { QuestionSessionProvider, useQuestionSession } from './QuestionSessionContext';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+
 
 interface UserInfo {
   role: string;
@@ -26,9 +26,16 @@ const toSlug = (input: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-const InnerTextToQuiz: React.FC = () => {
+interface InnerTextToQuizProps {
+  onReview: (courseName: string) => void;
+  triggerPaywall: () => void;
+}
+
+import { useContext } from 'react';
+import { AppContext } from '../../App';
+
+const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<'sv' | 'en'>(i18n.language as 'sv' | 'en');
@@ -41,6 +48,8 @@ const InnerTextToQuiz: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  // triggerPaywall skickas in som prop från TextToQuiz
+
   const [regeneratingQuestionIndex, setRegeneratingQuestionIndex] = useState<number | null>(null);
   const [regeneratingOptionsIndex, setRegeneratingOptionsIndex] = useState<number | null>(null);
 
@@ -103,6 +112,11 @@ const InnerTextToQuiz: React.FC = () => {
   }, [text]);
 
   const handleGenerate = async (maxQuestions?: number) => {
+    // Premiumkontroll
+    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+      triggerPaywall();
+      return;
+    }
     if (!text || overLimit) {
       toast.error(t('textToQuiz.fillFields'));
       return;
@@ -144,20 +158,30 @@ const InnerTextToQuiz: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
       );
       toast.success(t('textToQuiz.saveSuccess'));
-      navigate(`/review?courseName=${encodeURIComponent(name.trim())}`);
+      onReview(name.trim());
     } catch (err: any) {
       toast.error(err.response?.data || t('textToQuiz.saveError'));
     }
   };
 
   const handleRegenerateQuestion = async (index: number) => {
+    // Premiumkontroll
+    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+      triggerPaywall();
+      return;
+    }
     setRegeneratingQuestionIndex(index);
-    try { await onRegenerateQuestion(index); } finally { setRegeneratingQuestionIndex(null); }
+    try { await onRegenerateQuestion(index, language); } finally { setRegeneratingQuestionIndex(null); }
   };
 
   const handleRegenerateOptions = async (index: number) => {
+    // Premiumkontroll
+    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+      triggerPaywall();
+      return;
+    }
     setRegeneratingOptionsIndex(index);
-    try { await onRegenerateOptions(index, aiModel); } finally { setRegeneratingOptionsIndex(null); }
+    try { await onRegenerateOptions(index, language, aiModel); } finally { setRegeneratingOptionsIndex(null); }
   };
 
   if (loadingUser) return null;
@@ -269,10 +293,17 @@ const InnerTextToQuiz: React.FC = () => {
   );
 };
 
-const TextToQuiz: React.FC = () => (
-  <QuestionSessionProvider>
-    <InnerTextToQuiz />
-  </QuestionSessionProvider>
-);
+interface TextToQuizProps {
+  onReview: (courseName: string) => void;
+}
 
+const TextToQuiz: React.FC<TextToQuizProps> = ({ onReview }) => {
+  // triggerPaywall hämtas från AppContext
+  const ctx = useContext(AppContext);
+  return (
+    <QuestionSessionProvider>
+      <InnerTextToQuiz onReview={onReview} triggerPaywall={ctx.triggerPaywall} />
+    </QuestionSessionProvider>
+  );
+};
 export default TextToQuiz;
