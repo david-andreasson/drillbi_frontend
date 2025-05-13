@@ -42,4 +42,4 @@ jobs:
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: davidandreasson/drillbi-frontend:latest
+          tags: davidandreasson/drillbi:frontend-latest
