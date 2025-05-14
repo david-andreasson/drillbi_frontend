@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
 
     return (
         <div
-            className={`fixed top-0 left-0 h-full w-64 shadow-2xl shadow-md z-50 transform transition-transform duration-300 overflow-y-auto scrollbar-hide ${
+            className={`fixed top-0 left-0 h-full w-11/12 sm:w-64 max-w-full shadow-2xl shadow-md z-50 transform transition-transform duration-300 overflow-y-auto scrollbar-hide ${
                 isOpen ? 'translate-x-0' : '-translate-x-full'
             } bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100`}
         >

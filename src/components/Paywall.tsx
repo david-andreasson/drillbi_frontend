@@ -15,8 +15,8 @@ const Paywall: React.FC = () => {
   const currency = isSwedish ? 'kr' : 'USD';
 
   return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-10 w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
-        <div className="w-full max-w-xl bg-gray-100 dark:bg-neutral-800 rounded-lg shadow-lg p-8">
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-2 py-4 sm:px-4 sm:py-10 w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
+        <div className="w-full max-w-full sm:max-w-xl bg-gray-100 dark:bg-neutral-800 rounded-lg shadow-lg p-4 sm:p-8">
           <h1 className="text-2xl font-bold mb-4 text-center">
             {isSwedish ? 'Bli medlem och lås upp fler funktioner!' : 'Become a member and unlock more features!'}
           </h1>
