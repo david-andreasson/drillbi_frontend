@@ -10,10 +10,11 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
-                                                         firstName,
-                                                         onStartNew,
-                                                         onContinue,
-                                                     }) => {
+    firstName,
+    onStartNew,
+    onContinue,
+    onCreateQuestions,
+}) => {
     const { t } = useTranslation();
 
     return (
