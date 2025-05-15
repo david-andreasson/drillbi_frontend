@@ -14,7 +14,7 @@ import LoggedOutScreen from './components/LoggedOutScreen';
 import TextToQuiz from './components/TextToQuiz/TextToQuiz';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
-import Settings from './components/Settings';
+
 import { useUser } from './contexts/UserContext';
 import { Toaster } from 'react-hot-toast';
 import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
     const [showProfile, setShowProfile] = useState<boolean>(false);
-    const [showSettings, setShowSettings] = useState<boolean>(false);
+    
     const [showTextToQuiz, setShowTextToQuiz] = useState<boolean>(false);
 
 
@@ -109,7 +109,6 @@ const App: React.FC = () => {
 
     const resetAllViews = () => {
         setShowProfile(false);
-        setShowSettings(false);
         setShowTextToQuiz(false);
         setCourse(null);
         setWelcomeDone(false);
@@ -127,9 +126,6 @@ const App: React.FC = () => {
                 break;
             case 'texttoquiz':
                 setShowTextToQuiz(true);
-                break;
-            case 'settings':
-                setShowSettings(true);
                 break;
             case 'profile':
                 setShowProfile(true);
@@ -185,8 +181,6 @@ const App: React.FC = () => {
             setShowProfile(false);
             setWelcomeDone(false);
         }} />;
-    } else if (showSettings) {
-        content = <Settings theme={theme} setTheme={setTheme} />;
     } else if (showTextToQuiz) {
         content = <TextToQuiz onReview={courseName => {
             setShowTextToQuiz(false);
@@ -205,13 +199,25 @@ const App: React.FC = () => {
             <WelcomeScreen
                 firstName={firstName}
                 onStartNew={() => {
-                    localStorage.removeItem('sessionId');
-                    setWelcomeDone(true);
                     setContinueQuiz(false);
+                    setWelcomeDone(true);
+                    setShowProfile(false);
+                    setShowTextToQuiz(false);
+                    setReviewCourseName(null);
                 }}
                 onContinue={() => {
-                    setWelcomeDone(true);
                     setContinueQuiz(true);
+                    setWelcomeDone(true);
+                    setShowProfile(false);
+                    setShowTextToQuiz(false);
+                    setReviewCourseName(null);
+                }}
+                onCreateQuestions={() => {
+                    setShowTextToQuiz(true);
+                    setShowProfile(false);
+                    setContinueQuiz(false);
+                    setWelcomeDone(true);
+                    setReviewCourseName(null);
                 }}
             />
         );
