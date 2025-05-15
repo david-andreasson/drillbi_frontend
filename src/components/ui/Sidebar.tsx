@@ -41,9 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                 <button onClick={() => onNavigate('courses')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.selectCourse')}
                 </button>
-                <button onClick={() => { console.log('Sidebar: Settings clicked'); onNavigate('settings'); }} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                    {t('menu.settings')}
-                </button>
+                
 
                 <button onClick={() => onNavigate('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.textToQuiz')}

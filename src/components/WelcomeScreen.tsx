@@ -6,6 +6,7 @@ interface WelcomeScreenProps {
     firstName: string;
     onStartNew: () => void;
     onContinue: () => void;
+    onCreateQuestions: () => void;
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
@@ -25,13 +26,16 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 </h1>
                 <p className="mb-8 text-gray-900 dark:text-white">{t("welcomeDescription")}</p>
 
-                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-full sm:max-w-lg mx-auto">
-                    <PrimaryButton className="w-full" onClick={onContinue}>
-    {t("continueQuiz")}
-</PrimaryButton>
+                <div className="flex flex-col gap-4 w-full max-w-xs mx-auto mt-10">
                     <PrimaryButton className="w-full" onClick={onStartNew}>
-    {t("startNewQuiz")}
-</PrimaryButton>
+                        {t("startNewQuiz", "Starta ett nytt quiz")}
+                    </PrimaryButton>
+                    <PrimaryButton className="w-full" onClick={onContinue}>
+                        {t("continueQuiz", "Fortsätt på tidigare quiz")}
+                    </PrimaryButton>
+                    <PrimaryButton className="w-full" onClick={onCreateQuestions}>
+                        {t("createQuizQuestions", "Skapa quiz-frågor")}
+                    </PrimaryButton>
                 </div>
             </div>
         </div>
