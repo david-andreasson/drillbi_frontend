@@ -29,43 +29,38 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
 
   if (!token || userLoading) return <div>Loading...</div>;
   return (
-    <div style={{ padding: 24, width: '100%', maxWidth: 600, margin: '0 auto' }}>
-      {/* Medlemsstatus + användaruppgifter överst */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 4 }}>Medlemsstatus</div>
-        <div style={{ marginBottom: 16 }}>{(user && 'isPremium' in user && (user as any).isPremium) ? 'Premium' : 'Gratis'}</div>
+      <div style={{ padding: 24, width: '100%', maxWidth: 600, margin: '0 auto' }}>
         <ProfileForm token={token} onDone={onDone} />
-      </div>
-      {/* Språk */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 4 }}>{t('settings.language')}</div>
-        <button onClick={toggleLanguage} style={{ width: '100%', padding: 10, borderRadius: 8, background: '#f6f6f6', fontWeight: 500 }}>
-          {i18n.language === 'sv' ? 'Svenska' : 'English'}
-        </button>
-      </div>
-      {/* Tema */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 4 }}>{t('settings.theme')}</div>
-        <button onClick={toggleTheme} style={{ width: '100%', padding: 10, borderRadius: 8, background: '#f6f6f6', fontWeight: 500 }}>
-          {theme === 'light' ? t('settings.light') : t('settings.dark')}
-        </button>
-      </div>
-      {/* AI-modell */}
-      {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 4 }}>AI-modell</div>
-          <select
-            style={{ width: '100%', padding: 10, borderRadius: 8, background: '#f6f6f6', fontWeight: 500 }}
-            value={aiModel}
-            onChange={e => setAiModel(e.target.value)}
-          >
-            <option value="openai">OpenAI</option>
-            <option value="claude">Claude 3 Haiku</option>
-          </select>
+        {/* Språk */}
+        <div className="mb-6 bg-gray-200 rounded-lg shadow-md px-6 py-5">
+          <label className="block mb-2 font-semibold text-lg text-left">{t('settings.language')}</label>
+          <button onClick={toggleLanguage} className="w-full px-3 py-2 rounded bg-gray-100 dark:bg-neutral-800 dark:text-neutral-100 mt-1 font-medium">
+            {i18n.language === 'sv' ? 'Svenska' : 'English'}
+          </button>
         </div>
-      )}
+        {/* Tema */}
+        <div className="mb-6 bg-gray-200 rounded-lg shadow-md px-6 py-5">
+          <label className="block mb-2 font-semibold text-lg text-left">{t('settings.theme')}</label>
+          <button onClick={toggleTheme} className="w-full px-3 py-2 rounded bg-gray-100 dark:bg-neutral-800 dark:text-neutral-100 mt-1 font-medium">
+            {theme === 'light' ? t('settings.light') : t('settings.dark')}
+          </button>
+        </div>
+        {/* AI-modell */}
+        {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
+            <div className="mb-6 bg-gray-200 rounded-lg shadow-md px-6 py-5">
+              <label className="block mb-2 font-semibold text-lg text-left">AI-modell</label>
+              <select
+                  className="w-full px-3 py-2 border rounded bg-gray-100 dark:bg-neutral-800 dark:text-neutral-100 mt-1 font-medium"
+                  value={aiModel}
+                  onChange={e => setAiModel(e.target.value)}
+              >
+                <option value="openai">OpenAI</option>
+                <option value="claude">Claude 3 Haiku</option>
+              </select>
+            </div>
+        )}
 
-    </div>
+      </div>
   );
 };
 
