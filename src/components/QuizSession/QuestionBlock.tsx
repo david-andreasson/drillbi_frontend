@@ -40,13 +40,13 @@ const QuestionBlock: React.FC<Props> = ({
                     let icon = '';
 
                     if (submitted) {
-                        if (option.optionLabel === selectedOption && isCorrect) {
+                        if (option.optionLabel === selectedOption && isCorrect === true) {
                             buttonClass += 'border-green-500 bg-green-100';
                             icon = '✅';
-                        } else if (option.optionLabel === selectedOption && !isCorrect) {
+                        } else if (option.optionLabel === selectedOption && isCorrect === false) {
                             buttonClass += 'border-red-500 bg-red-100';
                             icon = '❌';
-                        } else if (option.isCorrect && !isCorrect) {
+                        } else if (option.isCorrect && isCorrect === false) {
                             buttonClass += 'border-green-300 border-2';
                         } else {
                             buttonClass += 'border-gray-300';

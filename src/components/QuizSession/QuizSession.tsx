@@ -71,6 +71,9 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         );
     }
 
+    // TypeScript: ensure isPremium is available for type checking
+    const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
+
     // Spara sessionId i localStorage när det ändras och är nytt
     React.useEffect(() => {
         if (sessionId && onSessionId) {
@@ -167,7 +170,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                       label={t('explainWithAI')}
                       loadingLabel={t('aiThinking')}
                       // Admins always have access to AI explanation
-                      disabled={!(isAdmin(loggedInUser) || (loggedInUser as any)?.isPremium)}
+                      disabled={!(isAdmin(loggedInUser) || userWithPremium?.isPremium)}
                     />
                   )}
                 </AppContext.Consumer>
