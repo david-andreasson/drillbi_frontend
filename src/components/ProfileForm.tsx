@@ -4,15 +4,18 @@ import { toast } from 'react-hot-toast';
 
 import { useTranslation } from 'react-i18next';
 import TextInput from "./ui/TextInput";
+import PrimaryButton from "./ui/PrimaryButton";
 
 interface ProfileFormProps {
   token: string;
   onDone: () => void;
+  showOnly?: 'status' | 'fields';
 }
+
 
 import { useLocation } from "react-router-dom";
 
-const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
+const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) => {
   // Alla hooks först!
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -34,7 +37,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const { t, i18n } = useTranslation();
-  // Fallback till svenska om översättning saknas
+  // Fallback to Swedish
   const getLabel = (key: string, fallback: string) => t(key, { defaultValue: fallback });
 
   useEffect(() => {
@@ -86,8 +89,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
       toast.success(getLabel('profile.updated', 'Profilen har uppdaterats!'));
       // Stanna kvar på profilsidan, ingen redirect
 
-    } catch (err) {
-      setError("Failed to save profile.");
+    } catch (err: any) {
+      let errorMsg = "Failed to save profile.";
+      if (err && err.response && err.response.data) {
+        if (typeof err.response.data === 'string') {
+          errorMsg = err.response.data;
+        } else if (typeof err.response.data === 'object' && err.response.data.error) {
+          errorMsg = err.response.data.error;
+        } else {
+          errorMsg = JSON.stringify(err.response.data);
+        }
+      } else if (err && err.message) {
+        errorMsg = err.message;
+      }
+      setError(errorMsg);
+      // Logga allt till konsolen för felsökning
+      console.error("[ProfileForm] Error saving profile:", err);
     } finally {
       setSaving(false);
     }
@@ -97,6 +114,114 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
   if (loading) return <div>Loading profile...</div>;
 
 
+  if (showOnly === 'status') {
+    return (
+      <div style={{ maxWidth: 400, margin: '0 auto' }}>
+        <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.statusTitle', 'Din medlemsstatus:')}</label>
+        <div
+          className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
+          onClick={() => {
+            if (!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && typeof (window as any).triggerPaywall === 'function') {
+              (window as any).triggerPaywall();
+            }
+          }}
+        >
+          {profile.role === 'ROLE_ADMIN' ? (
+            <span>{getLabel('profile.statusAdmin', 'Admin')}</span>
+          ) : profile.role === 'ROLE_EDUCATOR' ? (
+            <span>{getLabel('profile.statusEducator', 'Undervisande personal')}</span>
+          ) : isPremium ? (
+            <span>{getLabel('profile.statusPremium', 'Premium-användare')}</span>
+          ) : (
+            <span>{getLabel('profile.statusFree', 'Gratisanvändare')}</span>
+          )}
+        </div>
+        {/* Betalningsknapp endast för gratisanvändare */}
+        {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
+          <PrimaryButton
+            type="button"
+            className="w-full mb-4"
+            onClick={async () => {
+              try {
+                const res = await api.post("/api/v2/stripe/create-checkout-session");
+                if (res.data && res.data.url) {
+                  window.location.href = res.data.url;
+                } else {
+                  toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                }
+              } catch {
+                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+              }
+            }}
+          >
+            {getLabel('profile.upgrade', 'Uppgradera till Premium')}
+          </PrimaryButton>
+        )}
+      </div>
+    );
+  }
+  if (showOnly === 'fields') {
+    return (
+      <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
+        {error && !(error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+  <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>
+)}
+        {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.username', 'Användarnamn')}</label>
+          <TextInput
+            type="text"
+            name="username"
+            value={profile.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.email', 'E-post')}</label>
+          <TextInput
+            type="email"
+            className="h-[40px]"
+            name="email"
+            value={profile.email}
+            onChange={handleChange}
+            required
+          />
+          {error && (error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+            <div style={{ color: 'red', marginTop: 4 }}>{error}</div>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.firstName', 'Förnamn')}</label>
+          <TextInput
+            type="text"
+            name="firstName"
+            value={profile.firstName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.lastName', 'Efternamn')}</label>
+          <TextInput
+            type="text"
+            name="lastName"
+            value={profile.lastName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-4 flex items-center justify-center" style={{height:'40px'}}>
+          <button type="submit" disabled={saving} style={{background:'none',border:'none',boxShadow:'none',padding:0,margin:0,height:'auto',width:'auto',lineHeight:'normal'}}>
+            <span style={{border:'1px solid #bbb',borderRadius:4,padding:'2px 18px',background:'none',fontSize:'1rem',color:'inherit'}}>
+              {saving ? getLabel('profile.saving', 'Sparar...') : getLabel('profile.save', 'Spara')}
+            </span>
+          </button>
+        </div>
+      </form>
+    );
+  }
+  // Default: visa allt
   return (
     <>
       {paymentSuccess && (
@@ -109,13 +234,56 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
           {t('profile.paymentCanceled')}
         </div>
       )}
-
+      {/* Medlemsstatus högst upp */}
+      <div style={{ maxWidth: 400, margin: '0 auto' }}>
+        <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.statusTitle', 'Din medlemsstatus:')}</label>
+        <div
+          className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
+          onClick={() => {
+            if (!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && typeof (window as any).triggerPaywall === 'function') {
+              (window as any).triggerPaywall();
+            }
+          }}
+        >
+          {profile.role === 'ROLE_ADMIN' ? (
+            <span>{getLabel('profile.statusAdmin', 'Admin')}</span>
+          ) : profile.role === 'ROLE_EDUCATOR' ? (
+            <span>{getLabel('profile.statusEducator', 'Undervisande personal')}</span>
+          ) : isPremium ? (
+            <span>{getLabel('profile.statusPremium', 'Premium-användare')}</span>
+          ) : (
+            <span>{getLabel('profile.statusFree', 'Gratisanvändare')}</span>
+          )}
+        </div>
+        {/* Betalningsknapp endast för gratisanvändare */}
+        {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
+          <PrimaryButton
+            type="button"
+            className="w-full mb-4"
+            onClick={async () => {
+              try {
+                const res = await api.post("/api/v2/stripe/create-checkout-session");
+                if (res.data && res.data.url) {
+                  window.location.href = res.data.url;
+                } else {
+                  toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                }
+              } catch {
+                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+              }
+            }}
+          >
+            {getLabel('profile.upgrade', 'Uppgradera till Premium')}
+          </PrimaryButton>
+        )}
+      </div>
       <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-        <h2>{getLabel('profile.title', 'Dina användaruppgifter')}</h2>
-      {error && <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>}
-      {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
-      <div style={{ marginBottom: 16 }}>
-        <label>{getLabel('profile.username', 'Användarnamn')}<br />
+        {error && !(error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+  <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>
+)}
+        {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.username', 'Användarnamn')}</label>
           <TextInput
             type="text"
             name="username"
@@ -123,22 +291,23 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
             onChange={handleChange}
             required
           />
-        </label>
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label>{getLabel('profile.email', 'E-post')}<br />
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.email', 'E-post')}</label>
           <TextInput
             type="email"
+            className="h-[40px]"
             name="email"
             value={profile.email}
             onChange={handleChange}
             required
-            // readonly={true} // Avkommentera denna rad om e-post inte får ändras
           />
-        </label>
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label>{getLabel('profile.firstName', 'Förnamn')}<br />
+          {error && (error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+            <div style={{ color: 'red', marginTop: 4 }}>{error}</div>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.firstName', 'Förnamn')}</label>
           <TextInput
             type="text"
             name="firstName"
@@ -146,10 +315,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
             onChange={handleChange}
             required
           />
-        </label>
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label>{getLabel('profile.lastName', 'Efternamn')}<br />
+        </div>
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.lastName', 'Efternamn')}</label>
           <TextInput
             type="text"
             name="lastName"
@@ -157,46 +325,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone }) => {
             onChange={handleChange}
             required
           />
-        </label>
-      </div>
-      <button type="submit" disabled={saving} style={{ width: "100%" }}>
-        {saving ? getLabel('profile.saving', 'Sparar...') : getLabel('profile.save', 'Spara')}
-      </button>
-
-      <div className="mt-8">
-        <div className="font-medium mb-2 text-left">{getLabel('profile.statusTitle', 'Din medlemsstatus:')}</div>
-        <div className="w-full max-w-full rounded bg-gray-200 shadow-md px-4 py-4 flex items-center justify-center">
-          {profile.role === 'ROLE_ADMIN' ? (
-            <span className="text-red-600 font-semibold">{getLabel('profile.statusAdmin', 'Admin')}</span>
-          ) : profile.role === 'ROLE_EDUCATOR' ? (
-            <span className="text-blue-600 font-semibold">{getLabel('profile.statusEducator', 'Undervisande personal')}</span>
-          ) : isPremium ? (
-            <span className="text-green-600 font-semibold">{getLabel('profile.statusPremium', 'Betalande medlem')}</span>
-          ) : (
-            <span className="text-neutral-500 font-semibold">{getLabel('profile.statusFree', 'Gratis medlem')}</span>
-          )}
         </div>
-      </div>
-      {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
-        <button
-          type="button"
-          style={{ width: "100%", marginTop: 24, background: '#635bff', color: 'white', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}
-          onClick={async () => {
-            try {
-              const res = await api.post("/api/v2/stripe/create-checkout-session");
-              if (res.data && res.data.url) {
-                window.location.href = res.data.url;
-              } else {
-                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
-              }
-            } catch (err) {
-              toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
-            }
-          }}
-        >
-          {getLabel('profile.becomePremium', 'Bli betalande medlem')}
-        </button>
-      )}
+        <div className="mb-4 flex items-center justify-center" style={{height:'40px'}}>
+          <button type="submit" disabled={saving} style={{background:'none',border:'none',boxShadow:'none',padding:0,margin:0,height:'auto',width:'auto',lineHeight:'normal'}}>
+            <span style={{border:'1px solid #bbb',borderRadius:4,padding:'2px 18px',background:'none',fontSize:'1rem',color:'inherit'}}>
+              {saving ? getLabel('profile.saving', 'Sparar...') : getLabel('profile.save', 'Spara')}
+            </span>
+          </button>
+        </div>
       </form>
     </>
   );

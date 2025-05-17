@@ -59,6 +59,11 @@ export function useQuizSession(args: UseQuizSessionParams) {
         }
     }, []);
 
+    // Rensa sessionId när kurs, ordning eller startfråga ändras
+    useEffect(() => {
+        setSessionId(undefined);
+    }, [courseName, orderType, startQuestion]);
+
     // Initialize or resume quiz session
     useEffect(() => {
         if (sessionId) {
@@ -67,7 +72,7 @@ export function useQuizSession(args: UseQuizSessionParams) {
             startQuiz(courseName, orderType, startQuestion);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseName, orderType, startQuestion, parentSessionId]);
+    }, [sessionId, courseName, orderType, startQuestion, parentSessionId]);
 
     // Start a new quiz session
     const startQuiz = async (

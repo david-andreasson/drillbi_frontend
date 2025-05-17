@@ -93,7 +93,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         <div className="w-full max-w-3xl mx-auto px-4 py-6 text-neutral-900 dark:text-neutral-100">
             <div className="text-center mb-6">
                 <h2 className="text-2xl font-semibold">
-                    {t('selectedCourse')}: {selectedCourse?.displayName || courseName}
+                    {selectedCourse?.displayName || courseName}
                 </h2>
                 <p className="text-base flex justify-center items-center gap-2 mt-4">
                     {t('order')}: {t(getOrderTranslationKey(orderType))}
