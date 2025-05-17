@@ -37,7 +37,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const { t, i18n } = useTranslation();
-  // Fallback till svenska om översättning saknas
+  // Fallback to Swedish
   const getLabel = (key: string, fallback: string) => t(key, { defaultValue: fallback });
 
   useEffect(() => {
