@@ -65,7 +65,7 @@ const QuestionBlock: React.FC<Props> = ({
                                         selectedOption === option.optionLabel && submitted && option.isCorrect
                                             ? 'bg-green-200 text-green-900 font-bold'
                                             : selectedOption === option.optionLabel && submitted && !option.isCorrect
-                                            ? '' // Ingen röd feedback, inget blink
+                                            ? ''
                                             : selectedOption === option.optionLabel
                                             ? 'bg-blue-100 text-blue-900'
                                             : 'bg-gray-100 text-gray-900',
