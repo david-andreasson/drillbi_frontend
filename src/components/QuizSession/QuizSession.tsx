@@ -46,15 +46,6 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         aiExplanation,
         stats,
         loggedInUser,
-        // If loggedInUser is missing the correct type, we can cast it here:
-        // const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
-
-        detailedFeedback,
-        setSelectedOption,
-        getNextQuestion,
-        submitAnswer,
-        handleAiExplanation,
-        error: sessionError
     } = useQuizSession({
         courseName,
         orderType,
@@ -62,6 +53,17 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         parentSessionId,
         setError,
     });
+
+    // Helper: check if user is admin
+    function isAdmin(user: any): boolean {
+        if (!user) return false;
+        // Accepts 'ADMIN' or 'ROLE_ADMIN' (case-insensitive)
+        return (
+            user.role?.toUpperCase() === 'ADMIN' ||
+            user.role?.toUpperCase() === 'ROLE_ADMIN' ||
+            (Array.isArray(user.roles) && user.roles.some((r: string) => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'ROLE_ADMIN'))
+        );
+    }
 
     // Spara sessionId i localStorage när det ändras och är nytt
     React.useEffect(() => {
@@ -144,7 +146,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                       onExplain={() => {
                         // Cast loggedInUser if needed
                         const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
-                        if (userWithPremium?.isPremium) {
+                        if (userWithPremium?.isPremium || isAdmin(loggedInUser)) {
                           question && sessionId && handleAiExplanation(
                             sessionId,
                             question.questionText,
@@ -158,6 +160,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                       }}
                       label={t('explainWithAI')}
                       loadingLabel={t('aiThinking')}
+                      // Admins always have access to AI explanation
+                      disabled={!(isAdmin(loggedInUser) || (userWithPremium?.isPremium))}
                     />
                   )}
                 </AppContext.Consumer>
