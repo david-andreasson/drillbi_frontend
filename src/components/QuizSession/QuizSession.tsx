@@ -46,6 +46,12 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         aiExplanation,
         stats,
         loggedInUser,
+        setSelectedOption,
+        getNextQuestion,
+        submitAnswer,
+        handleAiExplanation,
+        detailedFeedback,
+        error: sessionError,
     } = useQuizSession({
         courseName,
         orderType,
@@ -161,7 +167,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                       label={t('explainWithAI')}
                       loadingLabel={t('aiThinking')}
                       // Admins always have access to AI explanation
-                      disabled={!(isAdmin(loggedInUser) || (userWithPremium?.isPremium))}
+                      disabled={!(isAdmin(loggedInUser) || (loggedInUser as any)?.isPremium)}
                     />
                   )}
                 </AppContext.Consumer>
