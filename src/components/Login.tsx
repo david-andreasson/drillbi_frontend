@@ -21,12 +21,28 @@ const Login: React.FC = () => {
         setError('');
         try {
             const response = await api.post('/api/v2/auth/login', { username, password });
+            console.log('LOGIN SUCCESS RESPONSE:', response);
             const { token } = response.data;
             localStorage.setItem('token', token);
             // After storing token, reload to fetch user context
             window.location.reload();
         } catch (err: any) {
-            setError(err.response?.data || 'Login failed');
+            console.error('LOGIN ERROR:', err);
+            // Try to extract backend error message
+            let msg = 'Login failed';
+            if (err.response?.data) {
+                if (typeof err.response.data === 'string') {
+                    msg = err.response.data;
+                } else if (err.response.data.error) {
+                    msg = err.response.data.error;
+                }
+            }
+            setError(
+                msg === 'Felaktigt användarnamn eller lösenord' || msg === 'Bad credentials'
+                  ? t('invalidCredentials')
+                  : msg || t('loginFailed')
+            );
+            setPassword(''); // Clear password field for security
         }
     };
 

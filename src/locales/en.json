@@ -8,6 +8,8 @@
   "loginPrompt": "Please log in to continue.",
   "logInWithGoogle": "Log in with Google",
   "login": "Login",
+  "invalidCredentials": "Incorrect username or password",
+  "loginFailed": "Login failed",
   "loginWithGoogle": "Login with Google",
   "order": "Order",
   "orderSequential": "Sequential",

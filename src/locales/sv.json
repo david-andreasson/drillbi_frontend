@@ -8,6 +8,8 @@
   "loginPrompt": "Logga in för att fortsätta.",
   "logInWithGoogle": "Logga in med Google",
   "login": "Logga in",
+  "invalidCredentials": "Felaktigt användarnamn eller lösenord",
+  "loginFailed": "Inloggningen misslyckades",
   "loginWithGoogle": "Logga in med Google",
   "order": "Ordning",
   "orderSequential": "Sekventiell",
