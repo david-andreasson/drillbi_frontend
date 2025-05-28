@@ -60,6 +60,15 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         setError,
     });
 
+    // Premiumstatus (robust mot olika property-namn)
+    const premiumRaw = (loggedInUser && (
+        (loggedInUser as any).IS_PREMIUM ??
+        (loggedInUser as any).isPremium ??
+        (loggedInUser as any).is_premium
+    )) ?? false;
+    const isPremium = Boolean(premiumRaw);
+    console.log('PREMIUM DEBUG', { loggedInUser, premiumRaw, isPremium });
+
     // Helper: check if user is admin
     function isAdmin(user: any): boolean {
         if (!user) return false;
@@ -71,8 +80,6 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         );
     }
 
-    // TypeScript: ensure isPremium is available for type checking
-    const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
 
     // Spara sessionId i localStorage när det ändras och är nytt
     React.useEffect(() => {
@@ -100,6 +107,15 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         );
     }
 
+    console.log('QuizSession DEBUG', {
+        isPremium,
+        loggedInUser,
+        sessionId,
+        question,
+        aiState,
+        aiExplanation,
+        submitted
+    });
     return (
         <div className="w-full max-w-3xl mx-auto px-4 py-6 text-neutral-900 dark:text-neutral-100">
             <div className="text-center mb-6">
@@ -152,25 +168,25 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                       isCorrect={isCorrect}
                       aiState={aiState}
                       aiExplanation={aiExplanation}
-                      onExplain={() => {
-                        // Cast loggedInUser if needed
-                        const userWithPremium = loggedInUser as typeof loggedInUser & { isPremium?: boolean };
-                        if (userWithPremium?.isPremium || isAdmin(loggedInUser)) {
-                          question && sessionId && handleAiExplanation(
-                            sessionId,
-                            question.questionText,
-                            question.options.find((o: any) => o.isCorrect)?.optionText || '',
-                            courseName,
-                            i18n.language as 'sv' | 'en'
-                          );
+                       onExplain={() => {
+                        console.log('AI Explain Click:', { isPremium, sessionId });
+                        if (isPremium) {
+                          if (question && sessionId) {
+                            handleAiExplanation(
+                              sessionId,
+                              question.questionText,
+                              question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                              courseName,
+                              i18n.language as 'sv' | 'en'
+                            );
+                          }
                         } else {
                           triggerPaywall();
                         }
                       }}
                       label={t('explainWithAI')}
                       loadingLabel={t('aiThinking')}
-                      // Admins always have access to AI explanation
-                      disabled={!(isAdmin(loggedInUser) || userWithPremium?.isPremium)}
+                      disabled={!isPremium || aiState === 'preparing'}
                     />
                   )}
                 </AppContext.Consumer>

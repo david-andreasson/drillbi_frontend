@@ -22,6 +22,7 @@ const AiExplanation: React.FC<Props> = ({
   label,
   loadingLabel
 }) => {
+  console.log('AiExplanation PROPS', { submitted, isCorrect, aiState, aiExplanation, disabled, label, loadingLabel });
   const { t } = useTranslation();
   if (!submitted || isCorrect) return null;
 
@@ -29,8 +30,17 @@ const AiExplanation: React.FC<Props> = ({
       <div className="flex flex-col items-center space-y-4 mt-4">
         <button
             className="px-6 py-2 bg-gray-200 text-neutral-900 hover:bg-gray-300 font-medium rounded flex items-center gap-2 shadow-md hover:shadow-lg"
-            onClick={onExplain}
+            onClick={e => {
+              alert('KLICK!');
+              console.log('AiExplanation BUTTON CLICK', { disabled, aiState, submitted, isCorrect });
+              if (!(disabled || aiState === 'preparing')) onExplain();
+            }}
             disabled={disabled || aiState === 'preparing'}
+            title={
+              !submitted || isCorrect ? 'Du måste svara fel först' :
+              disabled ? 'Endast för premium' :
+              aiState === 'preparing' ? 'Vänta på AI...' : ''
+            }
         >
           {aiState === 'preparing' ? (
               <>

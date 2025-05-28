@@ -48,6 +48,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
   const [loading, setLoading] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+const [isPremium, setIsPremium] = useState<boolean>(false);
   // triggerPaywall skickas in som prop från TextToQuiz
 
   const [regeneratingQuestionIndex, setRegeneratingQuestionIndex] = useState<number | null>(null);
@@ -67,11 +68,12 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get<UserInfo>(
+        const res = await axios.get<any>(
           `${API_BASE}/api/v2/users/me`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserRole(res.data.role);
+        setIsPremium(!!res.data.isPremium);
       } catch (err) {
         console.error('Failed to fetch user info', err);
       } finally {
@@ -113,7 +115,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
 
   const handleGenerate = async (maxQuestions?: number) => {
     // Premiumkontroll
-    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+    if (!isPremium) {
       triggerPaywall();
       return;
     }
@@ -166,7 +168,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
 
   const handleRegenerateQuestion = async (index: number) => {
     // Premiumkontroll
-    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+    if (!isPremium) {
       triggerPaywall();
       return;
     }
@@ -176,7 +178,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
 
   const handleRegenerateOptions = async (index: number) => {
     // Premiumkontroll
-    if (!['ROLE_EDUCATOR', 'ROLE_ADMIN', 'ROLE_PREMIUM'].includes(userRole || '')) {
+    if (!isPremium) {
       triggerPaywall();
       return;
     }
@@ -185,7 +187,10 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
   };
 
   if (loadingUser) return null;
-  if (!['ROLE_EDUCATOR', 'ROLE_ADMIN'].includes(userRole || '')) return null;
+  if (!isPremium) {
+    triggerPaywall();
+    return null;
+  }
 
   return (
     <div className="relative px-4 py-6 max-w-3xl mx-auto text-[#4A4A48]">
