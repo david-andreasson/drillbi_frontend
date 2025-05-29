@@ -21,7 +21,13 @@ const AdminSqlPage = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data);
+        if (data && typeof data === 'object' && data.error) {
+          setError(data.error);
+        } else if (typeof data === 'string') {
+          setError(data);
+        } else {
+          setError(JSON.stringify(data));
+        }
       } else {
         setResult(data);
       }
