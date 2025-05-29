@@ -159,37 +159,38 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     </div>
                 )}
 
-                {/* Endast premium-medlemmar får använda AI-förklaringen */}
-                {/* Knappen synlig för alla, men olika onExplain beroende på medlemskap */}
-                <AppContext.Consumer>
-                  {({ triggerPaywall }) => (
-                    <AiExplanation
-                      submitted={submitted}
-                      isCorrect={isCorrect}
-                      aiState={aiState}
-                      aiExplanation={aiExplanation}
-                       onExplain={() => {
-                        console.log('AI Explain Click:', { isPremium, sessionId });
-                        if (isPremium) {
-                          if (question && sessionId) {
-                            handleAiExplanation(
-                              sessionId,
-                              question.questionText,
-                              question.options.find((o: any) => o.isCorrect)?.optionText || '',
-                              courseName,
-                              i18n.language as 'sv' | 'en'
-                            );
+                {/* Endast visa AI-förklaring om svaret är felaktigt och inskickat */}
+                {submitted && isCorrect === false && (
+                  <AppContext.Consumer>
+                    {({ triggerPaywall }) => (
+                      <AiExplanation
+                        submitted={submitted}
+                        isCorrect={isCorrect}
+                        aiState={aiState}
+                        aiExplanation={aiExplanation}
+                        onExplain={() => {
+                          console.log('AI Explain Click:', { isPremium, sessionId });
+                          if (isPremium) {
+                            if (question && sessionId) {
+                              handleAiExplanation(
+                                sessionId,
+                                question.questionText,
+                                question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                                courseName,
+                                i18n.language as 'sv' | 'en'
+                              );
+                            }
+                          } else {
+                            triggerPaywall();
                           }
-                        } else {
-                          triggerPaywall();
-                        }
-                      }}
-                      label={t('explainWithAI')}
-                      loadingLabel={t('aiThinking')}
-                      disabled={!isPremium || aiState === 'preparing'}
-                    />
-                  )}
-                </AppContext.Consumer>
+                        }}
+                        label={t('explainWithAI')}
+                        loadingLabel={t('aiThinking')}
+                        disabled={!isPremium || aiState === 'preparing'}
+                      />
+                    )}
+                  </AppContext.Consumer>
+                )}
 
                 {stats && (
                     <p className="mt-2 text-sm text-gray-600 dark:text-neutral-100">

@@ -115,6 +115,7 @@ const App: React.FC = () => {
         setCourse(null);
         setWelcomeDone(false);
         setContinueQuiz(false);
+        setShowAdminSql(false); // Stäng Admin SQL varje gång man navigerar
     };
 
     const handleNavigate = (destination: string) => {

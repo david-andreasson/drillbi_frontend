@@ -6,6 +6,13 @@ import api from '../api';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+if (!API_BASE_URL) {
+    // Logga till konsolen direkt vid import
+    // (detta körs varje gång komponenten laddas)
+    // eslint-disable-next-line no-console
+    console.error('VARNING: VITE_API_BASE_URL är inte satt! Google-login och API-anrop fungerar inte.');
+}
+
 const Login: React.FC = () => {
     const { t } = useTranslation();
     const [username, setUsername] = useState('');
@@ -51,6 +58,12 @@ const Login: React.FC = () => {
             className="min-h-screen flex items-center justify-center px-4 py-20 bg-white text-gray-900 dark:bg-gray-900 dark:text-white"
         >
             <div className="max-w-md w-full text-center">
+                {/* Varning om API_BASE_URL saknas */}
+                {!API_BASE_URL && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                    <b>Fel:</b> Miljövariabeln <code>VITE_API_BASE_URL</code> är inte satt! Google-login och API-anrop kommer inte att fungera.
+                  </div>
+                )}
                 <h1 className="text-3xl font-semibold mb-6">{t('welcome')}</h1>
                 <p className="mb-4 text-[#59656F]">{t('loginPrompt')}</p>
 

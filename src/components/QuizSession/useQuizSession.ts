@@ -155,6 +155,11 @@ export function useQuizSession(args: UseQuizSessionParams) {
     // Submit the user's answer
     const submitAnswer = async (sessId: string, answer: string) => {
         if (!question) return;
+        // Direkt feedback på klienten
+        const selected = question.options.find((o: any) => o.optionLabel === answer);
+        if (selected) {
+            setIsCorrect(!!selected.isCorrect);
+        }
         setSubmitted(true);
         try {
             const url = `${API_BASE}/submit?sessionId=${encodeURIComponent(
