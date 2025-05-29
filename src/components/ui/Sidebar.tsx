@@ -51,6 +51,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                     Profile
                 </button>
 
+                {userRole === 'ROLE_ADMIN' && (
+                    <button onClick={() => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-red-400">
+                        Admin SQL
+                    </button>
+                )}
+
                 <button
                     onClick={() => onNavigate('logout')}
                     className="text-left hover:underline text-neutral-900 dark:text-neutral-100"

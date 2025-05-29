@@ -10,6 +10,7 @@ import Login from './components/Login';
 import CourseSelection from './components/CourseSelection/CourseSelection';
 import QuizSession from './components/QuizSession/QuizSession';
 import WelcomeScreen from './components/WelcomeScreen';
+import AdminSqlPage from './pages/AdminSqlPage';
 import LoggedOutScreen from './components/LoggedOutScreen';
 import TextToQuiz from './components/TextToQuiz/TextToQuiz';
 import Header from './components/ui/Header';
@@ -59,6 +60,7 @@ const App: React.FC = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
     const [showProfile, setShowProfile] = useState<boolean>(false);
+    const [showAdminSql, setShowAdminSql] = useState<boolean>(false);
     
     const [showTextToQuiz, setShowTextToQuiz] = useState<boolean>(false);
 
@@ -144,7 +146,10 @@ const App: React.FC = () => {
             case 'educator-contact':
                 setShowEducatorContact(true);
                 break;
-            default:
+            case 'adminsql':
+                setShowAdminSql(true);
+                break;
+           default:
                 break;
         }
     };
@@ -172,7 +177,9 @@ const App: React.FC = () => {
     const role = user?.role || 'ROLE_USER';
 
     let content = null;
-    if (showPaywall) {
+    if (showAdminSql) {
+        content = <AdminSqlPage />;
+    } else if (showPaywall) {
         content = <Paywall />;
     } else if (showEducatorContact) {
         content = <EducatorContact />;
