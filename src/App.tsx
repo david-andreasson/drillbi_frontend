@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createContext } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
 
 export const AppContext = createContext<{ triggerPaywall: () => void }>({ triggerPaywall: () => {} });
 
@@ -45,6 +47,10 @@ const App: React.FC = () => {
 
     // If no token or user is not loaded, always show Login
     const hasToken = !!localStorage.getItem('token');
+    // Hantera redirect från Google OAuth2
+    if (window.location.pathname === '/login/oauth2') {
+        return <OAuth2RedirectHandler />;
+    }
     if (!hasToken || (!userLoading && !user)) {
         return <Login />;
     }
@@ -258,14 +264,19 @@ const App: React.FC = () => {
 
     return (
         <AppContext.Provider value={{ triggerPaywall }}>
-            <div
-                className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-            >
-                <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
-                <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
-                {content}
-            </div>
+            <Routes>
+                <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
+                <Route path="*" element={
+                    <div
+                        className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+                    >
+                        <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+                        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
+                        <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
+                        {content}
+                    </div>
+                } />
+            </Routes>
         </AppContext.Provider>
     );
 };
