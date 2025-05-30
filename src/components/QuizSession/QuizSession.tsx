@@ -130,12 +130,12 @@ const QuizSession: React.FC<QuizSessionProps> = ({
             `}</style>
             {/* Kursnamn och ordning */}
             <div className="w-full max-w-2xl mb-6">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 quiz-mobile-gap">
-                    <h2 className="text-2xl font-bold mb-2 sm:mb-0">{selectedCourse?.displayName || courseName}</h2>
-                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2 sm:mb-0">
+                <div className="flex flex-col items-center sm:flex-row sm:items-end sm:justify-between mb-2 quiz-mobile-gap">
+                    <h2 className="text-2xl font-bold mb-1 sm:mb-0 text-center sm:text-left">{selectedCourse?.displayName || courseName}</h2>
+                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-1 sm:mb-0 text-center sm:text-left" style={{ marginLeft: '0', marginTop: '0.25rem' }}>
                         {t('order')}: {t(getOrderTranslationKey(orderType))}
                         <button
-                            className="text-xs underline hover:text-gray-600"
+                            className="text-xs underline hover:text-gray-600 ml-2"
                             onClick={onOrderChange}
                             title="Change order"
                         >
@@ -143,6 +143,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                         </button>
                     </span>
                 </div>
+                {/* Mellanrum mellan kursnamn och ordning */}
+                <div className="mb-3" />
                 {question && (
                     <QuestionBlock
                         question={question}
@@ -158,21 +160,6 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     />
                 )}
             </div>
-
-            {question && (
-                <QuestionBlock
-                    question={question}
-                    selectedOption={selectedOption}
-                    submitted={submitted}
-                    isCorrect={isCorrect}
-                    onSelect={(label) => {
-                        setSelectedOption(label);
-                        if (sessionId) {
-                            submitAnswer(sessionId, label);
-                        }
-                    }}
-                />
-            )}
 
             <div className="mt-6 space-y-4 text-center">
                 {submitted && sessionId && question && (
