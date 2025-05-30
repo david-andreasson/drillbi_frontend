@@ -28,7 +28,7 @@ const QuestionBlock: React.FC<Props> = ({
                                             onSelect
                                         }) => {
     return (
-        <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg text-gray-900">
+        <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg text-gray-900 md:min-w-[600px]">
 
             <p className="mb-6 text-lg font-medium text-gray-900">{question.questionText}</p>
             <ul className="space-y-2">

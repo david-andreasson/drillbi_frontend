@@ -130,7 +130,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
               }
             `}</style>
             {/* Kursnamn och ordning centrerat och på separata rader */}
-            <div className="w-full max-w-2xl mb-6">
+            <div className="w-full max-w-2xl mb-3 md:mb-6">
                 <div className="flex flex-col items-center gap-1 mb-2 quiz-mobile-gap">
                     <h2 className="text-2xl font-bold text-center">{selectedCourse?.displayName || courseName}</h2>
                     <span className="text-lg font-medium text-gray-600 dark:text-gray-300 text-center">
@@ -161,7 +161,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     }}
                 />
             )}
-            <div className="mt-6 space-y-4 text-center">
+            <div className="mt-4 md:mt-6 space-y-4 text-center">
                 {submitted && sessionId && question && (
                     <div>
                         <PrimaryButton onClick={() => getNextQuestion(sessionId)}>
