@@ -81,6 +81,12 @@ const Paywall: React.FC = () => {
               </PrimaryButton>
             </div>
           </div>
+          {/* Tillbaka-knapp längst ner */}
+          <div className="mt-8 flex justify-center">
+            <PrimaryButton className="w-full max-w-xs" onClick={() => window.location.href = '/'}>
+              {isSwedish ? 'Tillbaka' : 'Back'}
+            </PrimaryButton>
+          </div>
         </div>
       </div>
   );

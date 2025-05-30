@@ -82,6 +82,9 @@
     "coursePlaceholder": "Ange kursnamn"
   },
   "menu": {
+    "paywall": {
+      "back": "Tillbaka"
+    },
     "photoToQuiz": "Foto till Quiz",
     "title": "Meny",
     "home": "Hem",

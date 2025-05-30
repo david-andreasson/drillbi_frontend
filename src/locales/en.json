@@ -82,6 +82,9 @@
     "coursePlaceholder": "Enter course name"
   },
   "menu": {
+    "paywall": {
+      "back": "Back"
+    },
     "photoToQuiz": "Photo to Quiz",
     "title": "Menu",
     "home": "Home",
