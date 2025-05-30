@@ -116,23 +116,24 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         aiExplanation,
         submitted
     });
+
     return (
         <div className="flex flex-col items-center w-full">
             <style>{`
               @media (max-width: 640px) {
                 .quiz-mobile-gap {
-                  margin-bottom: 12px !important; /* ca 3mm */
+                  margin-bottom: 12px !important;
                 }
                 .quiz-mobile-gap-area {
-                  margin-bottom: 16px !important; /* ca 4mm */
+                  margin-bottom: 16px !important;
                 }
               }
             `}</style>
-            {/* Kursnamn och ordning */}
+            {/* Kursnamn och ordning centrerat och på separata rader */}
             <div className="w-full max-w-2xl mb-6">
-                <div className="flex flex-col items-center sm:flex-row sm:items-end sm:justify-between mb-2 quiz-mobile-gap">
-                    <h2 className="text-2xl font-bold mb-1 sm:mb-0 text-center sm:text-left">{selectedCourse?.displayName || courseName}</h2>
-                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-1 sm:mb-0 text-center sm:text-left" style={{ marginLeft: '0', marginTop: '0.25rem' }}>
+                <div className="flex flex-col items-center gap-1 mb-2 quiz-mobile-gap">
+                    <h2 className="text-2xl font-bold text-center">{selectedCourse?.displayName || courseName}</h2>
+                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300 text-center">
                         {t('order')}: {t(getOrderTranslationKey(orderType))}
                         <button
                             className="text-xs underline hover:text-gray-600 ml-2"
@@ -143,31 +144,29 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                         </button>
                     </span>
                 </div>
-                {/* Mellanrum mellan kursnamn och ordning */}
-                <div className="mb-3" />
-                {question && (
-                    <QuestionBlock
-                        question={question}
-                        selectedOption={selectedOption}
-                        submitted={submitted}
-                        isCorrect={isCorrect}
-                        onSelect={(label) => {
-                            setSelectedOption(label);
-                            if (sessionId) {
-                                submitAnswer(sessionId, label);
-                            }
-                        }}
-                    />
-                )}
             </div>
-
+            {/* Mellanrum mellan kursnamn och ordning */}
+            <div className="mb-3" />
+            {question && (
+                <QuestionBlock
+                    question={question}
+                    selectedOption={selectedOption}
+                    submitted={submitted}
+                    isCorrect={isCorrect}
+                    onSelect={(label) => {
+                        setSelectedOption(label);
+                        if (sessionId) {
+                            submitAnswer(sessionId, label);
+                        }
+                    }}
+                />
+            )}
             <div className="mt-6 space-y-4 text-center">
                 {submitted && sessionId && question && (
                     <div>
                         <PrimaryButton onClick={() => getNextQuestion(sessionId)}>
-
-    {t('nextQuestion')}
-</PrimaryButton>
+                            {t('nextQuestion')}
+                        </PrimaryButton>
                     </div>
                 )}
 

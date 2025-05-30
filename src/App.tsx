@@ -267,11 +267,10 @@ const App: React.FC = () => {
             <Routes>
                 <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
                 <Route path="*" element={
-                    <div
-                        className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
-                    >
+                    <div className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
                         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
                         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
+                        
                         <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
                         {content}
                     </div>
@@ -279,6 +278,6 @@ const App: React.FC = () => {
             </Routes>
         </AppContext.Provider>
     );
-};
+}
 
 export default App;
