@@ -28,6 +28,19 @@ type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
 
 const App: React.FC = () => {
+    // Snappar upp token på /-routen om den finns
+    React.useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (token) {
+            localStorage.setItem('token', token);
+            params.delete('token');
+            const newSearch = params.toString();
+            const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '');
+            window.history.replaceState({}, '', newUrl);
+            window.location.reload();
+        }
+    }, []);
     const [showPaywall, setShowPaywall] = useState<boolean>(false);
     const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
 
