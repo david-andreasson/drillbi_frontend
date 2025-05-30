@@ -35,7 +35,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                         {t("continueQuiz", "Fortsätt på tidigare quiz")}
                     </PrimaryButton>
                     <PrimaryButton className="w-full" onClick={onCreateQuestions}>
-                        {t("createQuizQuestions", "Skapa quiz-frågor")}
+                        {t("createOwnQuiz", "Skapa eget quiz")}
                     </PrimaryButton>
                 </div>
             </div>

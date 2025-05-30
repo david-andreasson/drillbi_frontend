@@ -25,6 +25,7 @@ import { Toaster } from 'react-hot-toast';
 import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
 import Paywall from './components/Paywall';
 import EducatorContact from './components/EducatorContact';
+import PhotoToQuizPlaceholder from './components/PhotoToQuizPlaceholder';
 
 type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
@@ -45,6 +46,7 @@ const App: React.FC = () => {
     }, []);
     const [showPaywall, setShowPaywall] = useState<boolean>(false);
     const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
+const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
 
     // Hjälpfunktion för att visa paywall
     const triggerPaywall = () => {
@@ -203,9 +205,11 @@ const App: React.FC = () => {
     if (showAdminSql) {
         content = <AdminSqlPage />;
     } else if (showPaywall) {
-        content = <Paywall />;
+        if (showPaywall) return <Paywall />;
     } else if (showEducatorContact) {
-        content = <EducatorContact />;
+        if (showEducatorContact) return <EducatorContact />;
+    } else if (showPhotoToQuiz) {
+        if (showPhotoToQuiz) return <PhotoToQuizPlaceholder />;
     } else if (showProfile) {
         content = <ProfilePage onDone={() => {
             setShowProfile(false);

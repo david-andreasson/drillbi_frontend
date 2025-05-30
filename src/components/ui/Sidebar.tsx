@@ -46,6 +46,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                 <button onClick={() => onNavigate('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.textToQuiz')}
                 </button>
+                <button onClick={() => onNavigate('phototoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                    {t('menu.photoToQuiz')}
+                </button>
 
                 <button onClick={() => onNavigate('profile')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     Profile
