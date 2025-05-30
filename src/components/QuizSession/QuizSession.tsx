@@ -197,7 +197,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                         }}
                         label={t('explainWithAI')}
                         loadingLabel={t('aiThinking')}
-                        disabled={!isPremium || aiState === 'preparing'}
+                        disabled={aiState === 'preparing'}
                       />
                     )}
                   </AppContext.Consumer>

@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import ProfilePage from './components/ProfilePage';
 import Login from './components/Login';
 import CourseSelection from './components/CourseSelection/CourseSelection';
+import GroupSelection from './components/GroupSelection';
+import { toast } from 'react-hot-toast';
 import QuizSession from './components/QuizSession/QuizSession';
 import WelcomeScreen from './components/WelcomeScreen';
 import AdminSqlPage from './pages/AdminSqlPage';
@@ -71,6 +73,7 @@ const App: React.FC = () => {
     const [theme, setTheme] = useState<ThemeType>('light');
     const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
     const [course, setCourse] = useState<string | null>(null);
+    const [group, setGroup] = useState<string | null>(null);
     const [orderType, setOrderType] = useState<OrderType>('ORDER');
     const [startQuestion, setStartQuestion] = useState<number>(1);
     const [welcomeDone, setWelcomeDone] = useState<boolean>(false);
@@ -220,6 +223,14 @@ const App: React.FC = () => {
         }} onAddMore={() => {
             setReviewCourseName(null);
             setShowTextToQuiz(true);
+        }} />;
+    } else if (!group) {
+        content = <GroupSelection onSelectGroup={name => {
+            if (name === 'JIN24') {
+                setGroup('JIN24');
+            } else {
+                toast.error('Du har inte behörighet att visa denna sida');
+            }
         }} />;
     } else if (!welcomeDone) {
         content = (
