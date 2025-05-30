@@ -1,6 +1,6 @@
 {
   "welcome": "Welcome",
-  "welcomeDescription": "Would you like to continue your previous quiz or start a new one?",
+  "welcomeDescription": "What would you like to do today?", 
   "continueQuiz": "Continue previous quiz",
   "startNewQuiz": "Start a new quiz",
   "loggedOut": "You have been logged out.",

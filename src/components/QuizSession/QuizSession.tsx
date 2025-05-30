@@ -117,21 +117,46 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         submitted
     });
     return (
-        <div className="w-full max-w-3xl mx-auto px-4 py-6 text-neutral-900 dark:text-neutral-100">
-            <div className="text-center mb-6">
-                <h2 className="text-2xl font-semibold">
-                    {selectedCourse?.displayName || courseName}
-                </h2>
-                <p className="text-base flex justify-center items-center gap-2 mt-4">
-                    {t('order')}: {t(getOrderTranslationKey(orderType))}
-                    <button
-                        className="text-xs underline hover:text-gray-600"
-                        onClick={onOrderChange}
-                        title="Change order"
-                    >
-                        🔄
-                    </button>
-                </p>
+        <div className="flex flex-col items-center w-full">
+            <style>{`
+              @media (max-width: 640px) {
+                .quiz-mobile-gap {
+                  margin-bottom: 12px !important; /* ca 3mm */
+                }
+                .quiz-mobile-gap-area {
+                  margin-bottom: 16px !important; /* ca 4mm */
+                }
+              }
+            `}</style>
+            {/* Kursnamn och ordning */}
+            <div className="w-full max-w-2xl mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 quiz-mobile-gap">
+                    <h2 className="text-2xl font-bold mb-2 sm:mb-0">{selectedCourse?.displayName || courseName}</h2>
+                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2 sm:mb-0">
+                        {t('order')}: {t(getOrderTranslationKey(orderType))}
+                        <button
+                            className="text-xs underline hover:text-gray-600"
+                            onClick={onOrderChange}
+                            title="Change order"
+                        >
+                            🔄
+                        </button>
+                    </span>
+                </div>
+                {question && (
+                    <QuestionBlock
+                        question={question}
+                        selectedOption={selectedOption}
+                        submitted={submitted}
+                        isCorrect={isCorrect}
+                        onSelect={(label) => {
+                            setSelectedOption(label);
+                            if (sessionId) {
+                                submitAnswer(sessionId, label);
+                            }
+                        }}
+                    />
+                )}
             </div>
 
             {question && (

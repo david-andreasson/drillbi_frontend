@@ -1,6 +1,6 @@
 {
   "welcome": "Välkommen",
-  "welcomeDescription": "Vill du fortsätta på ditt tidigare quiz eller starta ett nytt?",
+  "welcomeDescription": "Vad vill du göra idag?", 
   "continueQuiz": "Fortsätt på tidigare quiz",
   "startNewQuiz": "Starta ett nytt quiz",
   "loggedOut": "Du har loggats ut.",
