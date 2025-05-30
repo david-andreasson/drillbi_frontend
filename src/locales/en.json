@@ -46,7 +46,7 @@
     "choose": "Select a course below to start the quiz.",
     "question": "{{count}} questions available"
   },
-  "photoToQuiz": "Photo to Quiz",
+
   "createOwnQuiz": "Create your own quiz",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
   "textToQuiz": {
@@ -82,6 +82,7 @@
     "coursePlaceholder": "Enter course name"
   },
   "menu": {
+    "photoToQuiz": "Photo to Quiz",
     "title": "Menu",
     "home": "Home",
     "selectCourse": "Select course",

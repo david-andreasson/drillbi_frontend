@@ -46,7 +46,7 @@
     "choose": "Välj en kurs nedan för att börja quizet.",
     "question": "{{count}} frågor tillgängliga"
   },
-  "photoToQuiz": "Foto till Quiz",
+
   "createOwnQuiz": "Skapa eget quiz",
   "photoToQuiz.placeholder": "Här kommer en framtida funktion för att skapa quiz från foto. (Endast tillgänglig för premium-medlemmar).",
   "textToQuiz": {
@@ -82,6 +82,7 @@
     "coursePlaceholder": "Ange kursnamn"
   },
   "menu": {
+    "photoToQuiz": "Foto till Quiz",
     "title": "Meny",
     "home": "Hem",
     "selectCourse": "Välj kurs",

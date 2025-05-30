@@ -151,6 +151,14 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
             case 'logout':
                 handleLogout();
                 break;
+            case 'phototoquiz':
+            if (typeof (user as any)?.isPremium === 'boolean' ? (user as any).isPremium : false) {
+                setShowPaywall(false);
+                setShowPhotoToQuiz(true);
+            } else {
+                triggerPaywall();
+            }
+            break;
             case 'texttoquiz':
                 setShowTextToQuiz(true);
                 break;
