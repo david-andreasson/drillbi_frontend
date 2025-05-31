@@ -46,7 +46,13 @@
     "choose": "Select a course below to start the quiz.",
     "question": "{{count}} questions available"
   },
-
+  "groupSelection": {},
+  "welcomeScreen.becomeMember": "Become a member",
+  "teamSelection": {
+    "title": "Choose your team",
+    "instruction": "Click your team to continue",
+    "noPermission": "You do not have permission to view this page"
+  },
   "createOwnQuiz": "Create your own quiz",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
   "textToQuiz": {

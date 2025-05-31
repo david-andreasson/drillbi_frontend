@@ -5,15 +5,15 @@ import { useTranslation } from "react-i18next";
 interface WelcomeScreenProps {
     firstName: string;
     onStartNew: () => void;
-    onContinue: () => void;
     onCreateQuestions: () => void;
+    onBecomeMember: () => void;
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     firstName,
     onStartNew,
-    onContinue,
     onCreateQuestions,
+    onBecomeMember,
 }) => {
     const { t } = useTranslation();
 
@@ -31,11 +31,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                     <PrimaryButton className="w-full" onClick={onStartNew}>
                         {t("startNewQuiz", "Starta ett nytt quiz")}
                     </PrimaryButton>
-                    <PrimaryButton className="w-full" onClick={onContinue}>
-                        {t("continueQuiz", "Fortsätt på tidigare quiz")}
-                    </PrimaryButton>
                     <PrimaryButton className="w-full" onClick={onCreateQuestions}>
                         {t("createOwnQuiz", "Skapa eget quiz")}
+                    </PrimaryButton>
+                    <PrimaryButton className="w-full" onClick={onBecomeMember}>
+                        {t("welcomeScreen.becomeMember", "Bli medlem")}
                     </PrimaryButton>
                 </div>
             </div>

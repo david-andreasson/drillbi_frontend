@@ -45,11 +45,22 @@ const App: React.FC = () => {
         }
     }, []);
     const [showPaywall, setShowPaywall] = useState<boolean>(false);
+    const [lastView, setLastView] = useState<string | null>(null); // t.ex. "welcome", "courses", "profile", etc.
     const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
 const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
 
     // Hjälpfunktion för att visa paywall
     const triggerPaywall = () => {
+        // Spara vilken vy man var på innan paywall
+        if (showProfile) setLastView('profile');
+        else if (showTextToQuiz) setLastView('texttoquiz');
+        else if (showPhotoToQuiz) setLastView('phototoquiz');
+        else if (continueQuiz) setLastView('quiz');
+        else if (reviewCourseName) setLastView('review');
+        else if (!group) setLastView('group');
+        else if (!course) setLastView('courses');
+        else if (!welcomeDone) setLastView('welcome');
+        else setLastView(null);
         setShowPaywall(true);
         setShowEducatorContact(false);
     };
@@ -213,7 +224,18 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
     if (showAdminSql) {
         content = <AdminSqlPage />;
     } else if (showPaywall) {
-        if (showPaywall) return <Paywall />;
+        if (showPaywall) return <Paywall onBack={() => {
+            setShowPaywall(false);
+            // Navigera tillbaka till rätt vy
+            if (lastView === 'profile') setShowProfile(true);
+            else if (lastView === 'texttoquiz') setShowTextToQuiz(true);
+            else if (lastView === 'phototoquiz') setShowPhotoToQuiz(true);
+            else if (lastView === 'quiz') setContinueQuiz(true);
+            else if (lastView === 'review') setReviewCourseName(reviewCourseName);
+            else if (lastView === 'group') setGroup(null);
+            else if (lastView === 'courses') setCourse(null);
+            else if (lastView === 'welcome') setWelcomeDone(false);
+        }} />;
     } else if (showEducatorContact) {
         if (showEducatorContact) return <EducatorContact />;
     } else if (showPhotoToQuiz) {
@@ -255,13 +277,6 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
                     setShowTextToQuiz(false);
                     setReviewCourseName(null);
                 }}
-                onContinue={() => {
-                    setContinueQuiz(true);
-                    setWelcomeDone(true);
-                    setShowProfile(false);
-                    setShowTextToQuiz(false);
-                    setReviewCourseName(null);
-                }}
                 onCreateQuestions={() => {
                     setShowTextToQuiz(true);
                     setShowProfile(false);
@@ -269,6 +284,7 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
                     setWelcomeDone(true);
                     setReviewCourseName(null);
                 }}
+                onBecomeMember={triggerPaywall}
             />
         );
     } else if (continueQuiz && course) {

@@ -9,7 +9,11 @@ const educatorTiers = [
   { min: 21, max: 50, priceSEK: 29, priceUSD: 3 },
 ];
 
-const Paywall: React.FC = () => {
+interface PaywallProps {
+  onBack?: () => void;
+}
+
+const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
   const { t, i18n } = useTranslation();
   const isSwedish = i18n.language === 'sv';
   const currency = isSwedish ? 'kr' : 'USD';
@@ -83,7 +87,10 @@ const Paywall: React.FC = () => {
           </div>
           {/* Tillbaka-knapp längst ner */}
           <div className="mt-8 flex justify-center">
-            <PrimaryButton className="w-full max-w-xs" onClick={() => window.location.href = '/'}>
+            <PrimaryButton className="w-full max-w-xs" onClick={() => {
+              if (onBack) onBack();
+              else window.location.href = '/';
+            }}>
               {isSwedish ? 'Tillbaka' : 'Back'}
             </PrimaryButton>
           </div>
