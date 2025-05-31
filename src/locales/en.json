@@ -46,7 +46,10 @@
     "choose": "Select a course below to start the quiz.",
     "question": "{{count}} questions available"
   },
-  "groupSelection": {},
+  "groupSelection": {
+    "title": "Choose your team",
+    "instruction": "Click your team to continue"
+  },
   "welcomeScreen.becomeMember": "Become a member",
   "teamSelection": {
     "title": "Choose your team",

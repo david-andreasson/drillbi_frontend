@@ -46,7 +46,10 @@
     "choose": "Välj en kurs nedan för att börja quizet.",
     "question": "{{count}} frågor tillgängliga"
   },
-  "groupSelection": {},
+  "groupSelection": {
+    "title": "Välj ditt team",
+    "instruction": "Klicka på ditt team för att fortsätta"
+  },
   "welcomeScreen.becomeMember": "Bli medlem",
   "teamSelection": {
     "title": "Välj ditt team",
