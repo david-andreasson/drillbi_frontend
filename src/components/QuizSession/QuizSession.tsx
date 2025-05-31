@@ -125,7 +125,12 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                   margin-bottom: 12px !important;
                 }
                 .quiz-mobile-gap-area {
-                  margin-bottom: 6px !important;
+                  margin-bottom: 12px;
+                }
+                @media (max-width: 640px) {
+                  .quiz-mobile-gap-area {
+                    margin-bottom: 6px !important;
+                  }
                 }
               }
             `}</style>
@@ -146,7 +151,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                 </div>
             </div>
              {/* Mellanrum mellan kursnamn och ordning */}
-            <div className="mb-3 quiz-mobile-gap-area" />
+            <div className="quiz-mobile-gap-area" />
             {question && (
                 <QuestionBlock
                     question={question}
