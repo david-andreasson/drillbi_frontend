@@ -48,7 +48,8 @@
   },
   "groupSelection": {
     "title": "Välj ditt team",
-    "instruction": "Klicka på ditt team för att fortsätta"
+    "instruction": "Klicka på ditt team för att fortsätta",
+    "noPermission": "Du har inte behörighet att visa denna sida"
   },
   "welcomeScreen.becomeMember": "Bli medlem",
   "teamSelection": {

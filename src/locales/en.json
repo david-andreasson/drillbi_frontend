@@ -48,7 +48,8 @@
   },
   "groupSelection": {
     "title": "Choose your team",
-    "instruction": "Click your team to continue"
+    "instruction": "Click your team to continue",
+    "noPermission": "You do not have permission to view this page"
   },
   "welcomeScreen.becomeMember": "Become a member",
   "teamSelection": {
