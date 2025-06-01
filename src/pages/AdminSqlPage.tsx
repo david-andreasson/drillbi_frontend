@@ -12,11 +12,20 @@ const AdminSqlPage = () => {
     setError(null);
     setResult(null);
     try {
-      const response = await fetch("/admin/sql", {
+      // Fallback: Skicka till backend-porten direkt i dev-läge, annars använd proxy-path
+      const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      const backendPort = 8080; // Ändra om din backend kör på annan port
+      const apiBase = isDev ? `http://localhost:${backendPort}` : "";
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const response = await fetch(`${apiBase}/admin/sql`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({ sql }),
       });
       const data = await response.json();
