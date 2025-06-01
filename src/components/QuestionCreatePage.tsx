@@ -47,9 +47,36 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
 
   // Steg 3: Förbered backend-anrop
   const sendQuestionToBackend = async () => {
-    // TODO: Skicka frågedata och bild till backend-API
-    // Använd t.ex. fetch eller axios
+    try {
+      const formData = new FormData();
+      formData.append('questionText', questionText);
+      formData.append('options', JSON.stringify(options));
+      formData.append('correctIndex', correctIndex !== null ? String(correctIndex) : '');
+      if (image) {
+        formData.append('image', image);
+      }
+      if (preselectedCourse) {
+        formData.append('courseName', preselectedCourse);
+      }
+      // Lägg till språk om det behövs
+      // formData.append('language', i18n.language);
+
+      const response = await fetch('/api/questions/create', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          // Låt browser sätta Content-Type (multipart/form-data)
+        },
+      });
+      if (!response.ok) {
+        throw new Error(await response.text() || 'Misslyckades att spara frågan');
+      }
+    } catch (err: any) {
+      toast.error(t('questionCreate.apiError', 'Kunde inte spara frågan: ') + (err?.message || err));
+      throw err;
+    }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
