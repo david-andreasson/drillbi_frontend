@@ -10,6 +10,7 @@ interface Question {
     questionNumber: number;
     questionText: string;
     options: Option[];
+    imageUrl?: string;
 }
 
 interface Props {
@@ -30,6 +31,14 @@ const QuestionBlock: React.FC<Props> = ({
     return (
         <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg text-gray-900 md:min-w-[600px] md:max-w-2xl w-full">
 
+            {question.imageUrl && (
+                <img
+                    src={question.imageUrl}
+                    alt="Frågebild"
+                    className="mb-4 max-h-64 object-contain rounded shadow"
+                    style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+                />
+            )}
             <p className="mb-6 text-lg font-medium text-gray-900">{question.questionText}</p>
             <ul className="space-y-2">
                 {question.options.map((option) => {
