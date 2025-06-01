@@ -58,6 +58,17 @@
   },
   "createOwnQuiz": "Create your own quiz",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
+  "error": {
+    "courseNameRequired": "Course name is required.",
+    "courseNameTaken": "Course name is already taken.",
+    "courseCreateFailed": "Could not create course.",
+    "courseCreateUnknown": "An unexpected error occurred.",
+    "questionTextRequired": "Question text is required.",
+    "optionsRequired": "At least two answer options are required.",
+    "correctIndexInvalid": "You must select the correct answer.",
+    "imageUploadFailed": "Could not upload the image.",
+    "questionCreateFailed": "Could not create question."
+  },
   "textToQuiz": {
     "selectAll": "Select all",
     "save": "Save",
