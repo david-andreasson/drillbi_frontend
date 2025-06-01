@@ -7,6 +7,7 @@ interface Props {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PrimaryButton from './ui/PrimaryButton';
+import { toast } from 'react-hot-toast';
 
 const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const { t, i18n } = useTranslation();
@@ -20,6 +21,8 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleOptionChange = (idx: number, value: string) => {
     setOptions(opts => opts.map((opt, i) => i === idx ? { ...opt, optionText: value } : opt));
@@ -28,15 +31,36 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
     setCorrectIndex(idx);
     setOptions(opts => opts.map((opt, i) => ({ ...opt, isCorrect: i === idx })));
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setImage(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
+  // Steg 3: Förbered backend-anrop
+  const sendQuestionToBackend = async () => {
+    // TODO: Skicka frågedata och bild till backend-API
+    // Använd t.ex. fetch eller axios
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!questionText.trim() || options.some(opt => !opt.optionText.trim()) || correctIndex === null) {
       setError(t('questionCreate.error', 'Fyll i alla fält och markera rätt svar.'));
       return;
     }
     setError(null);
+    await sendQuestionToBackend();
     setSuccess(true);
-    // TODO: Skicka till backend
+    toast.success(t('questionCreate.success', 'Frågan sparades!'), { duration: 3500, position: 'top-center' });
     // Rensa formuläret när frågan sparats
     setQuestionText('');
     setOptions([
@@ -46,6 +70,8 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
       { optionLabel: 'D', optionText: '', isCorrect: false },
     ]);
     setCorrectIndex(null);
+    setImage(null);
+    setImagePreview(null);
   }
 
   return (
@@ -54,12 +80,16 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         {preselectedCourse ? t('questionCreate.titleForCourse', { course: preselectedCourse }) : t('questionCreate.title', 'Lägg till frågor')}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Mockad bilduppladdning */}
+        {/* Bilduppladdning */}
         <div className="mb-4">
           <label className="block font-semibold mb-1">Bild (valfritt)</label>
-          <input type="file" accept="image/*" className="mb-2" disabled />
+          <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
           <div className="w-full h-32 bg-gray-100 flex items-center justify-center text-gray-400 rounded">
-            <span>Förhandsvisning av bild<br />(kommer snart)</span>
+            {imagePreview ? (
+              <img src={imagePreview} alt="Förhandsvisning" className="max-h-32 object-contain" />
+            ) : (
+              <span>Ingen bild vald</span>
+            )}
           </div>
         </div>
         <div>
@@ -105,7 +135,6 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
           </div>
         </div>
         {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
-        {success && <div className="text-green-600 text-sm mt-2">{t('questionCreate.success', 'Frågan sparades!')}</div>}
         <PrimaryButton type="submit" className="w-full mt-2 bg-orange-400 hover:bg-orange-500 text-white">
           {t('questionCreate.create', 'Lägg till fråga')}
         </PrimaryButton>

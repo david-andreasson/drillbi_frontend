@@ -206,6 +206,9 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
                     setShowPaywall(true);
                 }
                 break;
+            case 'questioncreate':
+                setShowQuestionCreate(true);
+                break;
            default:
                 break;
         }
