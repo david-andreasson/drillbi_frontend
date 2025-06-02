@@ -21,6 +21,10 @@ interface Props {
     onSelect: (label: string) => void;
 }
 
+import { useState } from 'react';
+
+import { useEffect } from 'react';
+
 const QuestionBlock: React.FC<Props> = ({
                                             question,
                                             selectedOption,
@@ -28,16 +32,83 @@ const QuestionBlock: React.FC<Props> = ({
                                             isCorrect,
                                             onSelect
                                         }) => {
+    const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        if (!showModal) return;
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setShowModal(false);
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [showModal]);
     return (
         <div className="p-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg text-gray-900 md:min-w-[600px] md:max-w-2xl w-full">
 
             {question.imageUrl && (
-                <img
-                    src={question.imageUrl}
-                    alt="Frågebild"
-                    className="mb-4 max-h-64 object-contain rounded shadow"
-                    style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
-                />
+                <>
+                    <img
+                        src={
+                            question.imageUrl.startsWith('http')
+                                ? question.imageUrl
+                                : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${question.imageUrl}`
+                        }
+                        alt="Frågebild"
+                        className="mb-4 object-contain rounded shadow cursor-pointer"
+                        title="Klicka för att zooma bilden"
+                        style={{
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            display: 'block',
+                            maxWidth: 320,
+                            maxHeight: 320
+                        }}
+                        onClick={() => setShowModal(true)}
+                    />
+                    {showModal && (
+                        <div
+                            onClick={() => setShowModal(false)}
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100vw',
+                                height: '100vh',
+                                background: 'rgba(0,0,0,0.7)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 9999
+                            }}
+                        >
+                            <button
+                                aria-label="Stäng"
+                                onClick={e => { e.stopPropagation(); setShowModal(false); }}
+                                style={{
+                                    position: 'absolute',
+                                    top: 32,
+                                    right: 32,
+                                    fontSize: 32,
+                                    color: '#fff',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    zIndex: 10000
+                                }}
+                            >&#10005;</button>
+                            <img
+                                src={
+                                    question.imageUrl.startsWith('http')
+                                        ? question.imageUrl
+                                        : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${question.imageUrl}`
+                                }
+                                alt="Frågebild"
+                                style={{ maxWidth: 640, maxHeight: 640, borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.5)' }}
+                                onClick={e => { e.stopPropagation(); setShowModal(false); }}
+                            />
+                        </div>
+                    )}
+                </>
             )}
             <p className="mb-6 text-lg font-medium text-gray-900">{question.questionText}</p>
             <ul className="space-y-2">
