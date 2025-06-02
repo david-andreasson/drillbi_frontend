@@ -17,6 +17,11 @@ import WelcomeScreen from './components/WelcomeScreen';
 import AdminSqlPage from './pages/AdminSqlPage';
 import CourseCreatePage from './components/CourseCreatePage';
 import QuestionCreatePage from './components/QuestionCreatePage';
+import EditCoursePage from './pages/EditCoursePage';
+import EditQuestionPage from './pages/EditQuestionPage';
+import CourseListPage from './pages/CourseListPage';
+import QuestionCourseSelectPage from './pages/QuestionCourseSelectPage';
+import QuestionListPage from './pages/QuestionListPage';
 import LoggedOutScreen from './components/LoggedOutScreen';
 import TextToQuiz from './components/TextToQuiz/TextToQuiz';
 import Header from './components/ui/Header';
@@ -210,6 +215,12 @@ const App: React.FC = () => {
             case 'questioncreate':
                 setShowQuestionCreate(true);
                 break;
+            case 'editcourse':
+                window.location.href = '/admin/courses/list';
+                break;
+            case 'editquestion':
+                window.location.href = '/admin/questions/course';
+                break;
            default:
                 break;
         }
@@ -338,6 +349,11 @@ const App: React.FC = () => {
         <AppContext.Provider value={{ triggerPaywall }}>
             <Routes>
                 <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
+                <Route path="/admin/courses/list" element={<CourseListPage />} />
+                <Route path="/admin/courses/:id/edit" element={<EditCoursePage />} />
+                <Route path="/admin/questions/course" element={<QuestionCourseSelectPage />} />
+                <Route path="/admin/questions/course/:courseId" element={<QuestionListPage />} />
+                <Route path="/admin/questions/:id/edit" element={<EditQuestionPage />} />
                 <Route path="*" element={
                     <div className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
                         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />

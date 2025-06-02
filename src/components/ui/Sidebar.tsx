@@ -57,8 +57,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                 <button onClick={() => onNavigate('coursecreate')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
                     {t('menu.courseCreate', 'Skapa kurs')}
                 </button>
+                <button onClick={() => onNavigate('editcourse')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
+                    Redigera kurs
+                </button>
                 <button onClick={() => onNavigate('questioncreate')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
                     {t('menu.questionCreate', 'Skapa fråga')}
+                </button>
+                <button onClick={() => onNavigate('editquestion')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
+                    Redigera fråga
                 </button>
 
                 {userRole === 'ROLE_ADMIN' && (
