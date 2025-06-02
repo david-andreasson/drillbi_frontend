@@ -103,16 +103,27 @@
     "coursePlaceholder": "Ange kursnamn"
   },
   "menu": {
+    "manageContent": "Hantera innehåll",
     "title": "Meny",
+    "section": {
+      "navigation": "Navigering",
+      "quiztools": "Quizverktyg",
+      "profile": "Profil",
+      "courseadmin": "Kursadministration",
+      "questionadmin": "Frågeadministration",
+      "admin": "Admin"
+    },
     "home": "Hem",
     "selectCourse": "Välj kurs",
-    "settings": "Inställningar",
     "textToQuiz": "Text till Quiz",
     "photoToQuiz": "Foto till Quiz",
-    "logout": "Logga ut",
-    "create": "Skapa kurs",
-    "cancel": "Avbryt",
-    "addQuestions": "Lägg till frågor i kursen"
+    "profile": "Profil",
+    "courseCreate": "Skapa kurs",
+    "editCourse": "Redigera kurs",
+    "questionCreate": "Skapa fråga",
+    "editQuestion": "Redigera fråga",
+    "adminSQL": "Admin SQL",
+    "logout": "Logga ut"
   },
   "questionCreate": {
     "title": "Lägg till frågor",
