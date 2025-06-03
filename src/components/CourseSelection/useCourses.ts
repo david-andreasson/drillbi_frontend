@@ -7,13 +7,14 @@ export interface Course {
     description?: string;
 }
 
-export function useCourses() {
+export function useCourses(refresh?: any) {
     const [courses, setCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchCourses = async () => {
+            setLoading(true);
             try {
                 const response = await fetchWithAuth('/api/v2/courses');
                 if (!response.ok) {
@@ -27,9 +28,8 @@ export function useCourses() {
                 setLoading(false);
             }
         };
-
         fetchCourses();
-    }, []);
+    }, [refresh]);
 
     return { courses, loading, error };
 }

@@ -52,7 +52,7 @@ const App: React.FC = () => {
     const [showPaywall, setShowPaywall] = useState<boolean>(false);
     const [lastView, setLastView] = useState<string | null>(null); // t.ex. "welcome", "courses", "profile", etc.
     const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
-const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
+    const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
 
     // Hjälpfunktion för att visa paywall
     const triggerPaywall = () => {
@@ -157,6 +157,7 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
         setContinueQuiz(false);
         setShowAdminSql(false); // Stäng Admin SQL varje gång man navigerar
         setShowCourseCreate(false); // Stäng kurs-skaparsidan när man navigerar bort
+        setShowQuestionCreate(false); // Stäng frågeskaparsidan vid navigation
     };
 
     const handleNavigate = (destination: string) => {

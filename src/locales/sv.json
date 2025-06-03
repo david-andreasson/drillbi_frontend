@@ -59,6 +59,17 @@
   },
   "createOwnQuiz": "Skapa eget quiz",
   "photoToQuiz.placeholder": "Här kommer en framtida funktion för att skapa quiz från foto. (Endast tillgänglig för premium-medlemmar).",
+  "error": {
+    "courseNameRequired": "Kursnamn krävs.",
+    "courseNameTaken": "Kursnamnet är redan upptaget.",
+    "courseCreateFailed": "Kunde inte skapa kursen.",
+    "courseCreateUnknown": "Ett oväntat fel uppstod.",
+    "questionTextRequired": "Frågetext krävs.",
+    "optionsRequired": "Minst två svarsalternativ krävs.",
+    "correctIndexInvalid": "Du måste markera vilket svar som är rätt.",
+    "imageUploadFailed": "Kunde inte ladda upp bilden.",
+    "questionCreateFailed": "Kunde inte skapa frågan."
+  },
   "textToQuiz": {
     "selectAll": "Markera alla",
     "save": "Spara",

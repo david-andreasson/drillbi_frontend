@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fetchWithAuth } from '../utils/auth';
 import { useTranslation } from 'react-i18next';
 import PrimaryButton from './ui/PrimaryButton';
 
@@ -32,15 +33,43 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
     if (!validate()) return;
     setLoading(true);
     setSuccess(false);
-    // TODO: Byt ut mot riktigt API-anrop när backend är klart
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    try {
+      const res = await fetchWithAuth('/api/v2/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          displayName,
+          description,
+        })
+      });
+      if (!res.ok) {
+        let errorMsg = 'courseCreate.errorUnknown';
+        try {
+          const text = await res.text();
+          // Om backend returnerar en felnyckel, använd den direkt
+          if (text && text.startsWith('error.')) {
+            errorMsg = text.trim();
+          }
+        } catch {}
+        throw new Error(errorMsg);
+      }
       setSuccess(true);
       if (onCreated) onCreated({ name, displayName, description });
-      setName('');
-      setDisplayName('');
-      setDescription('');
-    }, 800);
+      // Behåll värdena ifall användaren vill lägga till frågor direkt
+    } catch (err: any) {
+      // Om error är en backend-felnyckel, översätt via t()
+      if (err.message && err.message.startsWith('error.')) {
+        setError(t(err.message));
+      } else {
+        setError(t('courseCreate.errorUnknown', 'Ett oväntat fel uppstod.'));
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,7 +109,12 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
           />
         </div>
         {error && <div className="text-red-500">{t('courseCreate.error', error)}</div>}
-        {success && <div className="text-green-600">{t('courseCreate.success', 'Kursen skapades!')}</div>}
+        {success && (
+          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded mb-2 text-center text-lg font-semibold">
+            <div>{t('courseCreate.success', 'Kursen skapades!')}</div>
+            <div className="text-green-700 text-base mt-1">Nu kan du lägga till frågor i kursen.</div>
+          </div>
+        )}
         <PrimaryButton type="submit" className="w-full" disabled={loading}>
           {loading ? t('courseCreate.saving', 'Sparar...') : t('courseCreate.create', 'Skapa kurs')}
         </PrimaryButton>
