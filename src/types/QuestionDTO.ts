@@ -11,4 +11,5 @@ export interface QuestionDTO {
     questionText: string;
     options: QuestionOptionDTO[];
     language: string;
+    imageUrl?: string;
 }
