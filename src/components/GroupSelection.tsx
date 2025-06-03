@@ -33,7 +33,7 @@ const GroupSelection: React.FC<{ onSelectGroup: (group: string) => void }> = ({ 
                 if (group.action === 'courses') {
                   onSelectGroup(group.name);
                 } else {
-                  toast.error(t('groupSelection.noPermission'));
+                  toast.error('Du har inte behörighet att visa denna sida');
                 }
               }}
             >

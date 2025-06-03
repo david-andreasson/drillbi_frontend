@@ -42,7 +42,7 @@ export function useQuizSession(args: UseQuizSessionParams) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [detailedFeedback, setDetailedFeedback] = useState<string | undefined>(undefined);
     const [stats, setStats] = useState<SessionStatsDTO | undefined>(undefined);
-    const [loggedInUser, setLoggedInUser] = useState<{ username: string } | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<{ username: string; role?: string; isPremium?: boolean } | null>(null);
 
     // State for AI explanation
     const [aiState, setAiState] = useState<AiState>('idle');
@@ -54,7 +54,11 @@ export function useQuizSession(args: UseQuizSessionParams) {
         if (token) {
             const decoded = parseJwt(token);
             if (decoded && decoded.sub) {
-                setLoggedInUser({ username: decoded.sub });
+                setLoggedInUser({
+                  username: decoded.sub,
+                  role: decoded.role || decoded.roles || undefined,
+                  isPremium: decoded.isPremium ?? decoded.IS_PREMIUM ?? decoded.is_premium ?? false
+                });
             }
         }
     }, []);

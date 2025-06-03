@@ -13,7 +13,10 @@ interface PaywallProps {
   onBack?: () => void;
 }
 
+import { useNavigate } from 'react-router-dom';
+
 const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const isSwedish = i18n.language === 'sv';
   const currency = isSwedish ? 'kr' : 'USD';
@@ -89,7 +92,7 @@ const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
           <div className="mt-8 flex justify-center">
             <PrimaryButton className="w-full max-w-xs" onClick={() => {
               if (onBack) onBack();
-              else window.location.href = '/';
+              else navigate('/');
             }}>
               {isSwedish ? 'Tillbaka' : 'Back'}
             </PrimaryButton>

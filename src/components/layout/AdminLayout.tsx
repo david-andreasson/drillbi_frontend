@@ -1,78 +1,62 @@
 import React, { useState } from 'react';
 import Sidebar from '../ui/Sidebar';
 import Header from '../ui/Header';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
-interface AdminLayoutProps {
+interface MainLayoutProps {
   userRole: string | null;
   onNavigate: (destination: string) => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ userRole, onNavigate: _onNavigate, children }) => {
+interface MainLayoutProps {
+  userRole: string | null;
+  onNavigate: (destination: string) => void;
+  forceChooseGroup?: boolean;
+  children?: React.ReactNode;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNavigate, forceChooseGroup = false, children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   // Mappa strängar till riktiga routes
-  const handleNavigate = (destination: string) => {
-    switch (destination) {
-      case 'home':
-        navigate('/admin'); break;
-      case 'profile':
-        navigate('/admin/profile'); break;
-      case 'courses':
-        navigate('/admin/courses'); break;
-      case 'coursecreate':
-        navigate('/admin/courses/create'); break;
-      case 'questioncreate':
-        navigate('/admin/questions/create'); break;
-      case 'editcourse':
-        navigate('/admin/courses/list'); break;
-      case 'editquestion':
-        navigate('/admin/questions/course'); break;
-      case 'phototoquiz':
-        navigate('/admin/phototoquiz'); break;
-      case 'texttoquiz':
-        navigate('/admin/texttoquiz'); break;
-      case 'adminsql':
-        navigate('/admin/sql'); break;
-      case 'logout':
-        localStorage.removeItem('token');
-        navigate('/login'); break;
-      case 'paywall':
-        navigate('/paywall'); break;
-      default:
-        break;
-    }
-  };
+
 
   // Stäng sidomenyn när route ändras
   React.useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  // Visa overlay och blockera navigation om forceChooseGroup
+  const handleBlocked = () => {
+    // Visa endast toast, ingen overlay eller blockering av knappar
+    import('react-hot-toast').then(({ toast }) => toast.error('Välj ditt team först!'));
+  };
+
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full relative">
       <div className="sticky top-0 left-0 right-0 z-40">
         <Header
           theme={"light"}
           setTheme={() => {}}
-          onLogout={() => handleNavigate('logout')}
-          onMenuClick={() => setSidebarOpen(true)}
+          onLogout={forceChooseGroup ? handleBlocked : () => _onNavigate('logout')}
+          onMenuClick={forceChooseGroup ? handleBlocked : () => setSidebarOpen(true)}
         />
       </div>
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         userRole={userRole}
-        onNavigate={handleNavigate}
+        onNavigate={forceChooseGroup ? handleBlocked : _onNavigate}
       />
+
       <main className="min-h-screen w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100 pt-4 pb-8">
-        {children}
+        <Outlet />
       </main>
     </div>
   );
 };
 
-export default AdminLayout;
+export default MainLayout;

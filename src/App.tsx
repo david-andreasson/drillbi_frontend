@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createContext } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
 
 export const AppContext = createContext<{ triggerPaywall: () => void }>({ triggerPaywall: () => {} });
@@ -26,7 +27,7 @@ import QuestionCourseSelectPage from './pages/QuestionCourseSelectPage';
 import QuestionListPage from './pages/QuestionListPage';
 import LoggedOutScreen from './components/LoggedOutScreen';
 import TextToQuiz from './components/TextToQuiz/TextToQuiz';
-import AdminLayout from './components/layout/AdminLayout';
+import MainLayout from './components/layout/AdminLayout';
 
 import { useUser } from './contexts/UserContext';
 import { Toaster } from 'react-hot-toast';
@@ -39,6 +40,10 @@ type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
 
 const App: React.FC = () => {
+    // Lägg till Toaster för att visa toast-meddelanden
+    // (react-hot-toast kräver att <Toaster /> finns i appen)
+
+    const navigate = useNavigate();
     const [showQuestionCreate, setShowQuestionCreate] = useState<boolean>(false);
     const [questionCreateCourse, setQuestionCreateCourse] = useState<string | undefined>(undefined);
     const [showCourseCreate, setShowCourseCreate] = useState<boolean>(false);
@@ -243,113 +248,34 @@ const App: React.FC = () => {
     };
 
     // --- här fortsätter logiken korrekt ---
-    let content = null;
-    if (showEducatorContact) {
-        return <EducatorContact />;
-    } else if (showPhotoToQuiz) {
-        return <PhotoToQuizPlaceholder />;
-    } else if (showCourseCreate) {
-        content = <CourseCreatePage
-          onCancel={() => setShowCourseCreate(false)}
-          onAddQuestions={(course: { name: string; displayName: string; description: string }) => {
-            setShowCourseCreate(false);
-            setShowQuestionCreate(true);
-            setQuestionCreateCourse(course.name);
-          }}
-        />;
-    } else if (showQuestionCreate) {
-        content = <QuestionCreatePage preselectedCourse={questionCreateCourse} />;
-    } else if (showProfile) {
-        content = <ProfilePage onDone={() => {
-            setShowProfile(false);
-            setWelcomeDone(false);
-        }} />;
-    } else if (showTextToQuiz) {
-        content = <TextToQuiz onReview={courseName => {
-            setShowTextToQuiz(false);
-            setReviewCourseName(courseName);
-        }} />;
-    } else if (reviewCourseName) {
-        content = <ReviewQuestions courseName={reviewCourseName} onDone={() => {
-            setReviewCourseName(null);
-            setWelcomeDone(false);
-        }} onAddMore={() => {
-            setReviewCourseName(null);
-            setShowTextToQuiz(true);
-        }} />;
-    } else if (!group) {
-        content = <GroupSelection onSelectGroup={name => {
-            if (name === 'JIN24') {
-                setGroup('JIN24');
-            } else {
-                // Felhantering eller annan logik om ogiltig grupp
-            }
-        }} />;
-    } else if (!welcomeDone) {
-        content = (
-            <WelcomeScreen
-                firstName={user?.firstName || ''}
-                onStartNew={() => {
-                    setContinueQuiz(false);
-                    setWelcomeDone(true);
-                    setShowProfile(false);
-                    setShowTextToQuiz(false);
-                    setReviewCourseName(null);
-                }}
-                onCreateQuestions={() => {
-                    setShowTextToQuiz(true);
-                    setShowProfile(false);
-                    setContinueQuiz(false);
-                    setWelcomeDone(true);
-                    setReviewCourseName(null);
-                }}
-                onBecomeMember={triggerPaywall}
-            />
-        );
-    } else if (continueQuiz && course) {
-        // sessionId sätts av QuizSession när backend svarat
-        const sessionId = localStorage.getItem('sessionId');
-        content = (
-            <QuizSession
-                sessionId={sessionId || undefined}
-                courseName={course || ''}
-                orderType={orderType}
-                startQuestion={startQuestion}
-                onOrderChange={handleOrderChange}
-                onDone={() => {
-                    // Rensa sessionId när quizet är klart
-                    localStorage.removeItem('sessionId');
-                    setContinueQuiz(false);
-                    setWelcomeDone(false);
-                }}
-                onSessionId={(id: string) => localStorage.setItem('sessionId', id)}
-            />
-        );
-    } else if (!course) {
-        content = <CourseSelection onSelectCourse={name => {
-            setCourse(name);
-            setContinueQuiz(true);
-            setWelcomeDone(true);
-        }} />;
-    }
+// Enkel HomePage för admin-panelen
+const HomePage = () => <div style={{padding:'2rem'}}>Välkommen till adminpanelen!</div>;
 
-    return (
-        <AppContext.Provider value={{ triggerPaywall }}>
-            <AdminLayout userRole={user?.role || null} onNavigate={handleNavigate}>
-                <Routes>
-                    <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
-                    <Route path="/admin/courses/list" element={<CourseListPage />} />
-                    <Route path="/admin/courses/create" element={<CourseCreatePage />} />
-                    <Route path="/admin/questions/create" element={<QuestionCreatePage />} />
-                    <Route path="/admin/courses/:id/edit" element={<EditCoursePage />} />
-                    <Route path="/admin/questions/course" element={<QuestionCourseSelectPage />} />
-                    <Route path="/admin/questions/course/:courseId" element={<QuestionListPage />} />
-                    <Route path="/admin/questions/:id/edit" element={<EditQuestionPage />} />
-                    <Route path="*" element={content} />
-                </Routes>
-            </AdminLayout>
-        </AppContext.Provider>
-    );
+// Om group inte är satt och vi inte står på /choose-group, navigera dit (men gör det inuti useEffect)
+React.useEffect(() => {
+    if (!group && window.location.pathname !== '/choose-group') {
+        navigate('/choose-group', { replace: true });
+    }
+    // eslint-disable-next-line
+}, [group]);
+
+return (
+    <AppContext.Provider value={{ triggerPaywall }}>
+        <div className={`min-h-screen w-full ${theme === 'dark' ? 'dark' : ''}`}>
+            <Toaster position="top-center" />
+            <AppRoutes
+                user={user}
+                setGroup={setGroup}
+                group={group}
+                setContinueQuiz={setContinueQuiz}
+                setShowQuestionCreate={setShowQuestionCreate}
+                triggerPaywall={triggerPaywall}
+            />
+        </div>
+    </AppContext.Provider>
+);
+
+
 }
 
 export default App;
