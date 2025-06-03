@@ -6,6 +6,7 @@ import QuestionBlock from './QuestionBlock';
 import AiExplanation from './AiExplanation';
 import PrimaryButton from '../ui/PrimaryButton';
 import { useCourses } from '../CourseSelection/useCourses';
+import { useNavigate } from 'react-router-dom';
 
 interface QuizSessionProps {
     courseName: string;
@@ -33,6 +34,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     onDone,
     onSessionId
 }) => {
+    const appCtx = React.useContext(AppContext); // Hämta triggerPaywall från context
+    const navigate = useNavigate();
     const [error, setError] = React.useState<string | null>(null);
     const { t, i18n } = useTranslation();
 
@@ -185,19 +188,26 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                         aiState={aiState}
                         aiExplanation={aiExplanation}
                         onExplain={() => {
-                          console.log('AI Explain Click:', { isPremium, sessionId });
-                          if (isPremium) {
-                            if (question && sessionId) {
-                              handleAiExplanation(
-                                sessionId,
-                                question.questionText,
-                                question.options.find((o: any) => o.isCorrect)?.optionText || '',
-                                courseName,
-                                i18n.language as 'sv' | 'en'
-                              );
+                          console.log('AI Explain Click:', { isPremium, sessionId, loggedInUser });
+                          const userRole = Array.isArray(loggedInUser?.role)
+                            ? (loggedInUser?.role.find((r: string) => r === 'ROLE_ADMIN' || r === 'ADMIN') ?? loggedInUser?.role[0])
+                            : loggedInUser?.role;
+                          const userIsPremium = loggedInUser?.isPremium ?? isPremium;
+                          if (userRole !== 'ROLE_ADMIN' && userRole !== 'ADMIN' && !userIsPremium) {
+                            if (typeof appCtx?.triggerPaywall === 'function') {
+                              appCtx.triggerPaywall();
                             }
-                          } else {
-                            triggerPaywall();
+                            navigate('/paywall');
+                            return;
+                          }
+                          if (question && sessionId) {
+                            handleAiExplanation(
+                              sessionId,
+                              question.questionText,
+                              question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                              courseName,
+                              i18n.language as 'sv' | 'en'
+                            );
                           }
                         }}
                         label={t('explainWithAI')}
