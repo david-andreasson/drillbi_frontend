@@ -15,6 +15,8 @@ import { toast } from 'react-hot-toast';
 import QuizSession from './components/QuizSession/QuizSession';
 import WelcomeScreen from './components/WelcomeScreen';
 import AdminSqlPage from './pages/AdminSqlPage';
+import CourseCreatePage from './components/CourseCreatePage';
+import QuestionCreatePage from './components/QuestionCreatePage';
 import LoggedOutScreen from './components/LoggedOutScreen';
 import TextToQuiz from './components/TextToQuiz/TextToQuiz';
 import Header from './components/ui/Header';
@@ -31,6 +33,9 @@ type ThemeType = 'light' | 'dark';
 type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
 
 const App: React.FC = () => {
+    const [showQuestionCreate, setShowQuestionCreate] = useState<boolean>(false);
+    const [questionCreateCourse, setQuestionCreateCourse] = useState<string | undefined>(undefined);
+    const [showCourseCreate, setShowCourseCreate] = useState<boolean>(false);
     // Snappar upp token på /-routen om den finns
     React.useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -151,6 +156,7 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
         setWelcomeDone(false);
         setContinueQuiz(false);
         setShowAdminSql(false); // Stäng Admin SQL varje gång man navigerar
+        setShowCourseCreate(false); // Stäng kurs-skaparsidan när man navigerar bort
     };
 
     const handleNavigate = (destination: string) => {
@@ -193,6 +199,16 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
             case 'adminsql':
                 setShowAdminSql(true);
                 break;
+            case 'coursecreate':
+                if (user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_EDUCATOR') {
+                    setShowCourseCreate(true);
+                } else {
+                    setShowPaywall(true);
+                }
+                break;
+            case 'questioncreate':
+                setShowQuestionCreate(true);
+                break;
            default:
                 break;
         }
@@ -224,22 +240,25 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
     if (showAdminSql) {
         content = <AdminSqlPage />;
     } else if (showPaywall) {
-        if (showPaywall) return <Paywall onBack={() => {
+        return <Paywall onBack={() => {
             setShowPaywall(false);
-            // Navigera tillbaka till rätt vy
-            if (lastView === 'profile') setShowProfile(true);
-            else if (lastView === 'texttoquiz') setShowTextToQuiz(true);
-            else if (lastView === 'phototoquiz') setShowPhotoToQuiz(true);
-            else if (lastView === 'quiz') setContinueQuiz(true);
-            else if (lastView === 'review') setReviewCourseName(reviewCourseName);
-            else if (lastView === 'group') setGroup(null);
-            else if (lastView === 'courses') setCourse(null);
-            else if (lastView === 'welcome') setWelcomeDone(false);
+            if (lastView) handleNavigate(lastView);
         }} />;
     } else if (showEducatorContact) {
-        if (showEducatorContact) return <EducatorContact />;
+        return <EducatorContact />;
     } else if (showPhotoToQuiz) {
-        if (showPhotoToQuiz) return <PhotoToQuizPlaceholder />;
+        return <PhotoToQuizPlaceholder />;
+    } else if (showCourseCreate) {
+        content = <CourseCreatePage
+          onCancel={() => setShowCourseCreate(false)}
+          onAddQuestions={(course: { name: string; displayName: string; description: string }) => {
+            setShowCourseCreate(false);
+            setShowQuestionCreate(true);
+            setQuestionCreateCourse(course.name);
+          }}
+        />;
+    } else if (showQuestionCreate) {
+        content = <QuestionCreatePage preselectedCourse={questionCreateCourse} />;
     } else if (showProfile) {
         content = <ProfilePage onDone={() => {
             setShowProfile(false);
@@ -322,7 +341,6 @@ const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
                     <div className="min-h-screen overflow-auto scrollbar-hide bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
                         <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
                         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} userRole={role} onNavigate={handleNavigate} />
-                        
                         <Header theme={theme} setTheme={setTheme} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(true)} />
                         {content}
                     </div>

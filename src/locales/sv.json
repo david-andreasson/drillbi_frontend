@@ -92,17 +92,33 @@
     "coursePlaceholder": "Ange kursnamn"
   },
   "menu": {
-    "paywall": {
-      "back": "Tillbaka"
-    },
-    "photoToQuiz": "Foto till Quiz",
     "title": "Meny",
     "home": "Hem",
     "selectCourse": "Välj kurs",
     "settings": "Inställningar",
     "textToQuiz": "Text till Quiz",
-    "logout": "Logga ut"
+    "photoToQuiz": "Foto till Quiz",
+    "logout": "Logga ut",
+    "create": "Skapa kurs",
+    "cancel": "Avbryt",
+    "addQuestions": "Lägg till frågor i kursen"
   },
+  "questionCreate": {
+    "title": "Lägg till frågor",
+    "titleForCourse": "Lägg till frågor i kursen: {{course}}",
+    "questionText": "Frågetext",
+    "questionTextPlaceholder": "Skriv frågan här...",
+    "options": "Svarsalternativ",
+    "optionPlaceholder": "Alternativ {{label}}",
+    "language": "Språk",
+    "success": "Frågan sparades!",
+    "error": "Fyll i alla fält och markera rätt svar.",
+    "create": "Lägg till fråga"
+  },
+  "paywall": {
+    "back": "Tillbaka"
+  },
+  "photoToQuiz": "Foto till Quiz",
   "settings": {
     "title": "Inställningar",
     "theme": "Tema",
