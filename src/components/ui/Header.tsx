@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onLogout, onMenuClick 
 
     return (
         <header
-            className="flex justify-between items-center px-4 py-3 bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100"
+            className="flex justify-between items-center px-4 py-2 bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100 shadow-sm"
         >
             <div className="flex items-center gap-4">
                 <button className="text-xl text-gray-900 dark:text-neutral-100" onClick={onMenuClick} aria-label="Open menu">
