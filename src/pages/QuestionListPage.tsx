@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { List, ListItem, ListItemText, ListItemButton, Paper, Typography, CircularProgress, Button } from "@mui/material";
 
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 interface Question {
@@ -12,7 +11,6 @@ interface Question {
 }
 
 export default function QuestionListPage() {
-
   const { courseId } = useParams<{ courseId: string }>();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);

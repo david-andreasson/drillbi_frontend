@@ -69,33 +69,16 @@ export default function EditCoursePage() {
     <Paper sx={{ p: 3, maxWidth: 500, mx: "auto", mt: 4 }}>
       <Typography variant="h4" mb={3}>Redigera kurs</Typography>
 
-      {success && (
-        <Box sx={{
-          width: '100%',
-          mb: 3,
-          display: 'flex',
-          justifyContent: 'center',
-        }}>
-          <Alert
-            severity="success"
-            onClose={handleSnackbarClose}
-            sx={{
-              width: '100%',
-              maxWidth: 600,
-              fontSize: 22,
-              fontWeight: 'bold',
-              backgroundColor: '#43a047',
-              color: 'white',
-              p: 3,
-              borderRadius: 2,
-              boxShadow: 3,
-              textAlign: 'center',
-            }}
-          >
-            Kursen har sparats!
-          </Alert>
-        </Box>
-      )}
+      <Snackbar
+        open={success}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          Kursen har sparats!
+        </Alert>
+      </Snackbar>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField fullWidth label="Namn" name="name" value={course.name} onChange={handleChange} margin="normal" required />
         <TextField fullWidth label="Visningsnamn" name="displayName" value={course.displayName} onChange={handleChange} margin="normal" required />

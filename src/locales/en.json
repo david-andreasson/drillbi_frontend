@@ -102,29 +102,15 @@
     "coursePlaceholder": "Enter course name"
   },
   "menu": {
-    "manageContent": "Manage content",
     "paywall": {
       "back": "Back"
     },
-    "title": "Menu",
-    "section": {
-      "navigation": "Navigation",
-      "quiztools": "Quiz Tools",
-      "profile": "Profile",
-      "courseadmin": "Course Administration",
-      "questionadmin": "Question Administration",
-      "admin": "Admin"
-    },
-    "home": "Home",
-    "selectCourse": "Choose course",
-    "textToQuiz": "Text to Quiz",
     "photoToQuiz": "Photo to Quiz",
-    "profile": "Profile",
-    "courseCreate": "Create course",
-    "editCourse": "Edit course",
-    "questionCreate": "Create question",
-    "editQuestion": "Edit question",
-    "adminSQL": "Admin SQL",
+    "title": "Menu",
+    "home": "Home",
+    "selectCourse": "Select course",
+    "settings": "Settings",
+    "textToQuiz": "Text to Quiz",
     "logout": "Log out"
   },
   "settings": {

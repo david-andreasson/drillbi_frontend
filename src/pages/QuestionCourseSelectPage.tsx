@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { List, ListItem, ListItemText, ListItemButton, Paper, Typography, CircularProgress } from "@mui/material";
-
+import { List, ListItemButton, ListItemText, Paper, Typography, CircularProgress } from "@mui/material";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,7 +12,6 @@ interface Course {
 }
 
 export default function QuestionCourseSelectPage() {
-
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,14 +38,12 @@ export default function QuestionCourseSelectPage() {
           <Typography variant="h5" mb={2}>Välj kurs</Typography>
           <List>
             {courses.map((course) => (
-              <ListItem key={course.id} disablePadding>
-                <ListItemButton onClick={() => navigate(`/admin/questions/course/${course.id}`)}>
-                  <ListItemText
-                    primary={course.displayName || course.name}
-                    secondary={course.description}
-                  />
-                </ListItemButton>
-              </ListItem>
+              <ListItemButton
+                key={course.id}
+                onClick={() => navigate(`/home/questions/course/${course.id}`)}
+              >
+                <ListItemText primary={course.displayName || course.name} />
+              </ListItemButton>
             ))}
           </List>
         </Paper>

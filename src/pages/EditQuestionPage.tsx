@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography, Paper, IconButton, InputAdornment } from "@mui/material";
+import { TextField, Button, Box, Typography, Paper, IconButton, InputAdornment, Snackbar, Alert } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -18,10 +18,7 @@ type Question = {
   imageUrl: string;
 };
 
-import { Snackbar, Alert } from "@mui/material";
-
 export default function EditQuestionPage() {
-
   const { id } = useParams();
   const navigate = useNavigate();
   const [question, setQuestion] = useState<Question>({ questionText: "", options: [], imageUrl: "" });
@@ -29,8 +26,8 @@ export default function EditQuestionPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -76,14 +73,9 @@ export default function EditQuestionPage() {
     setError("");
     setLoading(true);
     try {
-      // Se till att det alltid är exakt 4 alternativ
-      let options = question.options.slice(0, 4);
-      while (options.length < 4) {
-        options.push({ optionText: "", optionLabel: String.fromCharCode(65 + options.length), correct: false });
-      }
       const formData = new FormData();
       formData.append("questionText", question.questionText);
-      formData.append("options", JSON.stringify(options));
+      formData.append("options", JSON.stringify(question.options));
       formData.append("correctIndex", correctIndex.toString());
       if (imageFile) formData.append("image", imageFile);
       const token = localStorage.getItem("token");
@@ -93,11 +85,7 @@ export default function EditQuestionPage() {
         body: formData
       });
       if (!res.ok) throw new Error("Kunde inte spara fråga");
-      const data = await res.json();
-      setSuccess(true);
-      setTimeout(() => {
-        navigate(`/admin/questions/course/${data.courseId || ''}`);
-      }, 1200);
+      navigate("/admin/questions");
     } catch (err) {
       if (err instanceof Error) setError(err.message);
       else setError(String(err));
@@ -113,16 +101,44 @@ export default function EditQuestionPage() {
     <div className="min-h-screen bg-white">
       <Snackbar open={success} autoHideDuration={1500} onClose={() => setSuccess(false)} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert severity="success" sx={{ width: '100%' }}>
-          Frågan sparades!
+          Frågan har sparats!
         </Alert>
       </Snackbar>
       <main>
         <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
           <Typography variant="h5" mb={2}>Redigera fråga</Typography>
           <Box component="form" onSubmit={handleSubmit}>
-            <TextField fullWidth label="Frågetext" name="questionText" value={question.questionText} onChange={e => setQuestion(q => ({ ...q, questionText: e.target.value }))} margin="normal" required />
-
-            <Box display="flex" alignItems="center" gap={2} mb={2}>
+            <TextField
+              label="Frågetext"
+              value={question.questionText}
+              onChange={e => setQuestion({ ...question, questionText: e.target.value })}
+              fullWidth
+              margin="normal"
+              required
+            />
+            {question.options.map((option, idx) => (
+              <Box key={idx} display="flex" alignItems="center" mb={1}>
+                <TextField
+                  label={`Alternativ ${idx + 1}`}
+                  value={option.optionText}
+                  onChange={e => handleOptionChange(idx, "optionText", e.target.value)}
+                  fullWidth
+                  required
+                />
+                <Button
+                  variant={correctIndex === idx ? "contained" : "outlined"}
+                  color={correctIndex === idx ? "success" : "primary"}
+                  onClick={() => setCorrectIndex(idx)}
+                  sx={{ ml: 1 }}
+                >
+                  Rätt svar
+                </Button>
+              </Box>
+            ))}
+            <Box mt={2} mb={2}>
+              <Button variant="outlined" onClick={() => setQuestion(q => ({ ...q, options: [...q.options, { optionText: "", optionLabel: String.fromCharCode(65 + q.options.length), correct: false }] }))}>Lägg till alternativ</Button>
+            </Box>
+            <Box mt={2} mb={2}>
               <Button
                 variant="contained"
                 component="label"
@@ -130,9 +146,9 @@ export default function EditQuestionPage() {
               >
                 Ladda upp bild
                 <input
-                  hidden
-                  accept="image/*"
                   type="file"
+                  accept="image/*"
+                  hidden
                   ref={fileInputRef}
                   onChange={handleImageChange}
                 />
@@ -145,27 +161,6 @@ export default function EditQuestionPage() {
                 />
               )}
             </Box>
-
-            {[0,1,2,3].map(idx => (
-              <Box key={idx} display="flex" alignItems="center" gap={1}>
-                <TextField
-                  fullWidth
-                  label={`Alternativ ${idx + 1}`}
-                  value={question.options[idx]?.optionText || ""}
-                  onChange={e => handleOptionChange(idx, "optionText", e.target.value)}
-                  margin="normal"
-                />
-                <input
-                  type="radio"
-                  checked={correctIndex === idx}
-                  onChange={() => setCorrectIndex(idx)}
-                  style={{ marginLeft: 8 }}
-                  id={`radio-correct-${idx}`}
-                  name="correctOption"
-                />
-                <label htmlFor={`radio-correct-${idx}`} style={{ fontSize: 13, marginRight: 8 }}>Rätt svar</label>
-              </Box>
-            ))}
             <Box mt={2} display="flex" gap={2}>
               <Button type="submit" variant="contained">Spara</Button>
               <Button variant="outlined" onClick={() => navigate(-1)}>Avbryt</Button>
