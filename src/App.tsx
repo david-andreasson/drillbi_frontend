@@ -1,281 +1,181 @@
-import React, { useEffect, useState } from 'react';
-import { createContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AppRoutes from './AppRoutes';
-import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
-
-export const AppContext = createContext<{ triggerPaywall: () => void }>({ triggerPaywall: () => {} });
-
-import { useTranslation } from 'react-i18next';
-
-import ProfilePage from './components/ProfilePage';
-import Login from './components/Login';
-import CourseSelection from './components/CourseSelection/CourseSelection';
-import GroupSelection from './components/GroupSelection';
-import { toast } from 'react-hot-toast';
-import QuizSession from './components/QuizSession/QuizSession';
-import WelcomeScreen from './components/WelcomeScreen';
-import AdminSqlPage from './pages/AdminSqlPage';
-import CourseCreatePage from './components/CourseCreatePage';
-import QuestionCreatePage from './components/QuestionCreatePage';
-import EditCoursePage from './pages/EditCoursePage';
-import EditQuestionPage from './pages/EditQuestionPage';
-import EditCoursePlaceholder from './pages/EditCoursePlaceholder';
-import EditQuestionPlaceholder from './pages/EditQuestionPlaceholder';
-import CourseListPage from './pages/CourseListPage';
-import QuestionCourseSelectPage from './pages/QuestionCourseSelectPage';
-import QuestionListPage from './pages/QuestionListPage';
-import LoggedOutScreen from './components/LoggedOutScreen';
-import TextToQuiz from './components/TextToQuiz/TextToQuiz';
-import MainLayout from './components/layout/AdminLayout';
-
-import { useUser } from './contexts/UserContext';
+import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import { BrowserRouter as Router, useLocation, useNavigate, Location } from 'react-router-dom';
+import { ThemeProvider, createTheme, CircularProgress, Box } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
-import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
-import Paywall from './components/Paywall';
-import EducatorContact from './components/EducatorContact';
-import PhotoToQuizPlaceholder from './components/PhotoToQuizPlaceholder';
+import { UserProvider, useUser } from './contexts/UserContext';
+import { AppProvider } from './contexts/AppContext';
+import AppRoutes from './AppRoutes';
+import Login from './components/Login';
+import { Course } from './components/CourseSelection/useCourses';
+import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
+// import { getSupportedLanguage, LanguageProvider, setLanguageInStorage } from './contexts/LanguageContext'; // Kommenteras ut tills vidare
+// import { CourseProvider } from "./contexts/CourseContext"; // Kommenteras ut tills vidare
 
-type ThemeType = 'light' | 'dark';
-type OrderType = 'ORDER' | 'REVERSE' | 'RANDOM';
+export type ThemeType = 'light' | 'dark';
 
-const App: React.FC = () => {
-    // Lägg till Toaster för att visa toast-meddelanden
-    // (react-hot-toast kräver att <Toaster /> finns i appen)
+const THEME_KEY = 'app_theme';
+// const LANGUAGE_KEY = 'app_language'; // Kommenteras ut tills vidare
 
-    const navigate = useNavigate();
-    const [showQuestionCreate, setShowQuestionCreate] = useState<boolean>(false);
-    const [questionCreateCourse, setQuestionCreateCourse] = useState<string | undefined>(undefined);
-    const [showCourseCreate, setShowCourseCreate] = useState<boolean>(false);
-    // Snappar upp token på /-routen om den finns
-    React.useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-        if (token) {
-            localStorage.setItem('token', token);
-            params.delete('token');
-            const newSearch = params.toString();
-            const newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '');
-            window.history.replaceState({}, '', newUrl);
-            window.location.reload();
+const getInitialTheme = (): ThemeType => {
+    const savedTheme = localStorage.getItem(THEME_KEY) as ThemeType | null;
+    return savedTheme || 'light';
+};
+
+/* // Kommenteras ut tills vidare
+const getInitialLanguage = (): string => {
+    const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
+    return savedLanguage || getSupportedLanguage(navigator.language);
+};
+*/
+
+interface AppContentProps {
+    navigate: (to: string, options?: { replace?: boolean }) => void;
+    location: Location;
+}
+
+function AppContent({ navigate, location }: AppContentProps) {
+    const { user, loading: userLoading, token: contextToken, setToken: setContextToken, logout: contextLogout } = useUser();
+
+    const [themeMode, setThemeMode] = useState<ThemeType>(getInitialTheme);
+    // const [language, setLanguage] = useState<string>(getInitialLanguage); // Kommenteras ut tills vidare
+    const [course, setCourse] = useState<Course | null>(null); // Behålls om AppRoutes behöver det
+    const [isLoggingOut, setIsLoggingOut] = useState(false); // För att spåra om utloggning pågår
+
+    const isAuthenticated = !!contextToken && !!user;
+    const isPotentiallyAuthenticated = !!contextToken;
+
+    useEffect(() => {
+        localStorage.setItem(THEME_KEY, themeMode);
+    }, [themeMode]);
+
+    /* // Kommenteras ut tills vidare
+    useEffect(() => {
+        setLanguageInStorage(language);
+    }, [language]);
+    */
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const tokenFromUrl = searchParams.get('token');
+        if (tokenFromUrl && setContextToken) {
+            setContextToken(tokenFromUrl);
+            navigate(location.pathname, { replace: true });
         }
-    }, []);
-    const [showPaywall, setShowPaywall] = useState<boolean>(false);
-    const [lastView, setLastView] = useState<string | null>(null); // t.ex. "welcome", "courses", "profile", etc.
-    const [showEducatorContact, setShowEducatorContact] = useState<boolean>(false);
-    const [showPhotoToQuiz, setShowPhotoToQuiz] = useState<boolean>(false);
+    }, [location, navigate, setContextToken]);
 
-    // Hjälpfunktion för att visa paywall
-    const triggerPaywall = () => {
-        // Spara vilken vy man var på innan paywall
-        if (showProfile) setLastView('profile');
-        else if (showTextToQuiz) setLastView('texttoquiz');
-        else if (showPhotoToQuiz) setLastView('phototoquiz');
-        else if (continueQuiz) setLastView('quiz');
-        else if (reviewCourseName) setLastView('review');
-        else if (!group) setLastView('group');
-        else if (!course) setLastView('courses');
-        else if (!welcomeDone) setLastView('welcome');
-        else setLastView(null);
-        setShowPaywall(true);
-        setShowEducatorContact(false);
+    useEffect(() => {
+        if (!userLoading) {
+            if (!isAuthenticated) {
+                // Tillåt endast inloggning och OAuth-återanrop
+                const allowedPaths = ['/login', '/login/oauth2'];
+                
+                if (!allowedPaths.some(path => 
+                    location.pathname === path || location.pathname.startsWith(path)
+                )) {
+                    navigate('/login', { replace: true });
+                }
+            } else if (location.pathname === '/login' || location.pathname === '/') {
+                // Efter inloggning, skicka till kursväljaren
+                navigate('/courses', { replace: true });
+            }
+        }
+    }, [isAuthenticated, userLoading, location, navigate]);
+
+    const muiTheme = createTheme({
+        palette: {
+            mode: themeMode,
+            ...(themeMode === 'light'
+                ? { primary: { main: '#1976d2' }, background: { default: '#f5f5f5', paper: '#ffffff' } }
+                : { primary: { main: '#90caf9' }, background: { default: '#121212', paper: '#1e1e1e' } }),
+        },
+    });
+
+    const toggleTheme = () => {
+        setThemeMode((prevTheme: ThemeType) => (prevTheme === 'light' ? 'dark' : 'light'));
     };
-    // Hjälpfunktion för att visa educator-contact
-    const triggerEducatorContact = () => {
-        setShowEducatorContact(true);
-        setShowPaywall(false);
-    };
 
-    const { i18n } = useTranslation();
-    const { user, loading: userLoading } = useUser();
+    const handleLogout = useCallback(async () => {
+        try {
+            setIsLoggingOut(true);
+            if (contextLogout) {
+                await contextLogout();
+            }
+            setCourse(null); // Rensa kursdata vid utloggning
+            navigate('/login', { replace: true });
+        } catch (error) {
+            console.error('Fel vid utloggning:', error);
+            // Visa eventuellt ett felmeddelande för användaren här
+        } finally {
+            setIsLoggingOut(false);
+        }
+    }, [contextLogout, navigate]);
 
-    // If no token or user is not loaded, always show Login
-    const hasToken = !!localStorage.getItem('token');
-    // Hantera redirect från Google OAuth2
-    if (window.location.pathname === '/login/oauth2') {
+    if (userLoading && isPotentiallyAuthenticated && location.pathname !== '/login' && !location.pathname.startsWith('/login/oauth2')) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (location.pathname.startsWith('/login/oauth2')) {
         return <OAuth2RedirectHandler />;
     }
-    if (!hasToken || (!userLoading && !user)) {
-        return <Login />;
+
+    // LanguageProvider och CourseProvider är utkommenterade i JSX nedan också
+    if (!isAuthenticated && location.pathname === '/login') {
+        return (
+            <ThemeProvider theme={muiTheme}>
+                {/* <LanguageProvider language={language} setLanguage={setLanguage}> */}
+                    <Toaster position="bottom-right" />
+                    <Login />
+                {/* </LanguageProvider> */}
+            </ThemeProvider>
+        );
     }
 
-    const [theme, setTheme] = useState<ThemeType>('light');
-    const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
-    const [course, setCourse] = useState<string | null>(null);
-    const [group, setGroup] = useState<string | null>(null);
-    const [orderType, setOrderType] = useState<OrderType>('ORDER');
-    const [startQuestion, setStartQuestion] = useState<number>(1);
-    const [welcomeDone, setWelcomeDone] = useState<boolean>(false);
-    const [continueQuiz, setContinueQuiz] = useState<boolean>(false);
-    const [reviewCourseName, setReviewCourseName] = useState<string | null>(null);
-
-    const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-    const [showProfile, setShowProfile] = useState<boolean>(false);
-    const [showAdminSql, setShowAdminSql] = useState<boolean>(false);
+    if (isAuthenticated) {
+        return (
+            <ThemeProvider theme={muiTheme}>
+                {/* <LanguageProvider language={language} setLanguage={setLanguage}> */}
+                    {/* <CourseProvider course={course} setCourse={setCourse}> */}
+                        <Toaster position="bottom-right" />
+                        <AppRoutes 
+                            toggleTheme={toggleTheme} 
+                            currentTheme={themeMode} 
+                            handleLogout={handleLogout} 
+                            course={course} 
+                            setCourse={setCourse}
+                            isLoggingOut={isLoggingOut}
+                            user={user}
+                        />
+                    {/* </CourseProvider> */}
+                {/* </LanguageProvider> */}
+            </ThemeProvider>
+        );
+    }
     
-    const [showTextToQuiz, setShowTextToQuiz] = useState<boolean>(false);
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+        </Box>
+    );
+}
 
+// Hjälpkomponent för att använda useNavigate och useLocation inuti Router
+const AppContentWithRouter: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    return <AppContent navigate={navigate} location={location} />;
+};
 
-
-    useEffect(() => {
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme) setTheme(storedTheme as ThemeType);
-
-        const storedLang = localStorage.getItem('language');
-        if (storedLang) i18n.changeLanguage(storedLang);
-    }, []);
-
-    useEffect(() => {
-        const root = window.document.documentElement;
-        if (theme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    useEffect(() => {
-        if (window.location.pathname === '/logged-out') {
-            setIsLoggedOut(true);
-        }
-    }, []);
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-        if (token) {
-            localStorage.setItem('token', token);
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedOut(true);
-        setCourse(null);
-        // Instead of redirect, just reload so App will show <Login />
-        window.location.reload();
-    }
-
-
-
-    const resetAllViews = () => {
-        setShowProfile(false);
-        setShowTextToQuiz(false);
-        setCourse(null);
-        setWelcomeDone(false);
-        setContinueQuiz(false);
-        setShowAdminSql(false); // Stäng Admin SQL varje gång man navigerar
-        setShowCourseCreate(false); // Stäng kurs-skaparsidan när man navigerar bort
-        setShowQuestionCreate(false); // Stäng frågeskaparsidan vid navigation
-    };
-
-    const handleNavigate = (destination: string) => {
-        setSidebarOpen(false);
-        resetAllViews();
-        setShowPaywall(false);
-        setShowEducatorContact(false);
-        switch (destination) {
-            case 'logout':
-                handleLogout();
-                break;
-            case 'phototoquiz':
-            if (typeof (user as any)?.isPremium === 'boolean' ? (user as any).isPremium : false) {
-                setShowPaywall(false);
-                setShowPhotoToQuiz(true);
-            } else {
-                triggerPaywall();
-            }
-            break;
-            case 'texttoquiz':
-                setShowTextToQuiz(true);
-                break;
-            case 'profile':
-                setShowProfile(true);
-                break;
-            case 'home':
-                setWelcomeDone(false);
-                break;
-            case 'courses':
-                setWelcomeDone(true);
-                setContinueQuiz(false);
-                setCourse(null);
-                break;
-            case 'paywall':
-                setShowPaywall(true);
-                break;
-            case 'educator-contact':
-                setShowEducatorContact(true);
-                break;
-            case 'adminsql':
-                setShowAdminSql(true);
-                break;
-            case 'coursecreate':
-                if (user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_EDUCATOR') {
-                    setShowCourseCreate(true);
-                } else {
-                    setShowPaywall(true);
-                }
-                break;
-            case 'questioncreate':
-                setShowQuestionCreate(true);
-                break;
-            case 'editcourse':
-                window.location.href = '/admin/courses/list';
-                break;
-            case 'editquestion':
-                window.location.href = '/admin/questions/course';
-                break;
-            // Ta bort trasig eller ofärdig kod här
-            default:
-                break;
-        }
-    };
-
-
-
-    const handleOrderChange = () => {
-        // Byt ordning och starta om quizet helt
-        setOrderType(prev => {
-            const newOrder = prev === 'ORDER' ? 'REVERSE' : prev === 'REVERSE' ? 'RANDOM' : 'ORDER';
-            // Rensa sessionId och starta om quizet
-            localStorage.removeItem('sessionId');
-            setContinueQuiz(false);
-            setTimeout(() => setContinueQuiz(true), 0); // Tvinga QuizSession att mounta om
-            return newOrder;
-        });
-    };
-
-    // --- här fortsätter logiken korrekt ---
-// Enkel HomePage för admin-panelen
-const HomePage = () => <div style={{padding:'2rem'}}>Välkommen till adminpanelen!</div>;
-
-// Om group inte är satt och vi inte står på /choose-group, navigera dit (men gör det inuti useEffect)
-React.useEffect(() => {
-    if (!group && window.location.pathname !== '/choose-group') {
-        navigate('/choose-group', { replace: true });
-    }
-    // eslint-disable-next-line
-}, [group]);
-
-return (
-    <AppContext.Provider value={{ triggerPaywall }}>
-        <div className={`min-h-screen w-full ${theme === 'dark' ? 'dark' : ''}`}>
-            <Toaster position="top-center" />
-            <AppRoutes
-                user={user}
-                setGroup={setGroup}
-                group={group}
-                setContinueQuiz={setContinueQuiz}
-                setShowQuestionCreate={setShowQuestionCreate}
-                triggerPaywall={triggerPaywall}
-            />
-        </div>
-    </AppContext.Provider>
-);
-
-
+function App() {
+    return (
+        <Router>
+            <AppContentWithRouter />
+        </Router>
+    );
 }
 
 export default App;

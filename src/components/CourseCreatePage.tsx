@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import CourseCreateForm from './CourseCreateForm';
 
 interface Props {
@@ -7,16 +8,19 @@ interface Props {
 }
 
 const CourseCreatePage: React.FC<Props> = ({ onCancel, onAddQuestions }) => {
-  // TODO: Implementera navigation till frågeskaparsidan (med förvald kurs)
+  const navigate = useNavigate();
+
   const handleAddQuestions = (course: { name: string; displayName: string; description: string }) => {
-    // Här ska navigation ske, t.ex. via context eller prop från App
-    // Exempel: navigateToQuestionCreate(course.name)
-    alert('Navigera till frågeskaparsidan med kurs: ' + course.name);
+    // Navigera till frågeskaparsidan med kursnamnet som parameter
+    navigate(`/questions/create?course=${encodeURIComponent(course.name)}`);
   };
 
   return (
     <div className="flex flex-col items-center justify-center py-8">
-      <CourseCreateForm onCancel={onCancel} onAddQuestions={onAddQuestions ?? handleAddQuestions} />
+      <CourseCreateForm 
+        onCancel={onCancel} 
+        onAddQuestions={onAddQuestions ?? handleAddQuestions} 
+      />
     </div>
   );
 };

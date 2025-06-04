@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppContext } from '../../App'; // Justera sökvägen om det behövs
+import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useQuizSession } from './useQuizSession';
 import QuestionBlock from './QuestionBlock';
@@ -34,7 +34,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     onDone,
     onSessionId
 }) => {
-    const appCtx = React.useContext(AppContext); // Hämta triggerPaywall från context
+    const { triggerPaywall } = useAppContext(); // Hämta triggerPaywall från context
     const navigate = useNavigate();
     const [error, setError] = React.useState<string | null>(null);
     const { t, i18n } = useTranslation();
@@ -180,9 +180,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
 
                 {/* Endast visa AI-förklaring om svaret är felaktigt och inskickat */}
                 {submitted && isCorrect === false && (
-                  <AppContext.Consumer>
-                    {({ triggerPaywall }) => (
-                      <AiExplanation
+                    <AiExplanation
                         submitted={submitted}
                         isCorrect={isCorrect}
                         aiState={aiState}
@@ -194,9 +192,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                             : loggedInUser?.role;
                           const userIsPremium = loggedInUser?.isPremium ?? isPremium;
                           if (userRole !== 'ROLE_ADMIN' && userRole !== 'ADMIN' && !userIsPremium) {
-                            if (typeof appCtx?.triggerPaywall === 'function') {
-                              appCtx.triggerPaywall();
-                            }
+                            triggerPaywall();
                             navigate('/paywall');
                             return;
                           }
@@ -213,9 +209,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                         label={t('explainWithAI')}
                         loadingLabel={t('aiThinking')}
                         disabled={aiState === 'preparing'}
-                      />
-                    )}
-                  </AppContext.Consumer>
+                    />
                 )}
 
                 {stats && (

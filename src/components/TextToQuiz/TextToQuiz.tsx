@@ -32,7 +32,7 @@ interface InnerTextToQuizProps {
 }
 
 import { useContext } from 'react';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../contexts/AppContext';
 
 const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
   const { t, i18n } = useTranslation();
@@ -310,10 +310,10 @@ interface TextToQuizProps {
 
 const TextToQuiz: React.FC<TextToQuizProps> = ({ onReview }) => {
   // triggerPaywall hämtas från AppContext
-  const ctx = useContext(AppContext);
+  const { triggerPaywall } = useAppContext();
   return (
     <QuestionSessionProvider>
-      <InnerTextToQuiz onReview={onReview} triggerPaywall={ctx.triggerPaywall} />
+      <InnerTextToQuiz onReview={onReview} triggerPaywall={triggerPaywall} />
     </QuestionSessionProvider>
   );
 };

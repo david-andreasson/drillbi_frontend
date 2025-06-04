@@ -6,12 +6,6 @@ import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 interface MainLayoutProps {
   userRole: string | null;
   onNavigate: (destination: string) => void;
-  children?: React.ReactNode;
-}
-
-interface MainLayoutProps {
-  userRole: string | null;
-  onNavigate: (destination: string) => void;
   forceChooseGroup?: boolean;
   children?: React.ReactNode;
 }
