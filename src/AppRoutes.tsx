@@ -25,7 +25,7 @@ import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
 import Paywall from './components/Paywall';
 import EducatorContact from './components/EducatorContact';
 import PhotoToQuizPlaceholder from './components/PhotoToQuizPlaceholder';
-import TestNavigation from './components/TestNavigation';
+
 
 interface AppRoutesProps {
   toggleTheme: () => void;
@@ -176,7 +176,7 @@ const AppRoutes = ({
       <Route path="/logout" element={null} /> {/* Hantering av direkt URL för utloggning */}
       <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
       <Route path="/educator-contact" element={<EducatorContact />} />
-      <Route path="/test-nav" element={<TestNavigation />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
