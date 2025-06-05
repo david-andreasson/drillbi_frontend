@@ -1,11 +1,12 @@
 import React from 'react';
-import { AppContext } from '../../App'; // Justera sökvägen om det behövs
+import { useAppContext } from '../../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useQuizSession } from './useQuizSession';
 import QuestionBlock from './QuestionBlock';
 import AiExplanation from './AiExplanation';
 import PrimaryButton from '../ui/PrimaryButton';
 import { useCourses } from '../CourseSelection/useCourses';
+import { useNavigate } from 'react-router-dom';
 
 interface QuizSessionProps {
     courseName: string;
@@ -33,6 +34,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     onDone,
     onSessionId
 }) => {
+    const { triggerPaywall } = useAppContext(); // Hämta triggerPaywall från context
+    const navigate = useNavigate();
     const [error, setError] = React.useState<string | null>(null);
     const { t, i18n } = useTranslation();
 
@@ -177,35 +180,36 @@ const QuizSession: React.FC<QuizSessionProps> = ({
 
                 {/* Endast visa AI-förklaring om svaret är felaktigt och inskickat */}
                 {submitted && isCorrect === false && (
-                  <AppContext.Consumer>
-                    {({ triggerPaywall }) => (
-                      <AiExplanation
+                    <AiExplanation
                         submitted={submitted}
                         isCorrect={isCorrect}
                         aiState={aiState}
                         aiExplanation={aiExplanation}
                         onExplain={() => {
-                          console.log('AI Explain Click:', { isPremium, sessionId });
-                          if (isPremium) {
-                            if (question && sessionId) {
-                              handleAiExplanation(
-                                sessionId,
-                                question.questionText,
-                                question.options.find((o: any) => o.isCorrect)?.optionText || '',
-                                courseName,
-                                i18n.language as 'sv' | 'en'
-                              );
-                            }
-                          } else {
+                          console.log('AI Explain Click:', { isPremium, sessionId, loggedInUser });
+                          const userRole = Array.isArray(loggedInUser?.role)
+                            ? (loggedInUser?.role.find((r: string) => r === 'ROLE_ADMIN' || r === 'ADMIN') ?? loggedInUser?.role[0])
+                            : loggedInUser?.role;
+                          const userIsPremium = loggedInUser?.isPremium ?? isPremium;
+                          if (userRole !== 'ROLE_ADMIN' && userRole !== 'ADMIN' && !userIsPremium) {
                             triggerPaywall();
+                            navigate('/paywall');
+                            return;
+                          }
+                          if (question && sessionId) {
+                            handleAiExplanation(
+                              sessionId,
+                              question.questionText,
+                              question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                              courseName,
+                              i18n.language as 'sv' | 'en'
+                            );
                           }
                         }}
                         label={t('explainWithAI')}
                         loadingLabel={t('aiThinking')}
                         disabled={aiState === 'preparing'}
-                      />
-                    )}
-                  </AppContext.Consumer>
+                    />
                 )}
 
                 {stats && (

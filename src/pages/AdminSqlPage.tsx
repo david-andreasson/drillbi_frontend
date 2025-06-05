@@ -48,8 +48,9 @@ const AdminSqlPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #0001" }}>
+    <div style={{ maxWidth: 700, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #0001" }}>
       <h2>Admin SQL-gränssnitt</h2>
+
       <form onSubmit={handleSubmit}>
         <textarea
           value={sql}
@@ -71,6 +72,35 @@ const AdminSqlPage = () => {
           </pre>
         </div>
       )}
+      <div style={{ marginTop: 32, background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: 6, padding: 16 }}>
+        <h4 style={{ marginBottom: 10 }}>Vanliga SQL-kommandon</h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div>
+            <b>Lista användare</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM users;</pre>
+          </div>
+          <div>
+            <b>Lista kurser</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM course;</pre>
+          </div>
+          <div>
+            <b>Ta bort användare (ange id)</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM users WHERE id = 1;</pre>
+          </div>
+          <div>
+            <b>Ta bort kurs (ange id)</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM course WHERE id = 1;</pre>
+          </div>
+          <div>
+            <b>Lista frågor</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM question;</pre>
+          </div>
+          <div>
+            <b>Ta bort fråga (ange id)</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question WHERE id = 1;</pre>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

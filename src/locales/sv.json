@@ -59,6 +59,17 @@
   },
   "createOwnQuiz": "Skapa eget quiz",
   "photoToQuiz.placeholder": "Här kommer en framtida funktion för att skapa quiz från foto. (Endast tillgänglig för premium-medlemmar).",
+  "error": {
+    "courseNameRequired": "Kursnamn krävs.",
+    "courseNameTaken": "Kursnamnet är redan upptaget.",
+    "courseCreateFailed": "Kunde inte skapa kursen.",
+    "courseCreateUnknown": "Ett oväntat fel uppstod.",
+    "questionTextRequired": "Frågetext krävs.",
+    "optionsRequired": "Minst två svarsalternativ krävs.",
+    "correctIndexInvalid": "Du måste markera vilket svar som är rätt.",
+    "imageUploadFailed": "Kunde inte ladda upp bilden.",
+    "questionCreateFailed": "Kunde inte skapa frågan."
+  },
   "textToQuiz": {
     "selectAll": "Markera alla",
     "save": "Spara",
@@ -92,17 +103,33 @@
     "coursePlaceholder": "Ange kursnamn"
   },
   "menu": {
-    "paywall": {
-      "back": "Tillbaka"
-    },
-    "photoToQuiz": "Foto till Quiz",
     "title": "Meny",
     "home": "Hem",
     "selectCourse": "Välj kurs",
     "settings": "Inställningar",
     "textToQuiz": "Text till Quiz",
-    "logout": "Logga ut"
+    "photoToQuiz": "Foto till Quiz",
+    "logout": "Logga ut",
+    "create": "Skapa kurs",
+    "cancel": "Avbryt",
+    "addQuestions": "Lägg till frågor i kursen"
   },
+  "questionCreate": {
+    "title": "Lägg till frågor",
+    "titleForCourse": "Lägg till frågor i kursen: {{course}}",
+    "questionText": "Frågetext",
+    "questionTextPlaceholder": "Skriv frågan här...",
+    "options": "Svarsalternativ",
+    "optionPlaceholder": "Alternativ {{label}}",
+    "language": "Språk",
+    "success": "Frågan sparades!",
+    "error": "Fyll i alla fält och markera rätt svar.",
+    "create": "Lägg till fråga"
+  },
+  "paywall": {
+    "back": "Tillbaka"
+  },
+  "photoToQuiz": "Foto till Quiz",
   "settings": {
     "title": "Inställningar",
     "theme": "Tema",

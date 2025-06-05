@@ -32,7 +32,7 @@ interface InnerTextToQuizProps {
 }
 
 import { useContext } from 'react';
-import { AppContext } from '../../App';
+import { useAppContext } from '../../contexts/AppContext';
 
 const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
   const { t, i18n } = useTranslation();
@@ -115,7 +115,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
 
   const handleGenerate = async (maxQuestions?: number) => {
     // Premiumkontroll
-    if (!isPremium) {
+    if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
     }
@@ -168,7 +168,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
 
   const handleRegenerateQuestion = async (index: number) => {
     // Premiumkontroll
-    if (!isPremium) {
+    if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
     }
@@ -178,7 +178,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
 
   const handleRegenerateOptions = async (index: number) => {
     // Premiumkontroll
-    if (!isPremium) {
+    if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
     }
@@ -186,10 +186,16 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
     try { await onRegenerateOptions(index, language, aiModel); } finally { setRegeneratingOptionsIndex(null); }
   };
 
-  if (loadingUser) return null;
-  if (!isPremium) {
-    triggerPaywall();
-    return null;
+  if (loadingUser) return <div style={{textAlign:'center',marginTop:40}}>Laddar...</div>;
+  // Admin får alltid se hela flödet
+  if (userRole !== 'ROLE_ADMIN' && !isPremium) {
+    return (
+      <div style={{maxWidth:500,margin:'40px auto',padding:24,background:'#fff',borderRadius:8,boxShadow:'0 2px 8px #0001',textAlign:'center'}}>
+        <h2>Text till quiz</h2>
+        <p>Den här funktionen kräver premium.</p>
+        <PrimaryButton onClick={triggerPaywall}>Bli premium</PrimaryButton>
+      </div>
+    );
   }
 
   return (
@@ -304,10 +310,10 @@ interface TextToQuizProps {
 
 const TextToQuiz: React.FC<TextToQuizProps> = ({ onReview }) => {
   // triggerPaywall hämtas från AppContext
-  const ctx = useContext(AppContext);
+  const { triggerPaywall } = useAppContext();
   return (
     <QuestionSessionProvider>
-      <InnerTextToQuiz onReview={onReview} triggerPaywall={ctx.triggerPaywall} />
+      <InnerTextToQuiz onReview={onReview} triggerPaywall={triggerPaywall} />
     </QuestionSessionProvider>
   );
 };

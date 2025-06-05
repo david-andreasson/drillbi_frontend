@@ -31,8 +31,8 @@ const Login: React.FC = () => {
             console.log('LOGIN SUCCESS RESPONSE:', response);
             const { token } = response.data;
             localStorage.setItem('token', token);
-            // After storing token, reload to fetch user context
-            window.location.reload();
+            // Navigera till startsidan efter inloggning
+            window.location.href = '/';
         } catch (err: any) {
             console.error('LOGIN ERROR:', err);
             // Try to extract backend error message

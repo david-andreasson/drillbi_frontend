@@ -9,8 +9,31 @@ interface SidebarProps {
     onNavigate: (destination: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate }) => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  userRole: string | null;
+  onNavigate: (destination: string) => void;
+  forceChooseGroup?: boolean;
+}
+
+import { useNavigate } from 'react-router-dom';
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate, forceChooseGroup = false }) => {
+    const navigate = useNavigate();
+    // Hjälpfunktion för premiumkontroll
+    const isPremiumAllowed = userRole === 'ROLE_ADMIN' || userRole === 'ROLE_EDUCATOR';
+    const handlePremiumClick = (destination: string) => {
+        if (!isPremiumAllowed) {
+            navigate('/paywall');
+            return;
+        }
+        onNavigate(destination);
+    }
     const { t } = useTranslation();
+    const handleBlocked = () => {
+        import('react-hot-toast').then(({ toast }) => toast.error('Välj ditt team först!'));
+    };
 
     useEffect(() => {
         if (!isOpen) return;
@@ -35,33 +58,46 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
             </div>
 
             <nav className="flex flex-col gap-3 p-4 text-left">
-                <button onClick={() => onNavigate('home')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('home')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.home')}
                 </button>
-                <button onClick={() => onNavigate('courses')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('courses')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.selectCourse')}
                 </button>
                 
 
-                <button onClick={() => onNavigate('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('texttoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.textToQuiz')}
                 </button>
-                <button onClick={() => onNavigate('phototoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('phototoquiz')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     {t('menu.photoToQuiz')}
                 </button>
 
-                <button onClick={() => onNavigate('profile')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
+                <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('profile')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                     Profile
                 </button>
 
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('coursecreate')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
+                    {t('menu.courseCreate', 'Skapa kurs')}
+                </button>
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editcourse')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
+                    Redigera kurs
+                </button>
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('questioncreate')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
+                    {t('menu.questionCreate', 'Skapa fråga')}
+                </button>
+                <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editquestion')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
+                    Redigera fråga
+                </button>
+
                 {userRole === 'ROLE_ADMIN' && (
-                    <button onClick={() => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-red-400">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-red-400">
                         Admin SQL
                     </button>
                 )}
 
                 <button
-                    onClick={() => onNavigate('logout')}
+                    onClick={forceChooseGroup ? handleBlocked : () => onNavigate('logout')}
                     className="text-left hover:underline text-neutral-900 dark:text-neutral-100"
                 >
                     {t('menu.logout')}
