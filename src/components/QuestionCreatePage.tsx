@@ -78,12 +78,19 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
       // Lägg till språk om det behövs
       // formData.append('language', i18n.language);
 
-      const response = await fetch('/api/v2/questions/create', {
+      const token = localStorage.getItem('token');
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${API_BASE}/api/v2/questions/create`, {
         method: 'POST',
-        body: formData,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData
       });
+      if (response.status === 401 || response.status === 403) {
+        import('react-hot-toast').then(({ toast }) => toast.error(t('auth.sessionExpired', 'Du måste vara inloggad för att skapa frågor. Logga in igen!'), { duration: 5000, position: 'top-center' }));
+        throw new Error('auth.sessionExpired');
+      }
       if (!response.ok) {
-        throw new Error(await response.text() || 'Misslyckades att spara frågan');
+        throw new Error('error.questionCreateFailed');
       }
       // Hantera det returnerade QuestionDTO-objektet
       const data = await response.json();

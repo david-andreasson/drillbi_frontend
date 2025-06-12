@@ -184,17 +184,38 @@ const AppRoutes = ({
 
 // Wrapper-komponent för att ge QuizSession rätt props från route
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 
 const QuizSessionRouteWrapper = () => {
   const { courseName } = useParams();
+  const navigate = useNavigate();
+  const [orderType, setOrderType] = useState<'ORDER' | 'RANDOM' | 'REVERSE'>('ORDER');
+
+  const handleOrderChange = () => {
+    // Rotera mellan olika ordningstyper
+    const orderTypes: Array<'ORDER' | 'RANDOM' | 'REVERSE'> = ['ORDER', 'RANDOM', 'REVERSE'];
+    const currentIndex = orderTypes.indexOf(orderType);
+    const nextIndex = (currentIndex + 1) % orderTypes.length;
+    setOrderType(orderTypes[nextIndex]);
+  };
+
+  const handleDone = () => {
+    navigate('/');
+  };
+
+  const handleSessionId = (id: string) => {
+    // Spara sessionId i localStorage för att kunna återuppta senare om så önskas
+    localStorage.setItem('quizSessionId', id);
+  };
+
   return (
     <QuizSession
       courseName={courseName || ''}
-      orderType={'ORDER'}
+      orderType={orderType}
       startQuestion={0}
-      onOrderChange={() => {}}
-      onDone={() => {}}
-      onSessionId={() => {}}
+      onOrderChange={handleOrderChange}
+      onDone={handleDone}
+      onSessionId={handleSessionId}
     />
   );
 };

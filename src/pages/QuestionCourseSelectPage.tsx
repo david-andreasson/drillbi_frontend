@@ -40,7 +40,7 @@ export default function QuestionCourseSelectPage() {
             {courses.map((course) => (
               <ListItemButton
                 key={course.id}
-                onClick={() => navigate(`/home/questions/course/${course.id}`)}
+                onClick={() => navigate(`/questions/course/${course.id}`)}
               >
                 <ListItemText primary={course.displayName || course.name} />
               </ListItemButton>

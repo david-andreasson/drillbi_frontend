@@ -39,7 +39,15 @@ export default function QuestionListPage() {
           <List>
             {questions.map((question) => (
               <ListItem key={question.id} disablePadding>
-                <ListItemButton onClick={() => navigate(`/admin/questions/${question.id}/edit`)}>
+                <ListItemButton onClick={() => {
+                  try {
+                    if (!question.id) throw new Error('Missing question id');
+                    navigate(`/questions/${question.id}/edit`);
+                  } catch (err) {
+                    setError('Kunde inte navigera till redigera fråga: ' + (err as Error).message);
+                    console.error('Navigation error:', err, question);
+                  }
+                }}>
                   <ListItemText
                     primary={`Fråga ${question.questionNumber}: ${question.questionText}`}
                   />

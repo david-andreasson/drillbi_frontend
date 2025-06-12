@@ -199,8 +199,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                           if (question && sessionId) {
                             handleAiExplanation(
                               sessionId,
-                              question.questionText,
-                              question.options.find((o: any) => o.isCorrect)?.optionText || '',
+                              question, // Skicka hela frågeobjektet
+                              selectedOption, // Skicka det valda alternativet
                               courseName,
                               i18n.language as 'sv' | 'en'
                             );

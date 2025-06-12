@@ -36,49 +36,94 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
         import('react-hot-toast').then(({ toast }) => toast.error('Välj ditt team först!'));
     };
 
-    useEffect(() => {
-        if (!isOpen) return;
-        const timer = setTimeout(onClose, 5000);
-        return () => clearTimeout(timer);
-    }, [isOpen, onClose]);
-
-    // Ref till menyn
+    // Refs för att spåra interaktioner
     const menuRef = React.useRef<HTMLDivElement>(null);
-    // Interval-id för autostängning
-    const intervalRef = React.useRef<number | null>(null);
-    // Senaste musrörelse-tid
-    const lastMoveRef = React.useRef<number>(Date.now());
+    const lastInteractionTime = React.useRef<number>(Date.now());
+    const closeTimer = React.useRef<number | null>(null);
+    const interactionCheckInterval = React.useRef<number | null>(null);
 
+    // Nollställ tiden för senaste interaktionen
+    const handleInteraction = React.useCallback(() => {
+        lastInteractionTime.current = Date.now();
+    }, []);
+
+    // Starta eller återställ tiden för autostängning
+    const startCloseTimer = React.useCallback(() => {
+        // Rensa eventuell befintlig timer
+        if (closeTimer.current) {
+            window.clearTimeout(closeTimer.current);
+        }
+        
+        // Sätt en ny timer för autostängning
+        closeTimer.current = window.setTimeout(() => {
+            onClose();
+        }, 5000); // 5 sekunder inaktivitet
+    }, [onClose]);
+
+    // Hantera musövergång in i menyn
+    const handleMouseEnter = React.useCallback(() => {
+        // Rensa eventuell timer när musen är i menyn
+        if (closeTimer.current) {
+            window.clearTimeout(closeTimer.current);
+            closeTimer.current = null;
+        }
+    }, []);
+
+    // Hantera musövergång ut ur menyn
+    const handleMouseLeave = React.useCallback(() => {
+        // Starta timern när musen lämnar menyn
+        startCloseTimer();
+    }, [startCloseTimer]);
+
+    // Effekt för att hantera menyns öppnade/stängda tillstånd
     React.useEffect(() => {
-        const menu = menuRef.current;
-        if (!menu || !isOpen) return;
-
-        // Nollställ timer vid ALL interaktion
-        const resetTimer = () => {
-            lastMoveRef.current = Date.now();
-        };
-        menu.addEventListener('mousemove', resetTimer);
-        menu.addEventListener('mousedown', resetTimer);
-        menu.addEventListener('keydown', resetTimer);
-        menu.addEventListener('wheel', resetTimer);
-        menu.addEventListener('touchstart', resetTimer);
-
-        // Starta intervallet som kollar varje sekund
-        intervalRef.current = window.setInterval(() => {
-            if (Date.now() - lastMoveRef.current >= 5000) {
-                onClose();
+        if (!isOpen) {
+            // Rensa alla timers när menyn stängs
+            if (closeTimer.current) {
+                window.clearTimeout(closeTimer.current);
+                closeTimer.current = null;
             }
-        }, 1000);
+            if (interactionCheckInterval.current) {
+                window.clearInterval(interactionCheckInterval.current);
+                interactionCheckInterval.current = null;
+            }
+            return;
+        }
 
+        // Starta initial timer när menyn öppnas
+        startCloseTimer();
+
+        // Sätt upp event listeners för interaktioner
+        const menu = menuRef.current;
+        if (menu) {
+            menu.addEventListener('mousemove', handleInteraction);
+            menu.addEventListener('mousedown', handleInteraction);
+            menu.addEventListener('keydown', handleInteraction);
+            menu.addEventListener('wheel', handleInteraction);
+            menu.addEventListener('touchstart', handleInteraction);
+            menu.addEventListener('mouseenter', handleMouseEnter);
+            menu.addEventListener('mouseleave', handleMouseLeave);
+        }
+
+        // Rensa upp vid avmontering
         return () => {
-            menu.removeEventListener('mousemove', resetTimer);
-            menu.removeEventListener('mousedown', resetTimer);
-            menu.removeEventListener('keydown', resetTimer);
-            menu.removeEventListener('wheel', resetTimer);
-            menu.removeEventListener('touchstart', resetTimer);
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (menu) {
+                menu.removeEventListener('mousemove', handleInteraction);
+                menu.removeEventListener('mousedown', handleInteraction);
+                menu.removeEventListener('keydown', handleInteraction);
+                menu.removeEventListener('wheel', handleInteraction);
+                menu.removeEventListener('touchstart', handleInteraction);
+                menu.removeEventListener('mouseenter', handleMouseEnter);
+                menu.removeEventListener('mouseleave', handleMouseLeave);
+            }
+            if (closeTimer.current) {
+                window.clearTimeout(closeTimer.current);
+            }
+            if (interactionCheckInterval.current) {
+                window.clearInterval(interactionCheckInterval.current);
+            }
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, handleInteraction, handleMouseEnter, handleMouseLeave, startCloseTimer]);
 
     return (
         <div
