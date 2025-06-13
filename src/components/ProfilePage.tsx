@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProfileForm from "./ProfileForm";
 import Login from "./Login";
 import { useUser } from "../contexts/UserContext";
@@ -13,7 +13,21 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = React.useState<'light' | 'dark'>(() => (localStorage.getItem('theme') as 'light' | 'dark') || 'light');
   const [aiModel, setAiModel] = React.useState<string>(() => localStorage.getItem('aiModel') || 'openai');
-  
+
+  // --- Version state ---
+  const [backendVersion, setBackendVersion] = useState<string>("");
+  const [frontendVersion, setFrontendVersion] = useState<string>("");
+  useEffect(() => {
+    fetch("/api/version")
+      .then(res => res.text())
+      .then(setBackendVersion)
+      .catch(() => setBackendVersion("unknown"));
+    fetch("/FRONTEND_VERSION.txt")
+      .then(res => res.text())
+      .then(setFrontendVersion)
+      .catch(() => setFrontendVersion("unknown"));
+  }, []);
+
   React.useEffect(() => { localStorage.setItem('theme', theme); }, [theme]);
   React.useEffect(() => { localStorage.setItem('aiModel', aiModel); }, [aiModel]);
 
@@ -37,11 +51,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
   }, [theme]);
 
   if (localStorage.getItem('force_login') === '1') {
-  localStorage.removeItem('force_login');
-  return <Login />;
-}
-if (!token) return <Login />;
-if (userLoading) return <div>Loading...</div>;
+    localStorage.removeItem('force_login');
+    return <Login />;
+  }
+  if (!token) return <Login />;
+  if (userLoading) return <div>Loading...</div>;
   return (
     <div style={{ padding: 24, width: '100%', maxWidth: 600, margin: '0 auto' }}>
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
@@ -78,6 +92,11 @@ if (userLoading) return <div>Loading...</div>;
           </div>
         )}
         <ProfileForm token={token} onDone={onDone} showOnly="fields" />
+        {/* --- Version info längst ner --- */}
+        <div style={{ marginTop: 32, fontSize: 14, color: '#888', textAlign: 'center' }}>
+          <div>Backend-version: <code>{backendVersion || "unknown"}</code></div>
+          <div>Frontend-version: <code>{frontendVersion || "unknown"}</code></div>
+        </div>
       </div>
     </div>
   );
