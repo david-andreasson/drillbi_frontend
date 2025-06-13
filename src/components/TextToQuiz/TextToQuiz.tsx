@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { QuestionDTO } from '../../types/QuestionDTO';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,7 @@ import QuestionPreviewList from './QuestionPreviewList';
 import LanguageSelector from './LanguageSelector';
 import { QuestionSessionProvider, useQuestionSession } from './QuestionSessionContext';
 import toast from 'react-hot-toast';
-import TextToQuizConfirmation from './TextToQuizConfirmation';
+
 
 
 interface UserInfo {
@@ -36,8 +37,8 @@ import { useContext } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 
 const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
-  const [confirmation, setConfirmation] = useState(false);
-  const [confirmationCourse, setConfirmationCourse] = useState<string>('');
+  const [success, setSuccess] = useState(false);
+  const [successCourse, setSuccessCourse] = useState<string>('');
   const { t, i18n } = useTranslation();
 
   const [text, setText] = useState('');
@@ -162,8 +163,8 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
         enriched,
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
       );
-      setConfirmation(true);
-      setConfirmationCourse(displayName.trim());
+      setSuccess(true);
+      setSuccessCourse(displayName.trim());
       setQuestions(null, ''); // Nollställ frågelista
       setDisplayName('');
       setName('');
@@ -194,6 +195,16 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
     try { await onRegenerateOptions(index, language, aiModel); } finally { setRegeneratingOptionsIndex(null); }
   };
 
+  const handleSuccessClose = (_event: any, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setSuccess(false);
+  };
+
+  const handleSuccessDone = () => {
+    setSuccess(false);
+    if (successCourse) onReview(successCourse);
+  };
+
   if (loadingUser) return <div style={{textAlign:'center',marginTop:40}}>Laddar...</div>;
   // Admin får alltid se hela flödet
   if (userRole !== 'ROLE_ADMIN' && !isPremium) {
@@ -206,17 +217,24 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
     );
   }
 
-  if (confirmation) {
-    return (
-      <TextToQuizConfirmation
-        onDone={() => setConfirmation(false)}
-        courseDisplayName={confirmationCourse}
-      />
-    );
-  }
-
   return (
     <div className="relative px-4 py-6 max-w-3xl mx-auto text-[#4A4A48]">
+      <Snackbar open={success} autoHideDuration={3500} onClose={handleSuccessClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert
+          onClose={handleSuccessClose}
+          severity="success"
+          sx={{ width: '100%', alignItems: 'center', fontSize: '1.1rem' }}
+          action={
+            <PrimaryButton onClick={handleSuccessDone} className="ml-2 bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
+              {t('textToQuiz.done', 'Klar')}
+            </PrimaryButton>
+          }
+        >
+          {t('textToQuiz.saveSuccess', 'Frågorna sparades!')}
+          <br />
+          {t('textToQuiz.confirmation', 'Dina frågor har sparats till kursen')}: <span className="font-semibold">{successCourse}</span>
+        </Alert>
+      </Snackbar>
       <h2 className="text-2xl font-bold mb-6 text-center">{t('textToQuiz.title')}</h2>
 
       <div className="relative">
