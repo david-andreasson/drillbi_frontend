@@ -18,8 +18,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
   const [backendVersion, setBackendVersion] = useState<string>("");
   const [frontendVersion, setFrontendVersion] = useState<string>("");
   useEffect(() => {
-    fetch("/api/version")
-      .then(res => res.text())
+    // Dynamisk backend-URL beroende på miljö
+    const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const backendUrl = isDev ? "http://localhost:8080/api/version" : "/api/version";
+    fetch(backendUrl, { credentials: 'omit' })
+      .then(res => {
+        if (!res.ok) throw new Error('not ok');
+        return res.text();
+      })
       .then(setBackendVersion)
       .catch(() => setBackendVersion("unknown"));
     fetch("/FRONTEND_VERSION.txt")
