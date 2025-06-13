@@ -85,7 +85,9 @@ export default function EditQuestionPage() {
         body: formData
       });
       if (!res.ok) throw new Error("Kunde inte spara fråga");
-      navigate("/admin/questions");
+      setSuccess(true);
+      // Visa grön toast också
+      import('react-hot-toast').then(({ toast }) => toast.success('Frågan har sparats!', { duration: 3500, position: 'top-center' }));
     } catch (err) {
       if (err instanceof Error) setError(err.message);
       else setError(String(err));

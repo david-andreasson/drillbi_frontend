@@ -8,6 +8,7 @@ import QuestionPreviewList from './QuestionPreviewList';
 import LanguageSelector from './LanguageSelector';
 import { QuestionSessionProvider, useQuestionSession } from './QuestionSessionContext';
 import toast from 'react-hot-toast';
+import TextToQuizConfirmation from './TextToQuizConfirmation';
 
 
 interface UserInfo {
@@ -35,6 +36,8 @@ import { useContext } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 
 const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
+  const [confirmation, setConfirmation] = useState(false);
+  const [confirmationCourse, setConfirmationCourse] = useState<string>('');
   const { t, i18n } = useTranslation();
 
   const [text, setText] = useState('');
@@ -159,8 +162,13 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
         enriched,
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
       );
-      toast.success(t('textToQuiz.saveSuccess'));
-      onReview(name.trim());
+      setConfirmation(true);
+      setConfirmationCourse(displayName.trim());
+      setQuestions(null, ''); // Nollställ frågelista
+      setDisplayName('');
+      setName('');
+      setDescription('');
+      setText('');
     } catch (err: any) {
       toast.error(err.response?.data || t('textToQuiz.saveError'));
     }
@@ -195,6 +203,15 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
         <p>Den här funktionen kräver premium.</p>
         <PrimaryButton onClick={triggerPaywall}>Bli premium</PrimaryButton>
       </div>
+    );
+  }
+
+  if (confirmation) {
+    return (
+      <TextToQuizConfirmation
+        onDone={() => setConfirmation(false)}
+        courseDisplayName={confirmationCourse}
+      />
     );
   }
 

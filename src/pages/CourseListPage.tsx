@@ -37,7 +37,7 @@ export default function CourseListPage() {
       <List>
         {courses.map((course) => (
           <ListItem key={course.id} disablePadding>
-            <ListItemButton onClick={() => navigate(`/admin/courses/${course.id}/edit`)}>
+            <ListItemButton onClick={() => navigate(`/courses/${course.id}/edit`)}>
               <ListItemText
                 primary={course.displayName || course.name}
                 secondary={course.description}

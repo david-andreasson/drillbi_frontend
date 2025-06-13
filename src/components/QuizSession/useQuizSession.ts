@@ -193,31 +193,28 @@ export function useQuizSession(args: UseQuizSessionParams) {
     // Fetch AI explanation when the answer is incorrect
     const handleAiExplanation = async (
         sessId: string,
-        questionText: string,
-        correctAnswer: string,
+        question: any,
+        selectedOption: string,
         course: string,
         lang: 'sv' | 'en' = 'sv'
     ) => {
         setAiState('preparing');
         try {
             const url = `/api/v2/explain`;
+            const explainPayload = {
+                question,
+                selectedOption,
+                language: lang,
+                aiModel: localStorage.getItem('aiModel') || 'openai',
+            };
+            console.log('[AI Explain] Payload sent to backend:', explainPayload);
             const res = await fetchWithAuth(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    question,            // the entire question object
-                    selectedOption,      // label, e.g. "A"
-                    language: lang,
-                    aiModel: localStorage.getItem('aiModel') || 'openai',
-                }),
+                body: JSON.stringify(explainPayload),
             });
             if (!res.ok) {
-                setAiState('idle');
-                const msg = `Failed to fetch AI explanation: ${res.status}`;
-                if (typeof setError === 'function') setError(msg);
-                setLocalError(msg);
-                console.error(msg);
-                return;
+                throw new Error(`HTTP error! status: ${res.status}`);
             }
             const text = await res.text();
             setAiExplanation(text);
