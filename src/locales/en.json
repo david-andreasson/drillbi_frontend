@@ -57,6 +57,14 @@
     "noPermission": "You do not have permission to view this page"
   },
   "createOwnQuiz": "Create your own quiz",
+  "photoToQuiz.title": "Photo to Quiz",
+  "photoToQuiz.instructions": "Upload an image to extract text from. Only PNG/JPG, max 5 MB.",
+  "photoToQuiz.chooseImage": "Choose image",
+  "photoToQuiz.fileError": "{{message}}",
+  "photoToQuiz.extractText": "Extract text from image",
+  "photoToQuiz.apiError": "{{message}}",
+  "photoToQuiz.extractedText": "Extracted text",
+  "photoToQuiz.useTextForQuiz": "Use this text to create questions",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
   "error": {
     "courseNameRequired": "Course name is required.",

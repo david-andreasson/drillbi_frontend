@@ -58,6 +58,14 @@
     "noPermission": "Du har inte behörighet att visa denna sida"
   },
   "createOwnQuiz": "Skapa eget quiz",
+  "photoToQuiz.title": "Foto till Quiz",
+  "photoToQuiz.instructions": "Ladda upp en bild att extrahera text från. Endast PNG/JPG, max 5 MB.",
+  "photoToQuiz.chooseImage": "Välj bild",
+  "photoToQuiz.fileError": "{{message}}",
+  "photoToQuiz.extractText": "Extrahera text från bild",
+  "photoToQuiz.apiError": "{{message}}",
+  "photoToQuiz.extractedText": "Extraherad text",
+  "photoToQuiz.useTextForQuiz": "Använd denna text för att skapa frågor",
   "photoToQuiz.placeholder": "Här kommer en framtida funktion för att skapa quiz från foto. (Endast tillgänglig för premium-medlemmar).",
   "error": {
     "courseNameRequired": "Kursnamn krävs.",
