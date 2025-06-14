@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Button, Typography, Box, Paper, TextField, CircularProgress } from '@mui/material';
+import { Button, Typography, Box, Paper, TextField, CircularProgress, Dialog, useMediaQuery } from '@mui/material';
 import { fetchWithAuth } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,8 @@ const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const PhotoToQuizPage: React.FC = () => {
+  // Enkel mobil-detektion baserat på userAgent
+  const isMobile = /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -19,24 +21,88 @@ const PhotoToQuizPage: React.FC = () => {
   const [ocrText, setOcrText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [cameraPreview, setCameraPreview] = useState<string | null>(null);
+  const [showCameraConfirm, setShowCameraConfirm] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setFileError({ message: 'Endast PNG eller JPG/JPEG är tillåtna.' });
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
       setSelectedFile(null);
       return;
     }
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      setFileError({ message: 'Filen får max vara 5 MB.' });
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
       setSelectedFile(null);
       return;
     }
     setFileError(null);
     setSelectedFile(file);
   };
+
+  // Hantera kamera-bild
+  const handleCameraChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
+      setCameraPreview(null);
+      setShowCameraConfirm(false);
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
+      setCameraPreview(null);
+      setShowCameraConfirm(false);
+      return;
+    }
+    setFileError(null);
+    setCameraPreview(URL.createObjectURL(file));
+    setSelectedFile(file);
+    setShowCameraConfirm(true);
+  };
+
+  const handleCameraClick = () => {
+    cameraInputRef.current?.click();
+  };
+
+  const handleCameraConfirm = async () => {
+    setShowCameraConfirm(false);
+    if (!selectedFile) return;
+    setLoading(true);
+    setApiError(null);
+    setOcrText('');
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const response = await fetchWithAuth('/api/phototoquiz', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        setApiError(errorText);
+      } else {
+        const text = await response.text();
+        setOcrText(text);
+      }
+    } catch (err: any) {
+      setApiError('Tekniskt fel vid kontakt med servern.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleCameraRetake = () => {
+    setShowCameraConfirm(false);
+    setCameraPreview(null);
+    setSelectedFile(null);
+  };
+
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -84,6 +150,48 @@ const PhotoToQuizPage: React.FC = () => {
         <Typography className="mb-4 text-center">
           {t('photoToQuiz.instructions')}
         </Typography>
+        {/* Mobil: Ta foto med kamera */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          capture="environment"
+          className="hidden"
+          onChange={handleCameraChange}
+        />
+        {isMobile && (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleCameraClick}
+            className="w-full mb-2"
+            size="large"
+          >
+            {t('photoToQuiz.takePhoto')}
+          </Button>
+        )}
+
+        {/* Kamera-bekräftelse-dialog */}
+        <Dialog open={showCameraConfirm} onClose={handleCameraRetake} fullWidth maxWidth="xs">
+          <Box className="flex flex-col items-center p-4">
+            {cameraPreview && (
+              <img src={cameraPreview} alt="Camera preview" className="max-w-full max-h-64 mb-4 rounded" />
+            )}
+            <Typography className="mb-4" align="center">
+              {t('photoToQuiz.cameraConfirm')}
+            </Typography>
+            <Box className="flex gap-2 w-full">
+              <Button onClick={handleCameraConfirm} color="primary" variant="contained" fullWidth>
+                {t('photoToQuiz.useTextForQuiz')}
+              </Button>
+              <Button onClick={handleCameraRetake} color="secondary" variant="outlined" fullWidth>
+                {t('photoToQuiz.retake') || 'Ta om'}
+              </Button>
+            </Box>
+          </Box>
+        </Dialog>
+
+        {/* Desktop/mobil: Välj bild från fil */}
         <input
           ref={fileInputRef}
           type="file"
