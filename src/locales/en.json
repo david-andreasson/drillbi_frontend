@@ -67,6 +67,7 @@
   "photoToQuiz.apiError": "{{message}}",
   "photoToQuiz.extractedText": "Extracted text",
   "photoToQuiz.useTextForQuiz": "Use this text to create questions",
+  "photoToQuiz.retake": "Retake",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
   "error": {
     "courseNameRequired": "Course name is required.",

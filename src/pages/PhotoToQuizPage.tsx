@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Button, Typography, Box, Paper, TextField, CircularProgress } from '@mui/material';
+import { Button, Typography, Box, Paper, TextField, CircularProgress, Dialog } from '@mui/material';
 import { fetchWithAuth } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -67,11 +67,33 @@ const PhotoToQuizPage: React.FC = () => {
     cameraInputRef.current?.click();
   };
 
-  const handleCameraConfirm = () => {
+  const handleCameraConfirm = async () => {
     setShowCameraConfirm(false);
-    // Bilden finns redan i selectedFile och cameraPreview
-    // Nästa steg: ladda upp eller visa preview (sker i nästa slice)
+    if (!selectedFile) return;
+    setLoading(true);
+    setApiError(null);
+    setOcrText('');
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const response = await fetchWithAuth('/api/phototoquiz', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        setApiError(errorText);
+      } else {
+        const text = await response.text();
+        setOcrText(text);
+      }
+    } catch (err: any) {
+      setApiError('Tekniskt fel vid kontakt med servern.');
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const handleCameraRetake = () => {
     setShowCameraConfirm(false);
@@ -144,6 +166,26 @@ const PhotoToQuizPage: React.FC = () => {
         >
           {t('photoToQuiz.takePhoto')}
         </Button>
+
+        {/* Kamera-bekräftelse-dialog */}
+        <Dialog open={showCameraConfirm} onClose={handleCameraRetake} fullWidth maxWidth="xs">
+          <Box className="flex flex-col items-center p-4">
+            {cameraPreview && (
+              <img src={cameraPreview} alt="Camera preview" className="max-w-full max-h-64 mb-4 rounded" />
+            )}
+            <Typography className="mb-4" align="center">
+              {t('photoToQuiz.cameraConfirm')}
+            </Typography>
+            <Box className="flex gap-2 w-full">
+              <Button onClick={handleCameraConfirm} color="primary" variant="contained" fullWidth>
+                {t('photoToQuiz.useTextForQuiz')}
+              </Button>
+              <Button onClick={handleCameraRetake} color="secondary" variant="outlined" fullWidth>
+                {t('photoToQuiz.retake') || 'Ta om'}
+              </Button>
+            </Box>
+          </Box>
+        </Dialog>
 
         {/* Desktop/mobil: Välj bild från fil */}
         <input
