@@ -25,6 +25,7 @@ import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
 import Paywall from './components/Paywall';
 import EducatorContact from './components/EducatorContact';
 import PhotoToQuizPlaceholder from './components/PhotoToQuizPlaceholder';
+import PhotoToQuizPage from './pages/PhotoToQuizPage';
 
 
 interface AppRoutesProps {
@@ -135,7 +136,7 @@ const AppRoutes = ({
         {/* Text till quiz */}
         <Route path="texttoquiz" element={<TextToQuiz onReview={() => {}} />} />
         {/* Foto till quiz */}
-        <Route path="phototoquiz" element={<PhotoToQuizPlaceholder />} />
+        <Route path="phototoquiz" element={<PhotoToQuizPage />} />
         {/* Admin SQL */}
         <Route path="sql" element={<AdminSqlPage />} />
         {/* Skapa fråga */}
