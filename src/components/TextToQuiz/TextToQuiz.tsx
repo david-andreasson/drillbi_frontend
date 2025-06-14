@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { QuestionDTO } from '../../types/QuestionDTO';
@@ -37,11 +38,18 @@ import { useContext } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 
 const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPaywall }) => {
+  const location = useLocation();
   const [success, setSuccess] = useState(false);
   const [successCourse, setSuccessCourse] = useState<string>('');
   const { t, i18n } = useTranslation();
 
-  const [text, setText] = useState('');
+  const [text, setText] = useState(() => {
+    // Förifyll från router state om det finns
+    if (location.state && typeof location.state === 'object' && 'text' in location.state) {
+      return (location.state as any).text || '';
+    }
+    return '';
+  });
   const [language, setLanguage] = useState<'sv' | 'en'>(i18n.language as 'sv' | 'en');
   const aiModel = localStorage.getItem('aiModel') || 'openai';
   const [estimatedQuestions, setEstimatedQuestions] = useState<number | null>(null);
