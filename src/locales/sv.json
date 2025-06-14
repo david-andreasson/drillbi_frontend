@@ -61,6 +61,8 @@
   "photoToQuiz.title": "Foto till Quiz",
   "photoToQuiz.instructions": "Ladda upp en bild att extrahera text från. Endast PNG/JPG, max 5 MB.",
   "photoToQuiz.chooseImage": "Välj bild",
+  "photoToQuiz.takePhoto": "Ta foto med kamera",
+  "photoToQuiz.cameraConfirm": "Vill du använda denna bilden? Du kan också ta om bilden.",
   "photoToQuiz.fileError": "{{message}}",
   "photoToQuiz.extractText": "Extrahera text från bild",
   "photoToQuiz.apiError": "{{message}}",

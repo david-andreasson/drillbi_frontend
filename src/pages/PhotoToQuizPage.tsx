@@ -19,24 +19,66 @@ const PhotoToQuizPage: React.FC = () => {
   const [ocrText, setOcrText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [cameraPreview, setCameraPreview] = useState<string | null>(null);
+  const [showCameraConfirm, setShowCameraConfirm] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setFileError({ message: 'Endast PNG eller JPG/JPEG är tillåtna.' });
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
       setSelectedFile(null);
       return;
     }
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      setFileError({ message: 'Filen får max vara 5 MB.' });
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
       setSelectedFile(null);
       return;
     }
     setFileError(null);
     setSelectedFile(file);
   };
+
+  // Hantera kamera-bild
+  const handleCameraChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
+      setCameraPreview(null);
+      setShowCameraConfirm(false);
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
+      setCameraPreview(null);
+      setShowCameraConfirm(false);
+      return;
+    }
+    setFileError(null);
+    setCameraPreview(URL.createObjectURL(file));
+    setSelectedFile(file);
+    setShowCameraConfirm(true);
+  };
+
+  const handleCameraClick = () => {
+    cameraInputRef.current?.click();
+  };
+
+  const handleCameraConfirm = () => {
+    setShowCameraConfirm(false);
+    // Bilden finns redan i selectedFile och cameraPreview
+    // Nästa steg: ladda upp eller visa preview (sker i nästa slice)
+  };
+
+  const handleCameraRetake = () => {
+    setShowCameraConfirm(false);
+    setCameraPreview(null);
+    setSelectedFile(null);
+  };
+
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -84,6 +126,26 @@ const PhotoToQuizPage: React.FC = () => {
         <Typography className="mb-4 text-center">
           {t('photoToQuiz.instructions')}
         </Typography>
+        {/* Mobil: Ta foto med kamera */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/png, image/jpeg, image/jpg"
+          capture="environment"
+          className="hidden"
+          onChange={handleCameraChange}
+        />
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleCameraClick}
+          className="w-full mb-2 block sm:hidden"
+          size="large"
+        >
+          {t('photoToQuiz.takePhoto')}
+        </Button>
+
+        {/* Desktop/mobil: Välj bild från fil */}
         <input
           ref={fileInputRef}
           type="file"

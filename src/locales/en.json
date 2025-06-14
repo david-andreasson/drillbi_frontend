@@ -60,6 +60,8 @@
   "photoToQuiz.title": "Photo to Quiz",
   "photoToQuiz.instructions": "Upload an image to extract text from. Only PNG/JPG, max 5 MB.",
   "photoToQuiz.chooseImage": "Choose image",
+  "photoToQuiz.takePhoto": "Take photo with camera",
+  "photoToQuiz.cameraConfirm": "Do you want to use this photo? You can also retake it.",
   "photoToQuiz.fileError": "{{message}}",
   "photoToQuiz.extractText": "Extract text from image",
   "photoToQuiz.apiError": "{{message}}",
