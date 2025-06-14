@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Button, Typography, Box, Paper, TextField } from '@mui/material';
+import { Button, Typography, Box, Paper, TextField, CircularProgress } from '@mui/material';
+import { fetchWithAuth } from '../utils/auth';
 
 interface FileError {
   message: string;
@@ -11,6 +12,9 @@ const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 const PhotoToQuizPage: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<FileError | null>(null);
+  const [ocrText, setOcrText] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +36,32 @@ const PhotoToQuizPage: React.FC = () => {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleExtractText = async () => {
+    if (!selectedFile) return;
+    setLoading(true);
+    setApiError(null);
+    setOcrText('');
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const response = await fetchWithAuth('/api/phototoquiz', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        setApiError(errorText);
+      } else {
+        const text = await response.text();
+        setOcrText(text);
+      }
+    } catch (err: any) {
+      setApiError('Tekniskt fel vid kontakt med servern.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleContinue = () => {
@@ -76,11 +106,38 @@ const PhotoToQuizPage: React.FC = () => {
           variant="contained"
           color="secondary"
           className="w-full mt-4"
-          onClick={handleContinue}
-          disabled={!selectedFile}
+          onClick={handleExtractText}
+          disabled={!selectedFile || loading}
+          startIcon={loading ? <CircularProgress size={20} /> : null}
         >
           Extrahera text från bild
         </Button>
+        {apiError && (
+          <Typography color="error" className="mt-2 text-center">
+            {apiError}
+          </Typography>
+        )}
+        {ocrText && (
+          <Box className="mt-6">
+            <Typography variant="h6" className="mb-2">Extraherad text</Typography>
+            <TextField
+              multiline
+              minRows={6}
+              value={ocrText}
+              onChange={e => setOcrText(e.target.value)}
+              fullWidth
+              variant="outlined"
+            />
+            <Button
+              variant="contained"
+              color="success"
+              className="w-full mt-4"
+              onClick={handleContinue}
+            >
+              Använd denna text för att skapa frågor
+            </Button>
+          </Box>
+        )}
       </Paper>
     </Box>
   );
