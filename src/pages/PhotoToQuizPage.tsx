@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Button, Typography, Box, Paper, TextField, CircularProgress } from '@mui/material';
 import { fetchWithAuth } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface FileError {
   message: string;
@@ -10,6 +11,7 @@ const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const PhotoToQuizPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<FileError | null>(null);
   const [ocrText, setOcrText] = useState<string>('');
@@ -65,8 +67,11 @@ const PhotoToQuizPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Navigera till /texttoquiz med router state eller query-param – implementeras i nästa slice
+    if (ocrText) {
+      navigate('/texttoquiz', { state: { text: ocrText } });
+    }
   };
+
 
   return (
     <Box className="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-8">
