@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Button, Typography, Box, Paper, TextField, CircularProgress } from '@mui/material';
 import { fetchWithAuth } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface FileError {
   message: string;
@@ -11,6 +12,7 @@ const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const PhotoToQuizPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<FileError | null>(null);
@@ -74,13 +76,13 @@ const PhotoToQuizPage: React.FC = () => {
 
 
   return (
-    <Box className="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-8">
-      <Paper elevation={3} className="p-8 w-full max-w-md">
+    <Box className="flex flex-col items-center justify-center min-h-screen bg-white py-4 px-2 sm:px-0">
+      <Paper elevation={3} className="p-4 sm:p-8 w-full max-w-md sm:max-w-lg mx-auto">
         <Typography variant="h4" className="mb-6 text-center">
-          Foto till Quiz
+          {t('photoToQuiz.title')}
         </Typography>
         <Typography className="mb-4 text-center">
-          Ladda upp en bild (foto på whiteboard eller bok). Endast PNG/JPG, max 5 MB.
+          {t('photoToQuiz.instructions')}
         </Typography>
         <input
           ref={fileInputRef}
@@ -94,8 +96,9 @@ const PhotoToQuizPage: React.FC = () => {
           color="primary"
           onClick={handleUploadClick}
           className="w-full mb-4"
+          size="large"
         >
-          Välj bild
+          {t('photoToQuiz.chooseImage')}
         </Button>
         {selectedFile && (
           <Box className="mb-2 text-center">
@@ -104,27 +107,28 @@ const PhotoToQuizPage: React.FC = () => {
         )}
         {fileError && (
           <Typography color="error" className="mb-2 text-center">
-            {fileError.message}
+            {t('photoToQuiz.fileError', { message: fileError.message })}
           </Typography>
         )}
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           className="w-full mt-4"
           onClick={handleExtractText}
           disabled={!selectedFile || loading}
           startIcon={loading ? <CircularProgress size={20} /> : null}
+          size="large"
         >
-          Extrahera text från bild
+          {t('photoToQuiz.extractText')}
         </Button>
         {apiError && (
           <Typography color="error" className="mt-2 text-center">
-            {apiError}
+            {t('photoToQuiz.apiError', { message: apiError })}
           </Typography>
         )}
         {ocrText && (
           <Box className="mt-6">
-            <Typography variant="h6" className="mb-2">Extraherad text</Typography>
+            <Typography variant="h6" className="mb-2">{t('photoToQuiz.extractedText')}</Typography>
             <TextField
               multiline
               minRows={6}
@@ -135,11 +139,12 @@ const PhotoToQuizPage: React.FC = () => {
             />
             <Button
               variant="contained"
-              color="success"
+              color="primary"
               className="w-full mt-4"
               onClick={handleContinue}
+              size="large"
             >
-              Använd denna text för att skapa frågor
+              {t('photoToQuiz.useTextForQuiz')}
             </Button>
           </Box>
         )}
