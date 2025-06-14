@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Button, Typography, Box, Paper, TextField, CircularProgress, Dialog } from '@mui/material';
+import { Button, Typography, Box, Paper, TextField, CircularProgress, Dialog, useMediaQuery } from '@mui/material';
 import { fetchWithAuth } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,8 @@ const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const PhotoToQuizPage: React.FC = () => {
+  // Enkel mobil-detektion baserat på userAgent
+  const isMobile = /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -157,15 +159,17 @@ const PhotoToQuizPage: React.FC = () => {
           className="hidden"
           onChange={handleCameraChange}
         />
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleCameraClick}
-          className="w-full mb-2 block sm:hidden"
-          size="large"
-        >
-          {t('photoToQuiz.takePhoto')}
-        </Button>
+        {isMobile && (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleCameraClick}
+            className="w-full mb-2"
+            size="large"
+          >
+            {t('photoToQuiz.takePhoto')}
+          </Button>
+        )}
 
         {/* Kamera-bekräftelse-dialog */}
         <Dialog open={showCameraConfirm} onClose={handleCameraRetake} fullWidth maxWidth="xs">
