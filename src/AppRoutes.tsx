@@ -107,8 +107,12 @@ const AppRoutes = ({
     <Routes>
       <Route path="/" element={
         <MainLayout 
-          userRole={user?.role || null} 
-          onNavigate={handleNavigate} 
+          userRole={user?.role || null}
+          onNavigate={handleNavigate}
+          theme={currentTheme}
+          setTheme={(theme: 'light' | 'dark') => {
+            if (theme !== currentTheme) toggleTheme();
+          }}
         />
       }>
         {/* Index: Hem/WelcomeScreen */}
