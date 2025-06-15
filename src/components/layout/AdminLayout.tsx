@@ -7,10 +7,11 @@ interface MainLayoutProps {
   userRole: string | null;
   onNavigate: (destination: string) => void;
   forceChooseGroup?: boolean;
-  children?: React.ReactNode;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNavigate, forceChooseGroup = false, children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNavigate, forceChooseGroup = false, theme, setTheme }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,8 +34,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNaviga
     <div className="min-h-screen w-full relative">
       <div className="sticky top-0 left-0 right-0 z-40">
         <Header
-          theme={"light"}
-          setTheme={() => {}}
+          theme={theme}
+          setTheme={setTheme}
           onLogout={forceChooseGroup ? handleBlocked : () => _onNavigate('logout')}
           onMenuClick={forceChooseGroup ? handleBlocked : () => setSidebarOpen(true)}
         />
