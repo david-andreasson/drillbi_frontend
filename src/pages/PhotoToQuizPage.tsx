@@ -78,7 +78,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/api/phototoquiz', {
+      const response = await fetchWithAuth('/api/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });
@@ -116,7 +116,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/api/phototoquiz', {
+      const response = await fetchWithAuth('/api/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });
