@@ -52,10 +52,14 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const MAX_IMAGE_SIZE_MB = 5;
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    if (file && file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+    const maxBytes = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+    if (file) {
+      console.log('Vald bildstorlek:', file.size, 'bytes. Gräns:', maxBytes, 'bytes.');
+    }
+    if (file && file.size > maxBytes) {
       setImage(null);
       setImagePreview(null);
-      setImageError('Bilden är för stor. Max tillåten storlek är 5 MB.');
+      setImageError('❌ Bilden är för stor. Max tillåten storlek är 5 MB.');
       return;
     }
     setImageError(null);
@@ -185,7 +189,12 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         <div className="mb-4">
           <label className="block font-semibold mb-1">Bild (valfritt)</label>
           <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
-          {imageError && <div className="text-red-600 text-sm mb-2">{imageError}</div>}
+          {imageError && (
+            <div className="flex items-center text-red-700 bg-red-100 border border-red-300 rounded px-3 py-2 mb-2 text-sm">
+              <svg className="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              {imageError}
+            </div>
+          )}
           <div className="w-full h-32 bg-gray-100 flex items-center justify-center text-gray-400 rounded">
             {imagePreview ? (
               <img src={imagePreview} alt="Förhandsvisning" className="max-h-32 object-contain" />
