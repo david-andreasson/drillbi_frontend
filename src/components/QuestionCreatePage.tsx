@@ -27,6 +27,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const [error, setError] = useState<string | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   useEffect(() => {
     setRefreshCourses(rc => rc + 1);
@@ -48,8 +49,16 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
     setCorrectIndex(idx);
     setOptions(opts => opts.map((opt, i) => ({ ...opt, isCorrect: i === idx })));
   };
+  const MAX_IMAGE_SIZE_MB = 5;
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
+    if (file && file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+      setImage(null);
+      setImagePreview(null);
+      setImageError('Bilden är för stor. Max tillåten storlek är 5 MB.');
+      return;
+    }
+    setImageError(null);
     setImage(file);
     if (file) {
       const reader = new FileReader();
@@ -176,6 +185,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         <div className="mb-4">
           <label className="block font-semibold mb-1">Bild (valfritt)</label>
           <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
+          {imageError && <div className="text-red-600 text-sm mb-2">{imageError}</div>}
           <div className="w-full h-32 bg-gray-100 flex items-center justify-center text-gray-400 rounded">
             {imagePreview ? (
               <img src={imagePreview} alt="Förhandsvisning" className="max-h-32 object-contain" />
