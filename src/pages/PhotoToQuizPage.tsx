@@ -12,7 +12,7 @@ const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
 const PhotoToQuizPage: React.FC = () => {
-  // Enkel mobil-detektion baserat på userAgent
+  // Simple mobile detection based on userAgent
   const isMobile = /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ const PhotoToQuizPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
+      setFileError({ message: t('photoToQuiz.fileError', { message: t('photoToQuiz.onlyPngJpg') }) });
       setSelectedFile(null);
       return;
     }
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
+      setFileError({ message: t('photoToQuiz.fileError', { message: t('photoToQuiz.max5mb') }) });
       setSelectedFile(null);
       return;
     }
@@ -43,18 +43,18 @@ const PhotoToQuizPage: React.FC = () => {
     setSelectedFile(file);
   };
 
-  // Hantera kamera-bild
+  // Handle camera image
   const handleCameraChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setFileError({ message: t('photoToQuiz.fileError', { message: 'Endast PNG eller JPG/JPEG är tillåtna.' }) });
+      setFileError({ message: t('photoToQuiz.fileError', { message: t('photoToQuiz.onlyPngJpg') }) });
       setCameraPreview(null);
       setShowCameraConfirm(false);
       return;
     }
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      setFileError({ message: t('photoToQuiz.fileError', { message: 'Filen får max vara 5 MB.' }) });
+      setFileError({ message: t('photoToQuiz.fileError', { message: t('photoToQuiz.max5mb') }) });
       setCameraPreview(null);
       setShowCameraConfirm(false);
       return;
@@ -90,7 +90,7 @@ const PhotoToQuizPage: React.FC = () => {
         setOcrText(text);
       }
     } catch (err: any) {
-      setApiError('Tekniskt fel vid kontakt med servern.');
+      setApiError(t('photoToQuiz.technicalError'));
     } finally {
       setLoading(false);
     }
@@ -128,7 +128,7 @@ const PhotoToQuizPage: React.FC = () => {
         setOcrText(text);
       }
     } catch (err: any) {
-      setApiError('Tekniskt fel vid kontakt med servern.');
+      setApiError(t('photoToQuiz.technicalError'));
     } finally {
       setLoading(false);
     }
@@ -150,7 +150,7 @@ const PhotoToQuizPage: React.FC = () => {
         <Typography className="mb-4 text-center">
           {t('photoToQuiz.instructions')}
         </Typography>
-        {/* Mobil: Ta foto med kamera */}
+        // Mobile: Take photo with camera
         <input
           ref={cameraInputRef}
           type="file"
@@ -171,7 +171,7 @@ const PhotoToQuizPage: React.FC = () => {
           </Button>
         )}
 
-        {/* Kamera-bekräftelse-dialog */}
+        // Camera confirmation dialog
         <Dialog open={showCameraConfirm} onClose={handleCameraRetake} fullWidth maxWidth="xs">
           <Box className="flex flex-col items-center p-4">
             {cameraPreview && (
@@ -185,13 +185,13 @@ const PhotoToQuizPage: React.FC = () => {
                 {t('photoToQuiz.useTextForQuiz')}
               </Button>
               <Button onClick={handleCameraRetake} color="secondary" variant="outlined" fullWidth>
-                {t('photoToQuiz.retake') || 'Ta om'}
+                {t('photoToQuiz.retake')}
               </Button>
             </Box>
           </Box>
         </Dialog>
 
-        {/* Desktop/mobil: Välj bild från fil */}
+        // Desktop/mobile: Select image from file
         <input
           ref={fileInputRef}
           type="file"
@@ -210,7 +210,7 @@ const PhotoToQuizPage: React.FC = () => {
         </Button>
         {selectedFile && (
           <Box className="mb-2 text-center">
-            <Typography variant="body2">Vald fil: {selectedFile.name}</Typography>
+            <Typography variant="body2">{t('photoToQuiz.selectedFile', { name: selectedFile.name })}</Typography>
           </Box>
         )}
         {fileError && (

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ListItemButton, ListItemText, Paper, Typography, CircularProgress } from "@mui/material";
+import { useTranslation } from 'react-i18next';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -12,6 +13,7 @@ interface Course {
 }
 
 export default function QuestionCourseSelectPage() {
+  const { t } = useTranslation();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,7 +24,7 @@ export default function QuestionCourseSelectPage() {
     fetch(`${API_BASE}/api/v2/courses`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject("Kunde inte hämta kurser")))
+      .then((res) => (res.ok ? res.json() : Promise.reject(t('courseList.fetchError'))))
       .then(setCourses)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -35,7 +37,7 @@ export default function QuestionCourseSelectPage() {
     <div style={{ minHeight: '100vh', background: '#fff' }}>
       <main>
         <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
-          <Typography variant="h5" mb={2}>Välj kurs</Typography>
+          <Typography variant="h5" mb={2}>{t('courseList.editTitle')}</Typography>
           <List>
             {courses.map((course) => (
               <ListItemButton

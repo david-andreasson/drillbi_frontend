@@ -17,31 +17,28 @@ import { useNavigate } from 'react-router-dom';
 
 const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const isSwedish = i18n.language === 'sv';
-  const currency = isSwedish ? 'kr' : 'USD';
+  const { t } = useTranslation();
+  const currency = t('paywall.currency');
 
   return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] px-2 py-4 sm:px-4 sm:py-10 w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
         <div className="w-full max-w-full sm:max-w-xl bg-gray-100 dark:bg-neutral-800 rounded-lg shadow-lg p-4 sm:p-8">
           <h1 className="text-2xl font-bold mb-4 text-center">
-            {isSwedish ? 'Bli medlem och lås upp fler funktioner!' : 'Become a member and unlock more features!'}
+            {t('paywall.title')}
           </h1>
           <p className="mb-6 text-center">
-            {isSwedish
-                ? 'Som betalande medlem får du tillgång till alla quizfunktioner, AI-förklaringar, obegränsat antal frågor och mycket mer. Är du lärare/utbildare? Välj Educator för att registrera flera elever till specialpris!'
-                : 'As a paying member, you get access to all quiz features, AI explanations, unlimited questions and much more. Are you a teacher/educator? Choose Educator to register multiple students at a special price!'}
+            {t('paywall.intro')}
           </p>
           <div className="flex flex-col md:flex-row gap-6 justify-center">
-            {/* Paying member */}
+            {/* Payment button only for free users */}
             <div className="flex-1 bg-white dark:bg-neutral-900 rounded shadow p-6 flex flex-col items-center">
-              <h2 className="text-lg font-semibold mb-2">{isSwedish ? 'Betalande medlem' : 'Paying member'}</h2>
-              <div className="text-3xl font-bold mb-2 text-green-600">{isSwedish ? '99 kr/mån' : '$9/month'}</div>
+              <h2 className="text-lg font-semibold mb-2">{t('paywall.payingMember')}</h2>
+              <div className="text-3xl font-bold mb-2 text-green-600">{t('paywall.price')}</div>
               <ul className="mb-4 text-left list-disc list-inside text-sm">
-                <li>{isSwedish ? 'Obegränsat antal quizfrågor' : 'Unlimited quiz questions'}</li>
-                <li>{isSwedish ? 'AI-förklaringar & smart feedback' : 'AI explanations & smart feedback'}</li>
-                <li>{isSwedish ? 'Spara och exportera quiz' : 'Save and export quizzes'}</li>
-                <li>{isSwedish ? 'Prioriterad support' : 'Priority support'}</li>
+                <li>{t('paywall.unlimitedQuestions')}</li>
+                <li>{t('paywall.aiExplanations')}</li>
+                <li>{t('paywall.saveExport')}</li>
+                <li>{t('paywall.prioritySupport')}</li>
               </ul>
               <PrimaryButton
                   className="w-full mt-auto"
@@ -58,43 +55,41 @@ const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
                       if (data && data.url) {
                         window.location.href = data.url;
                       } else {
-                        toast.error(isSwedish ? 'Kunde inte starta betalning.' : 'Could not start payment.');
+                        toast.error(t('paywall.paymentError'));
                       }
                     } catch (err) {
-                      toast.error(isSwedish ? 'Kunde inte starta betalning.' : 'Could not start payment.');
+                      toast.error(t('paywall.paymentError'));
                     }
                   }}
               >
-                {isSwedish ? 'Bli betalande medlem' : 'Become a paying member'}
+                {t('paywall.becomePayingMember')}
               </PrimaryButton>
             </div>
             {/* Educator */}
             <div className="flex-1 bg-white dark:bg-neutral-900 rounded shadow p-6 flex flex-col items-center">
-              <h2 className="text-lg font-semibold mb-2">{isSwedish ? 'Educator' : 'Educator'}</h2>
-              <div className="mb-2 font-bold text-blue-700">{isSwedish ? 'För skolor & utbildare' : 'For schools & educators'}</div>
+              <h2 className="text-lg font-semibold mb-2">{t('paywall.educator')}</h2>
+              <div className="mb-2 font-bold text-blue-700">{t('paywall.forSchools')}</div>
               <ul className="mb-4 text-left list-disc list-inside text-sm">
                 {educatorTiers.map((tier, idx) => (
                     <li key={idx}>
-                      {isSwedish
-                          ? `${tier.min}-${tier.max} användare: ${tier.priceSEK} kr/användare/mån`
-                          : `${tier.min}-${tier.max} users: $${tier.priceUSD}/user/month`}
+                      {t('paywall.educatorTier', { min: tier.min, max: tier.max, priceSEK: tier.priceSEK, priceUSD: tier.priceUSD })}
                     </li>
                 ))}
-                <li>{isSwedish ? 'Anpassade lösningar för större grupper' : 'Custom solutions for larger groups'}</li>
-                <li>{isSwedish ? 'Faktura eller kortbetalning' : 'Invoice or card payment'}</li>
+                <li>{t('paywall.customSolutions')}</li>
+                <li>{t('paywall.invoiceOrCard')}</li>
               </ul>
               <PrimaryButton className="w-full mt-auto" onClick={() => window.location.href = '/educator-contact'}>
-                {isSwedish ? 'Kontakta oss' : 'Contact us'}
+                {t('paywall.contactUs')}
               </PrimaryButton>
             </div>
           </div>
-          {/* Tillbaka-knapp längst ner */}
+          
           <div className="mt-8 flex justify-center">
             <PrimaryButton className="w-full max-w-xs" onClick={() => {
               if (onBack) onBack();
               else navigate('/');
             }}>
-              {isSwedish ? 'Tillbaka' : 'Back'}
+              {t('paywall.back')}
             </PrimaryButton>
           </div>
         </div>

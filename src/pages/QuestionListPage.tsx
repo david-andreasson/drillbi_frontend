@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { List, ListItem, ListItemText, ListItemButton, Paper, Typography, CircularProgress, Button } from "@mui/material";
+import { useTranslation } from 'react-i18next';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -11,6 +12,7 @@ interface Question {
 }
 
 export default function QuestionListPage() {
+  const { t } = useTranslation();
   const { courseId } = useParams<{ courseId: string }>();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ export default function QuestionListPage() {
     fetch(`${API_BASE}/api/v2/courses/${courseId}/questions`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
-      .then((res) => (res.ok ? res.json() : Promise.reject("Kunde inte hämta frågor")))
+      .then((res) => (res.ok ? res.json() : Promise.reject(t('editQuestion.fetchError'))))
       .then(setQuestions)
       .catch(setError)
       .finally(() => setLoading(false));
@@ -35,27 +37,27 @@ export default function QuestionListPage() {
     <div style={{ minHeight: '100vh', background: '#fff' }}>
       <main>
         <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
-          <Typography variant="h5" mb={2}>Välj fråga att redigera</Typography>
+          <Typography variant="h5" mb={2}>{t('editQuestion.selectTitle')}</Typography>
           <List>
             {questions.map((question) => (
               <ListItem key={question.id} disablePadding>
                 <ListItemButton onClick={() => {
                   try {
-                    if (!question.id) throw new Error('Missing question id');
+                    if (!question.id) throw new Error(t('editQuestion.missingId'));
                     navigate(`/questions/${question.id}/edit`);
                   } catch (err) {
-                    setError('Kunde inte navigera till redigera fråga: ' + (err as Error).message);
+                    setError(t('editQuestion.navigationError') + (err instanceof Error ? err.message : String(err)) );
                     console.error('Navigation error:', err, question);
                   }
                 }}>
                   <ListItemText
-                    primary={`Fråga ${question.questionNumber}: ${question.questionText}`}
+                    primary={t('editQuestion.questionLabel', { num: question.questionNumber, text: question.questionText })}
                   />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
-          <Button sx={{ mt: 2 }} variant="outlined" onClick={() => navigate(-1)}>Tillbaka</Button>
+          <Button sx={{ mt: 2 }} variant="outlined" onClick={() => navigate(-1)}>{t('editQuestion.back')}</Button>
         </Paper>
       </main>
     </div>

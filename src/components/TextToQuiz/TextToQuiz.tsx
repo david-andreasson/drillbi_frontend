@@ -44,7 +44,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
   const { t, i18n } = useTranslation();
 
   const [text, setText] = useState(() => {
-    // Förifyll från router state om det finns
+    // Prefill from router state if present
     if (location.state && typeof location.state === 'object' && 'text' in location.state) {
       return (location.state as any).text || '';
     }
@@ -61,7 +61,7 @@ const InnerTextToQuiz: React.FC<InnerTextToQuizProps> = ({ onReview, triggerPayw
   const [loadingUser, setLoadingUser] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
 const [isPremium, setIsPremium] = useState<boolean>(false);
-  // triggerPaywall skickas in som prop från TextToQuiz
+  // triggerPaywall is passed as a prop from TextToQuiz
 
   const [regeneratingQuestionIndex, setRegeneratingQuestionIndex] = useState<number | null>(null);
   const [regeneratingOptionsIndex, setRegeneratingOptionsIndex] = useState<number | null>(null);
@@ -118,7 +118,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
     if (count < 400) return 8;
     if (count < 450) return 9;
     if (count < 500) return 10;
-    return 10; // Max 10 frågor
+    return 10; // Max 10 questions
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
   }, [text]);
 
   const handleGenerate = async (maxQuestions?: number) => {
-    // Premiumkontroll
+    // Premium check
     if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
@@ -173,7 +173,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
       );
       setSuccess(true);
       setSuccessCourse(displayName.trim());
-      setQuestions(null, ''); // Nollställ frågelista
+      setQuestions(null, ''); // Reset question list
       setDisplayName('');
       setName('');
       setDescription('');
@@ -184,7 +184,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
   };
 
   const handleRegenerateQuestion = async (index: number) => {
-    // Premiumkontroll
+    // Premium check
     if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
@@ -194,7 +194,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
   };
 
   const handleRegenerateOptions = async (index: number) => {
-    // Premiumkontroll
+    // Premium check
     if (userRole !== 'ROLE_ADMIN' && !isPremium) {
       triggerPaywall();
       return;
@@ -213,14 +213,14 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
     if (successCourse) onReview(successCourse);
   };
 
-  if (loadingUser) return <div style={{textAlign:'center',marginTop:40}}>Laddar...</div>;
-  // Admin får alltid se hela flödet
+  if (loadingUser) return <div style={{textAlign:'center',marginTop:40}}>Loading...</div>;
+  // Admin can always see the full flow, others must be premium
   if (userRole !== 'ROLE_ADMIN' && !isPremium) {
     return (
       <div style={{maxWidth:500,margin:'40px auto',padding:24,background:'#fff',borderRadius:8,boxShadow:'0 2px 8px #0001',textAlign:'center'}}>
-        <h2>Text till quiz</h2>
-        <p>Den här funktionen kräver premium.</p>
-        <PrimaryButton onClick={triggerPaywall}>Bli premium</PrimaryButton>
+        <h2>Text to Quiz</h2>
+        <p>This feature requires premium.</p>
+        <PrimaryButton onClick={triggerPaywall}>Become premium</PrimaryButton>
       </div>
     );
   }
@@ -238,9 +238,9 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
             </PrimaryButton>
           }
         >
-          {t('textToQuiz.saveSuccess', 'Frågorna sparades!')}
+          {t('textToQuiz.saveSuccess', 'Questions saved!')}
           <br />
-          {t('textToQuiz.confirmation', 'Dina frågor har sparats till kursen')}: <span className="font-semibold">{successCourse}</span>
+          {t('textToQuiz.confirmation', 'Your questions have been saved to the course')}: <span className="font-semibold">{successCourse}</span>
         </Alert>
       </Snackbar>
       <h2 className="text-2xl font-bold mb-6 text-center">{t('textToQuiz.title')}</h2>
@@ -267,7 +267,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
             {t('textToQuiz.estimatedQuestions', { count: estimatedQuestions })}
           </div>
         )}
-        {/* Språkval */}
+        {/* Language selection */}
         <div className="mt-2">
           <LanguageSelector language={language} setLanguage={setLanguage} />
         </div>
@@ -352,7 +352,7 @@ interface TextToQuizProps {
 }
 
 const TextToQuiz: React.FC<TextToQuizProps> = ({ onReview }) => {
-  // triggerPaywall hämtas från AppContext
+  // triggerPaywall is retrieved from AppContext
   const { triggerPaywall } = useAppContext();
   return (
     <QuestionSessionProvider>

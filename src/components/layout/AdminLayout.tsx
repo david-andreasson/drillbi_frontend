@@ -16,18 +16,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNaviga
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Mappa strängar till riktiga routes
-
-
-  // Stäng sidomenyn när route ändras
+  // Close sidebar when route changes
   React.useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  // Visa overlay och blockera navigation om forceChooseGroup
+  // Show overlay and block navigation if forceChooseGroup
   const handleBlocked = () => {
-    // Visa endast toast, ingen overlay eller blockering av knappar
-    import('react-hot-toast').then(({ toast }) => toast.error('Välj ditt team först!'));
+    // Only show toast, no overlay or button blocking
+    import('react-hot-toast').then(({ toast }) => toast.error('Please select your team first!'));
   };
 
   return (

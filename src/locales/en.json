@@ -67,6 +67,10 @@
   "photoToQuiz.apiError": "{{message}}",
   "photoToQuiz.extractedText": "Extracted text",
   "photoToQuiz.useTextForQuiz": "Use this text to create questions",
+  "photoToQuiz.onlyPngJpg": "Only PNG or JPG/JPEG files are allowed.",
+  "photoToQuiz.max5mb": "The file must be at most 5 MB.",
+  "photoToQuiz.technicalError": "Technical error when contacting the server.",
+  "photoToQuiz.selectedFile": "Selected file: {{name}}",
   "photoToQuiz.retake": "Retake",
   "photoToQuiz.placeholder": "This is a future feature for creating quizzes from photos. (Premium members only).",
   "error": {
@@ -81,6 +85,8 @@
     "questionCreateFailed": "Could not create question."
   },
   "textToQuiz": {
+    "true": "TRUE",
+    "false": "FALSE",
     "selectAll": "Select all",
     "save": "Save",
     "regeneratingOptions": "Regenerating options",
@@ -130,5 +136,72 @@
     "light": "Light",
     "dark": "Dark",
     "language": "Language"
+  },
+  "adminSql": {
+    "title": "Admin SQL Interface",
+    "sqlPlaceholder": "Enter your SQL command here...",
+    "running": "Running...",
+    "runSql": "Run SQL",
+    "error": "Error",
+    "result": "Result:",
+    "commonCommands": "Common SQL Commands",
+    "listUsers": "List users",
+    "listCourses": "List courses",
+    "deleteUser": "Delete user (specify id)",
+    "deleteCourse": "Delete course (specify id)",
+    "deleteOptionsForCourseX": "Delete answer options for course X",
+    "deleteAllQuestionsForCourseX": "Delete all questions for course X",
+    "listQuestions": "List questions",
+    "deleteQuestion": "Delete question (specify id)"
+  },
+  "courseList": {
+    "editTitle": "Select course to edit",
+    "fetchError": "Could not fetch courses"
+  },
+  "editCourse": {
+    "title": "Edit course",
+    "loading": "Loading...",
+    "fetchError": "Could not fetch course",
+    "saveError": "Could not save course",
+    "saved": "Course has been saved!",
+    "name": "Name",
+    "displayName": "Display name",
+    "description": "Description",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "editCoursePlaceholder": {
+    "title": "Edit course",
+    "description": "Here you will be able to select and edit a course."
+  },
+  "editQuestion": {
+    "loading": "Loading...",
+    "fetchError": "Could not fetch question",
+    "saveError": "Could not save question",
+    "saved": "Question has been saved!"
+  },
+  "editQuestionPlaceholder": {
+    "title": "Edit question",
+    "description": "Here you will be able to select and edit a question."
+  },
+  "sidebar": {
+    "home": "Home",
+    "selectCourse": "Select course",
+    "profile": "Profile",
+    "manageContent": "Manage content",
+    "photoToQuiz": "Photo to Quiz",
+    "textToQuiz": "Text to Quiz",
+    "createQuestion": "Create question",
+    "createCourse": "Create course",
+    "editQuestion": "Edit question",
+    "editCourse": "Edit course",
+    "logout": "Log out",
+    "adminSQL": "Admin SQL",
+    "selectTeamFirst": "Select your team first!"
+  },
+  "themeToggle": {
+    "toggleAriaLabel": "Toggle dark mode",
+    "enableDark": "Enable dark mode",
+    "disableDark": "Disable dark mode"
   }
 }

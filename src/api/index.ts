@@ -24,7 +24,7 @@ api.interceptors.response.use(
             localStorage.removeItem('token');
             localStorage.setItem('session_expired', '1');
             localStorage.setItem('force_login', '1');
-            // Ingen redirect, hanteras i ProfilePage
+            // No redirect, gets handled in ProfilePage
         }
         return Promise.reject(error);
     }

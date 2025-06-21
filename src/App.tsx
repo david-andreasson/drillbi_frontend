@@ -6,27 +6,21 @@ import { UserProvider, useUser } from './contexts/UserContext';
 import { AppProvider } from './contexts/AppContext';
 import AppRoutes from './AppRoutes';
 import Login from './components/Login';
-import { Course } from './components/CourseSelection/useCourses';
+
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
-// import { getSupportedLanguage, LanguageProvider, setLanguageInStorage } from './contexts/LanguageContext'; // Kommenteras ut tills vidare
-// import { CourseProvider } from "./contexts/CourseContext"; // Kommenteras ut tills vidare
+
 
 export type ThemeType = 'light' | 'dark';
 
 const THEME_KEY = 'app_theme';
-// const LANGUAGE_KEY = 'app_language'; // Kommenteras ut tills vidare
+
 
 const getInitialTheme = (): ThemeType => {
     const savedTheme = localStorage.getItem(THEME_KEY) as ThemeType | null;
     return savedTheme || 'light';
 };
 
-/* // Kommenteras ut tills vidare
-const getInitialLanguage = (): string => {
-    const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
-    return savedLanguage || getSupportedLanguage(navigator.language);
-};
-*/
+
 
 interface AppContentProps {
     navigate: (to: string, options?: { replace?: boolean }) => void;
@@ -37,9 +31,7 @@ function AppContent({ navigate, location }: AppContentProps) {
     const { user, loading: userLoading, token: contextToken, setToken: setContextToken, logout: contextLogout } = useUser();
 
     const [themeMode, setThemeMode] = useState<ThemeType>(getInitialTheme);
-    // const [language, setLanguage] = useState<string>(getInitialLanguage); // Kommenteras ut tills vidare
-    const [course, setCourse] = useState<Course | null>(null); // Behålls om AppRoutes behöver det
-    const [isLoggingOut, setIsLoggingOut] = useState(false); // För att spåra om utloggning pågår
+    const [isLoggingOut, setIsLoggingOut] = useState(false); // To track if logout is in progress
 
     const isAuthenticated = !!contextToken && !!user;
     const isPotentiallyAuthenticated = !!contextToken;
@@ -48,11 +40,7 @@ function AppContent({ navigate, location }: AppContentProps) {
         localStorage.setItem(THEME_KEY, themeMode);
     }, [themeMode]);
 
-    /* // Kommenteras ut tills vidare
-    useEffect(() => {
-        setLanguageInStorage(language);
-    }, [language]);
-    */
+
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -66,7 +54,7 @@ function AppContent({ navigate, location }: AppContentProps) {
     useEffect(() => {
         if (!userLoading) {
             if (!isAuthenticated) {
-                // Tillåt endast inloggning och OAuth-återanrop
+                // Only allow login and OAuth callback
                 const allowedPaths = ['/login', '/login/oauth2'];
                 
                 if (!allowedPaths.some(path => 
@@ -75,7 +63,7 @@ function AppContent({ navigate, location }: AppContentProps) {
                     navigate('/login', { replace: true });
                 }
             } else if (location.pathname === '/login' || location.pathname === '/') {
-                // Efter inloggning, skicka till kursväljaren
+                // After login, redirect to course selector
                 navigate('/courses', { replace: true });
             }
         }
@@ -100,11 +88,11 @@ function AppContent({ navigate, location }: AppContentProps) {
             if (contextLogout) {
                 await contextLogout();
             }
-            setCourse(null); // Rensa kursdata vid utloggning
+
             navigate('/login', { replace: true });
         } catch (error) {
-            console.error('Fel vid utloggning:', error);
-            // Visa eventuellt ett felmeddelande för användaren här
+            console.error('Logout error:', error);
+            // Optionally show an error message to the user here
         } finally {
             setIsLoggingOut(false);
         }
@@ -138,18 +126,14 @@ function AppContent({ navigate, location }: AppContentProps) {
         return (
             <ThemeProvider theme={muiTheme}>
                 {/* <LanguageProvider language={language} setLanguage={setLanguage}> */}
-                    {/* <CourseProvider course={course} setCourse={setCourse}> */}
                         <Toaster position="bottom-right" />
                         <AppRoutes 
                             toggleTheme={toggleTheme} 
                             currentTheme={themeMode} 
                             handleLogout={handleLogout} 
-                            course={course} 
-                            setCourse={setCourse}
                             isLoggingOut={isLoggingOut}
                             user={user}
                         />
-                    {/* </CourseProvider> */}
                 {/* </LanguageProvider> */}
             </ThemeProvider>
         );
@@ -162,7 +146,7 @@ function AppContent({ navigate, location }: AppContentProps) {
     );
 }
 
-// Hjälpkomponent för att använda useNavigate och useLocation inuti Router
+// Helper component to use useNavigate and useLocation inside Router
 const AppContentWithRouter: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();

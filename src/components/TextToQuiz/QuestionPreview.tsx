@@ -41,7 +41,7 @@ const QuestionPreview: React.FC<Props> = ({
                     <div key={i}>
                         <strong>{opt.optionLabel}:</strong> {opt.optionText}
                         <span className="ml-2 text-xs text-gray-500">
-                            ({opt.isCorrect ? 'TRUE' : 'FALSE'})
+                            ({opt.isCorrect ? t('textToQuiz.true') : t('textToQuiz.false')})
                         </span>
                     </div>
                 ))}

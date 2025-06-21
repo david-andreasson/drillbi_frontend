@@ -54,12 +54,12 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
     const file = e.target.files?.[0] || null;
     const maxBytes = MAX_IMAGE_SIZE_MB * 1024 * 1024;
     if (file) {
-      console.log('Vald bildstorlek:', file.size, 'bytes. Gräns:', maxBytes, 'bytes.');
+      console.log('Selected image size:', file.size, 'bytes. Limit:', maxBytes, 'bytes.');
     }
     if (file && file.size > maxBytes) {
       setImage(null);
       setImagePreview(null);
-      setImageError('❌ Bilden är för stor. Max tillåten storlek är 5 MB.');
+      setImageError(t('questionCreate.imageTooLarge'));
       return;
     }
     setImageError(null);
@@ -75,7 +75,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
     }
   };
 
-  // Steg 3: Förbered backend-anrop
+  // Prepare backend call
   const sendQuestionToBackend = async () => {
     try {
       const formData = new FormData();
@@ -88,8 +88,6 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
       if (selectedCourse) {
         formData.append('courseName', selectedCourse);
       }
-      // Lägg till språk om det behövs
-      // formData.append('language', i18n.language);
 
       const token = localStorage.getItem('token');
       const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -99,21 +97,21 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         body: formData
       });
       if (response.status === 401 || response.status === 403) {
-        import('react-hot-toast').then(({ toast }) => toast.error(t('auth.sessionExpired', 'Du måste vara inloggad för att skapa frågor. Logga in igen!'), { duration: 5000, position: 'top-center' }));
+        import('react-hot-toast').then(({ toast }) => toast.error(t('auth.sessionExpired'), { duration: 5000, position: 'top-center' }));
         throw new Error('auth.sessionExpired');
       }
       if (!response.ok) {
         throw new Error('error.questionCreateFailed');
       }
-      // Hantera det returnerade QuestionDTO-objektet
+      // Handle the returned QuestionDTO object
       const data = await response.json();
-      // Om du vill visa uppladdad bild direkt efter sparning:
+      // Show uploaded image directly after saving if desired
       if (data.imageUrl) {
         setImagePreview(data.imageUrl);
       }
       return data;
     } catch (err: any) {
-      toast.error(t('questionCreate.apiError', 'Kunde inte spara frågan: ') + (err?.message || err));
+      toast.error(t('questionCreate.apiError') + (err?.message || err));
       throw err;
     }
   };
@@ -122,19 +120,19 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCourse) {
-      setError(t('questionCreate.selectCourse', 'Välj en kurs först.'));
+      setError(t('questionCreate.selectCourse'));
       return;
     }
     if (!questionText.trim() || options.some(opt => !opt.optionText.trim()) || correctIndex === null) {
-      setError(t('questionCreate.error', 'Fyll i alla fält och markera rätt svar.'));
+      setError(t('questionCreate.error'));
       return;
     }
     setError(null);
     try {
       const result = await sendQuestionToBackend();
       setSuccess(true);
-      toast.success(t('questionCreate.success', 'Frågan sparades!'), { duration: 3500, position: 'top-center' });
-      // Rensa formuläret när frågan sparats
+      toast.success(t('questionCreate.success'), { duration: 3500, position: 'top-center' });
+      // Reset form after question is saved
       setQuestionText('');
       setOptions([
         { optionLabel: 'A', optionText: '', isCorrect: false },
@@ -149,9 +147,9 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
       setRefreshCourses(rc => rc + 1);
     } catch (err: any) {
       if (err.message && err.message.startsWith('error.')) {
-        setError(t(err.message, 'Ett oväntat fel uppstod.'));
+        setError(t(err.message));
       } else {
-        setError(t('error.questionCreateFailed', 'Ett oväntat fel uppstod.'));
+        setError(t('error.questionCreateFailed'));
       }
     }
   }
@@ -159,33 +157,33 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   return (
     <div className="max-w-xl mx-auto p-8">
       <h2 className="text-2xl font-bold mb-4">
-        {t('questionCreate.title', 'Lägg till frågor')}
+        {t('questionCreate.title')}
       </h2>
       {success && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 text-center text-lg font-semibold">
-          {t('questionCreate.success', 'Frågan sparades!')}
-          <div className="text-green-900 text-base mt-2">{t('questionCreate.nextStep', 'Nu kan du lägga till fler frågor i kursen.')}</div>
+          {t('questionCreate.success')}
+          <div className="text-green-900 text-base mt-2">{t('questionCreate.nextStep')}</div>
         </div>
       )}
       {errorCourses && (
         <div className="text-red-500 text-sm mt-2">{t('questionCreate.coursesError', errorCourses)}</div>
       )}
       <div className="mb-4">
-        <label className="block font-semibold mb-1">{t('questionCreate.selectCourse', 'Välj kurs')}</label>
+        <label className="block font-semibold mb-1">{t('questionCreate.selectCourse')}</label>
         <select
           className="w-full border rounded px-3 py-2 bg-white"
           value={selectedCourse || ''}
           onChange={e => setSelectedCourse(e.target.value)}
           disabled={loadingCourses}
         >
-          <option value="" disabled>{t('questionCreate.selectCoursePlaceholder', 'Välj en kurs...')}</option>
+          <option value="" disabled>{t('questionCreate.selectCoursePlaceholder')}</option>
           {courses.map(c => (
             <option key={c.name} value={c.name}>{c.displayName || c.name}</option>
           ))}
         </select>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Bilduppladdning */}
+        {/* Image upload */}
         <div className="mb-4">
           <label className="block font-semibold mb-1">Bild (valfritt)</label>
           <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
@@ -197,25 +195,25 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
           )}
           <div className="w-full h-32 bg-gray-100 flex items-center justify-center text-gray-400 rounded">
             {imagePreview ? (
-              <img src={imagePreview} alt="Förhandsvisning" className="max-h-32 object-contain" />
+              <img src={imagePreview} alt="Preview" className="max-h-32 object-contain" />
             ) : (
-              <span>Ingen bild vald</span>
+              <span>{t('questionCreate.noImageSelected')}</span>
             )}
           </div>
         </div>
         <div>
-          <label className="block font-semibold mb-1">{t('questionCreate.questionText', 'Frågetext')}</label>
+          <label className="block font-semibold mb-1">{t('questionCreate.questionText')}</label>
           <textarea
             className="w-full border rounded px-3 py-2"
             value={questionText}
             onChange={e => setQuestionText(e.target.value)}
             required
             rows={3}
-            placeholder={t('questionCreate.questionTextPlaceholder', 'Skriv frågan här...')}
+            placeholder={t('questionCreate.questionTextPlaceholder')}
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">{t('questionCreate.options', 'Svarsalternativ')}</label>
+          <label className="block font-semibold mb-1">{t('questionCreate.options')}</label>
           <div className="grid grid-cols-1 gap-2">
             {options.map((opt, idx) => (
               <div key={opt.optionLabel} className="flex items-center gap-2">
@@ -223,7 +221,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
                 <input
                   type="text"
                   className="flex-1 border rounded px-3 py-2"
-                  placeholder={t('questionCreate.optionPlaceholder', `Alternativ ${opt.optionLabel}`, { label: opt.optionLabel })}
+                  placeholder={t('questionCreate.optionPlaceholder', { label: opt.optionLabel })}
                   value={opt.optionText}
                   onChange={e => handleOptionChange(idx, e.target.value)}
                   required
@@ -238,7 +236,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
                     required
                   />
                   {correctIndex === idx && (
-                    <span className="text-xs text-orange-600 ml-1 font-semibold">Rätt svar</span>
+                    <span className="text-xs text-orange-600 ml-1 font-semibold">{t('questionCreate.correctAnswer')}</span>
                   )}
                 </div>
               </div>
@@ -247,7 +245,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         </div>
         {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
         <PrimaryButton type="submit" className="w-full mt-2 bg-orange-400 hover:bg-orange-500 text-white">
-          {t('questionCreate.create', 'Lägg till fråga')}
+          {t('questionCreate.create')}
         </PrimaryButton>
       </form>
     </div>

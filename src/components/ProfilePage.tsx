@@ -18,7 +18,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
   const [backendVersion, setBackendVersion] = useState<string>("");
   const [frontendVersion, setFrontendVersion] = useState<string>("");
   useEffect(() => {
-    // Dynamisk backend-URL beroende på miljö
+    // Dynamic backend URL depending on environment
     const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     const backendUrl = isDev ? "http://localhost:8080/api/version" : "/api/version";
     fetch(backendUrl, { credentials: 'omit' })
@@ -86,7 +86,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
         </div>
         {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
           <div className="mb-4">
-            <label className="block text-base font-normal text-left text-neutral-900">{t('profile.aimodel', 'AI-modell')}</label>
+            <label className="block text-base font-normal text-left text-neutral-900">{t('profile.aimodel')}</label>
             <select
               className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 text-base font-normal focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] appearance-none"
               value={aiModel}
@@ -98,7 +98,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
           </div>
         )}
         <ProfileForm token={token} onDone={onDone} showOnly="fields" />
-        {/* --- Version info längst ner --- */}
+        {/* --- Version info at the bottom --- */}
         <div style={{ marginTop: 32, fontSize: 14, color: '#888', textAlign: 'center' }}>
           <div>Backend-version: <code>{backendVersion || "unknown"}</code></div>
           <div>Frontend-version: <code>{frontendVersion || "unknown"}</code></div>
