@@ -78,7 +78,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/api/v2/phototoquiz', {
+      const response = await fetchWithAuth('/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });
@@ -116,7 +116,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/api/v2/phototoquiz', {
+      const response = await fetchWithAuth('/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });
@@ -150,7 +150,7 @@ const PhotoToQuizPage: React.FC = () => {
         <Typography className="mb-4 text-center">
           {t('photoToQuiz.instructions')}
         </Typography>
-        // Mobile: Take photo with camera
+        
         <input
           ref={cameraInputRef}
           type="file"
@@ -171,7 +171,7 @@ const PhotoToQuizPage: React.FC = () => {
           </Button>
         )}
 
-        // Camera confirmation dialog
+        
         <Dialog open={showCameraConfirm} onClose={handleCameraRetake} fullWidth maxWidth="xs">
           <Box className="flex flex-col items-center p-4">
             {cameraPreview && (
@@ -191,7 +191,7 @@ const PhotoToQuizPage: React.FC = () => {
           </Box>
         </Dialog>
 
-        // Desktop/mobile: Select image from file
+        
         <input
           ref={fileInputRef}
           type="file"
