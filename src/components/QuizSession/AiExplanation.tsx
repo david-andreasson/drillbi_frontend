@@ -37,9 +37,9 @@ const AiExplanation: React.FC<Props> = ({
             }}
             disabled={disabled || aiState === 'preparing'}
             title={
-              !submitted || isCorrect ? 'Du måste svara fel först' :
-              disabled ? 'Endast för premium' :
-              aiState === 'preparing' ? 'Vänta på AI...' : ''
+              !submitted || isCorrect ? 'You must answer incorrectly first' :
+              disabled ? 'Premium only' :
+              aiState === 'preparing' ? 'Waiting for AI...' : ''
             }
         >
           {aiState === 'preparing' ? (

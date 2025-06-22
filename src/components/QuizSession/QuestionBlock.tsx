@@ -53,9 +53,9 @@ const QuestionBlock: React.FC<Props> = ({
                                 ? question.imageUrl
                                 : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${question.imageUrl}`
                         }
-                        alt="Frågebild"
+                        alt="Question image"
                         className="mb-4 object-contain rounded shadow cursor-pointer"
-                        title="Klicka för att zooma bilden"
+                        title="Click to zoom the image"
                         style={{
                             marginLeft: 'auto',
                             marginRight: 'auto',
@@ -82,7 +82,7 @@ const QuestionBlock: React.FC<Props> = ({
                             }}
                         >
                             <button
-                                aria-label="Stäng"
+                                aria-label="Close"
                                 onClick={e => { e.stopPropagation(); setShowModal(false); }}
                                 style={{
                                     position: 'absolute',
@@ -102,7 +102,7 @@ const QuestionBlock: React.FC<Props> = ({
                                         ? question.imageUrl
                                         : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${question.imageUrl}`
                                 }
-                                alt="Frågebild"
+                                alt="Question image"
                                 style={{ maxWidth: 640, maxHeight: 640, borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.5)' }}
                                 onClick={e => { e.stopPropagation(); setShowModal(false); }}
                             />

@@ -18,10 +18,10 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Enkel validering
+  // Simple validation
   const validate = () => {
     if (!name.trim() || !displayName.trim() || !description.trim()) {
-      setError(t('courseCreate.error', 'Alla fält måste vara ifyllda.'));
+      setError(t('courseCreate.allFieldsRequired'));
       return false;
     }
     setError(null);
@@ -50,7 +50,7 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
         let errorMsg = 'courseCreate.errorUnknown';
         try {
           const text = await res.text();
-          // Om backend returnerar en felnyckel, använd den direkt
+          // If backend returns an error key, use it directly
           if (text && text.startsWith('error.')) {
             errorMsg = text.trim();
           }
@@ -59,13 +59,13 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
       }
       setSuccess(true);
       if (onCreated) onCreated({ name, displayName, description });
-      // Behåll värdena ifall användaren vill lägga till frågor direkt
+      // Keep values if user wants to add questions directly
     } catch (err: any) {
-      // Om error är en backend-felnyckel, översätt via t()
+      // If error is a backend error key, translate via t()
       if (err.message && err.message.startsWith('error.')) {
         setError(t(err.message));
       } else {
-        setError(t('courseCreate.errorUnknown', 'Ett oväntat fel uppstod.'));
+        setError(t('courseCreate.errorUnknown'));
       }
     } finally {
       setLoading(false);
@@ -74,49 +74,49 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
 
   return (
     <div className="max-w-xl w-[28rem] mx-auto bg-white p-8 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">{t('courseCreate.title', 'Skapa ny kurs')}</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('courseCreate.title')}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-semibold mb-1">{t('courseCreate.courseNameLabel', 'Kursnamn (unikt id)')}</label>
+          <label className="block font-semibold mb-1">{t('courseCreate.courseNameLabel')}</label>
           <input
             type="text"
             className="w-full border rounded px-3 py-2"
             value={name}
             onChange={e => setName(e.target.value)}
             required
-            placeholder={t('courseCreate.courseNamePlaceholder', 't.ex. matte1a')}
+            placeholder={t('courseCreate.courseNamePlaceholder')}
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">{t('courseCreate.displayNameLabel', 'Visningsnamn')}</label>
+          <label className="block font-semibold mb-1">{t('courseCreate.displayNameLabel')}</label>
           <input
             type="text"
             className="w-full border rounded px-3 py-2"
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
             required
-            placeholder={t('courseCreate.displayNamePlaceholder', 'Matematik 1a')}
+            placeholder={t('courseCreate.displayNamePlaceholder')}
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">{t('courseCreate.descriptionLabel', 'Beskrivning')}</label>
+          <label className="block font-semibold mb-1">{t('courseCreate.descriptionLabel')}</label>
           <textarea
             className="w-full border rounded px-3 py-2"
             value={description}
             onChange={e => setDescription(e.target.value)}
             required
-            placeholder={t('courseCreate.descriptionPlaceholder', 'Kort beskrivning av kursen')}
+            placeholder={t('courseCreate.descriptionPlaceholder')}
           />
         </div>
         {error && <div className="text-red-500">{t('courseCreate.error', error)}</div>}
         {success && (
           <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded mb-2 text-center text-lg font-semibold">
-            <div>{t('courseCreate.success', 'Kursen skapades!')}</div>
-            <div className="text-green-700 text-base mt-1">Nu kan du lägga till frågor i kursen.</div>
+            <div>{t('courseCreate.success')}</div>
+            <div className="text-green-700 text-base mt-1">{t('courseCreate.addQuestionsInfo')}</div>
           </div>
         )}
         <PrimaryButton type="submit" className="w-full" disabled={loading}>
-          {loading ? t('courseCreate.saving', 'Sparar...') : t('courseCreate.create', 'Skapa kurs')}
+          {loading ? t('courseCreate.saving') : t('courseCreate.create')}
         </PrimaryButton>
         {onCancel && (
           <button
@@ -124,7 +124,7 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
             className="w-full mt-2 text-sm underline text-gray-700 dark:text-gray-200"
             onClick={onCancel}
           >
-            {t('courseCreate.cancel', 'Avbryt')}
+            {t('courseCreate.cancel')}
           </button>
         )}
         {success && onAddQuestions && (
@@ -133,7 +133,7 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
             className="w-full mt-4 bg-orange-400 hover:bg-orange-500 text-white"
             onClick={() => onAddQuestions({ name, displayName, description })}
           >
-            {t('courseCreate.addQuestions', 'Lägg till frågor i kursen')}
+            {t('courseCreate.addQuestions')}
           </PrimaryButton>
         )}
       </form>

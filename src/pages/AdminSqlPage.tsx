@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 const AdminSqlPage = () => {
   const [sql, setSql] = useState("");
@@ -12,9 +13,9 @@ const AdminSqlPage = () => {
     setError(null);
     setResult(null);
     try {
-      // Fallback: Skicka till backend-porten direkt i dev-läge, annars använd proxy-path
+      // Fallback: Send directly to backend port in dev mode, otherwise use proxy path
       const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-      const backendPort = 8080; // Ändra om din backend kör på annan port
+      const backendPort = 8080; // Change if your backend runs on another port
       const apiBase = isDev ? `http://localhost:${backendPort}` : "";
       const token = localStorage.getItem('token');
       const headers: Record<string, string> = {
@@ -47,9 +48,10 @@ const AdminSqlPage = () => {
     }
   };
 
+  const { t } = useTranslation();
   return (
     <div style={{ maxWidth: 700, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #0001" }}>
-      <h2>Admin SQL-gränssnitt</h2>
+      <h2>{t('adminSql.title')}</h2>
 
       <form onSubmit={handleSubmit}>
         <textarea
@@ -57,46 +59,62 @@ const AdminSqlPage = () => {
           onChange={e => setSql(e.target.value)}
           rows={6}
           style={{ width: "100%", fontFamily: "monospace", marginBottom: 12 }}
-          placeholder="Skriv ditt SQL-kommando här..."
+          placeholder={t('adminSql.sqlPlaceholder')}
         />
         <button type="submit" disabled={loading || !sql.trim()} style={{ padding: "8px 24px" }}>
-          {loading ? "Kör..." : "Kör SQL"}
+          {loading ? t('adminSql.running') : t('adminSql.runSql')}
         </button>
       </form>
-      {error && <div style={{ color: "red", marginTop: 16 }}>Fel: {String(error)}</div>}
+      {error && <div style={{ color: "red", marginTop: 16 }}>{t('adminSql.error')}: {String(error)}</div>}
       {result && (
         <div style={{ marginTop: 24 }}>
-          <h4>Resultat:</h4>
+          <h4>{t('adminSql.result')}</h4>
           <pre style={{ background: "#f4f4f4", padding: 12, borderRadius: 4, overflowX: "auto" }}>
             {typeof result === "object" ? JSON.stringify(result, null, 2) : String(result)}
           </pre>
         </div>
       )}
       <div style={{ marginTop: 32, background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: 6, padding: 16 }}>
-        <h4 style={{ marginBottom: 10 }}>Vanliga SQL-kommandon</h4>
+        <h4 style={{ marginBottom: 10 }}>{t('adminSql.commonCommands')}</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div>
-            <b>Lista användare</b>
+            <b>{t('adminSql.listUsers')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM users;</pre>
           </div>
           <div>
-            <b>Lista kurser</b>
+            <b>{t('adminSql.listCourses')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM course;</pre>
           </div>
           <div>
-            <b>Ta bort användare (ange id)</b>
+            <b>{t('adminSql.deleteUser')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM users WHERE id = 1;</pre>
           </div>
           <div>
-            <b>Ta bort kurs (ange id)</b>
+            <b>{t('adminSql.deleteCourse')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM course WHERE id = 1;</pre>
           </div>
           <div>
-            <b>Lista frågor</b>
+            <b>{t('adminSql.deleteOptionsForCourseX')}</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question_option
+WHERE question_id IN 
+(
+  SELECT id
+  FROM question
+  WHERE course_id = X
+);
+</pre>
+          </div>
+          <div>
+            <b>{t('adminSql.deleteAllQuestionsForCourseX')}</b>
+            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question
+WHERE course_id = X;</pre>
+          </div>
+          <div>
+            <b>{t('adminSql.listQuestions')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM question;</pre>
           </div>
           <div>
-            <b>Ta bort fråga (ange id)</b>
+            <b>{t('adminSql.deleteQuestion')}</b>
             <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question WHERE id = 1;</pre>
           </div>
         </div>

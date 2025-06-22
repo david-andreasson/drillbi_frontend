@@ -1,27 +1,30 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+
 const OAuth2RedirectHandler: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Läs ut token från URL:en
+        // Parse token from URL
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
 
         if (token) {
             localStorage.setItem('token', token);
-            // Ta bort token ur URL:en och navigera till startsidan
+            // Remove token from URL and navigate to home
             navigate('/', { replace: true });
         } else {
-            // Om ingen token, visa felmeddelande eller skicka till login
+            // If no token, show error or redirect to login
             navigate('/login', { replace: true });
         }
     }, [navigate]);
 
+    const { t } = useTranslation();
     return (
         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <h2>Bearbetar inloggning...</h2>
+            <h2>{t('oauth2Redirect.processing')}</h2>
         </div>
     );
 };

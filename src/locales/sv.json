@@ -57,7 +57,7 @@
     "instruction": "Klicka på ditt team för att fortsätta",
     "noPermission": "Du har inte behörighet att visa denna sida"
   },
-  "createOwnQuiz": "Skapa eget quiz",
+
   "photoToQuiz.title": "Foto till Quiz",
   "photoToQuiz.instructions": "Ladda upp en bild att extrahera text från. Endast PNG/JPG, max 5 MB.",
   "photoToQuiz.chooseImage": "Välj bild",
@@ -68,6 +68,10 @@
   "photoToQuiz.apiError": "{{message}}",
   "photoToQuiz.extractedText": "Extraherad text",
   "photoToQuiz.useTextForQuiz": "Använd denna text för att skapa frågor",
+  "photoToQuiz.onlyPngJpg": "Endast PNG eller JPG/JPEG är tillåtna.",
+  "photoToQuiz.max5mb": "Filen får max vara 5 MB.",
+  "photoToQuiz.technicalError": "Tekniskt fel vid kontakt med servern.",
+  "photoToQuiz.selectedFile": "Vald fil: {{name}}",
   "photoToQuiz.retake": "Ta om",
   "photoToQuiz.placeholder": "Här kommer en framtida funktion för att skapa quiz från foto. (Endast tillgänglig för premium-medlemmar).",
   "error": {
@@ -82,6 +86,8 @@
     "questionCreateFailed": "Kunde inte skapa frågan."
   },
   "textToQuiz": {
+    "true": "RÄTT",
+    "false": "FEL",
     "selectAll": "Markera alla",
     "save": "Spara",
     "regeneratingOptions": "Genererar nya svar",
@@ -140,12 +146,78 @@
   "paywall": {
     "back": "Tillbaka"
   },
-  "photoToQuiz": "Foto till Quiz",
   "settings": {
     "title": "Inställningar",
     "theme": "Tema",
     "light": "Ljust",
     "dark": "Mörkt",
     "language": "Språk"
+  },
+  "adminSql": {
+    "title": "Admin SQL-gränssnitt",
+    "sqlPlaceholder": "Skriv ditt SQL-kommando här...",
+    "running": "Kör...",
+    "runSql": "Kör SQL",
+    "error": "Fel",
+    "result": "Resultat:",
+    "commonCommands": "Vanliga SQL-kommandon",
+    "listUsers": "Lista användare",
+    "listCourses": "Lista kurser",
+    "deleteUser": "Ta bort användare (ange id)",
+    "deleteCourse": "Ta bort kurs (ange id)",
+    "deleteOptionsForCourseX": "Ta bort svarsalternativ för kurs X",
+    "deleteAllQuestionsForCourseX": "Ta bort alla frågor för kurs X",
+    "listQuestions": "Lista frågor",
+    "deleteQuestion": "Ta bort fråga (ange id)"
+  },
+  "courseList": {
+    "editTitle": "Välj kurs att redigera",
+    "fetchError": "Kunde inte hämta kurser"
+  },
+  "editCourse": {
+    "title": "Redigera kurs",
+    "loading": "Laddar...",
+    "fetchError": "Kunde inte hämta kurs",
+    "saveError": "Kunde inte spara kurs",
+    "saved": "Kursen har sparats!",
+    "name": "Namn",
+    "displayName": "Visningsnamn",
+    "description": "Beskrivning",
+    "save": "Spara",
+    "cancel": "Avbryt"
+  },
+  "editCoursePlaceholder": {
+    "title": "Redigera kurs",
+    "description": "Här kommer du kunna välja och redigera en kurs."
+  },
+  "editQuestion": {
+    "loading": "Laddar...",
+    "fetchError": "Kunde inte hämta fråga",
+    "saveError": "Kunde inte spara fråga",
+    "saved": "Frågan har sparats!"
+  },
+  "editQuestionPlaceholder": {
+    "title": "Redigera fråga",
+    "description": "Här kommer du kunna välja och redigera en fråga."
+  },
+  "sidebar": {
+    "home": "Hem",
+    "selectCourse": "Välj kurs",
+    "profile": "Profil",
+    "manageContent": "Hantera innehåll",
+    "photoToQuiz": "Foto till Quiz",
+    "textToQuiz": "Text till Quiz",
+    "createQuestion": "Skapa fråga",
+    "createCourse": "Skapa kurs",
+    "editQuestion": "Redigera fråga",
+    "editCourse": "Redigera kurs",
+    "logout": "Logga ut",
+    "adminSQL": "Admin SQL",
+    "selectTeamFirst": "Välj ditt team först!"
+  },
+  "themeToggle": {
+    "toggleAriaLabel": "Växla mörkt läge",
+    "enableDark": "Aktivera mörkt läge",
+    "disableDark": "Inaktivera mörkt läge"
   }
 }

@@ -34,7 +34,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     onDone,
     onSessionId
 }) => {
-    const { triggerPaywall } = useAppContext(); // Hämta triggerPaywall från context
+    const { triggerPaywall } = useAppContext(); // Get triggerPaywall from context
     const navigate = useNavigate();
     const [error, setError] = React.useState<string | null>(null);
     const { t, i18n } = useTranslation();
@@ -63,7 +63,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         setError,
     });
 
-    // Premiumstatus (robust mot olika property-namn)
+    // Premium status (robust against different property names)
     const premiumRaw = (loggedInUser && (
         (loggedInUser as any).IS_PREMIUM ??
         (loggedInUser as any).isPremium ??
@@ -83,8 +83,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         );
     }
 
-
-    // Spara sessionId i localStorage när det ändras och är nytt
+    // Save sessionId in localStorage when it changes and is new
     React.useEffect(() => {
         if (sessionId && onSessionId) {
             onSessionId(sessionId);
@@ -94,18 +93,17 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     const { courses } = useCourses();
     const selectedCourse = courses.find(c => c.name === courseName);
 
-    // Anropa onDone när quizet är klart
+    // Call onDone when the quiz is finished
     const handleQuizFinish = () => {
         if (onDone) onDone();
     };
 
-
     if (error || sessionError) {
         return (
             <div className="w-full max-w-3xl mx-auto px-4 py-6 text-red-600 dark:text-red-400">
-                <h2 className="text-2xl font-semibold mb-4">Ett fel uppstod</h2>
+                <h2 className="text-2xl font-semibold mb-4">An error occurred</h2>
                 <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{error || sessionError}</pre>
-                <button className="mt-6 px-4 py-2 bg-gray-200 rounded" onClick={() => window.location.reload()}>Ladda om sidan</button>
+                <button className="mt-6 px-4 py-2 bg-gray-200 rounded" onClick={() => window.location.reload()}>Reload the page</button>
             </div>
         );
     }
@@ -137,7 +135,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                 }
               }
             `}</style>
-            {/* Kursnamn och ordning centrerat och på separata rader */}
+            {/* Course name and order centered and on separate lines */}
             <div className="w-full max-w-2xl mb-3 md:mb-6">
                 <div className="flex flex-col items-center gap-1 mb-2 quiz-mobile-gap">
                     <h2 className="text-2xl font-bold text-center">{selectedCourse?.displayName || courseName}</h2>
@@ -153,7 +151,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     </span>
                 </div>
             </div>
-             {/* Mellanrum mellan kursnamn och ordning */}
+             {/* Gap between course name and order */}
             <div className="quiz-mobile-gap-area" />
             {question && (
                 <QuestionBlock
@@ -178,7 +176,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                     </div>
                 )}
 
-                {/* Endast visa AI-förklaring om svaret är felaktigt och inskickat */}
+                {/* Only show AI explanation if the answer is incorrect and submitted */}
                 {submitted && isCorrect === false && (
                     <AiExplanation
                         submitted={submitted}
@@ -199,8 +197,8 @@ const QuizSession: React.FC<QuizSessionProps> = ({
                           if (question && sessionId) {
                             handleAiExplanation(
                               sessionId,
-                              question, // Skicka hela frågeobjektet
-                              selectedOption, // Skicka det valda alternativet
+                              question, // Send the entire question object
+                              selectedOption, // Send the selected option
                               courseName,
                               i18n.language as 'sv' | 'en'
                             );

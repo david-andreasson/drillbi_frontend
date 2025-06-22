@@ -13,8 +13,7 @@ import CourseCreatePage from './components/CourseCreatePage';
 import QuestionCreatePage from './components/QuestionCreatePage';
 import EditCoursePage from './pages/EditCoursePage';
 import EditQuestionPage from './pages/EditQuestionPage';
-import EditCoursePlaceholder from './pages/EditCoursePlaceholder';
-import EditQuestionPlaceholder from './pages/EditQuestionPlaceholder';
+
 import CourseListPage from './pages/CourseListPage';
 import QuestionCourseSelectPage from './pages/QuestionCourseSelectPage';
 import QuestionListPage from './pages/QuestionListPage';
@@ -32,8 +31,6 @@ interface AppRoutesProps {
   toggleTheme: () => void;
   currentTheme: 'light' | 'dark';
   handleLogout: () => void;
-  course: any;
-  setCourse: (course: any) => void;
   isLoggingOut: boolean;
   user?: any;
 
@@ -46,8 +43,6 @@ const AppRoutes = ({
   toggleTheme,
   currentTheme,
   handleLogout,
-  course,
-  setCourse,
   isLoggingOut,
   user,
   setContinueQuiz = () => {},

@@ -16,7 +16,7 @@ interface ProfileFormProps {
 import { useLocation } from "react-router-dom";
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) => {
-  // Alla hooks först!
+  // All hooks first!
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const paymentSuccess = params.get("success");
@@ -37,8 +37,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const { t, i18n } = useTranslation();
-  // Fallback to Swedish
-  const getLabel = (key: string, fallback: string) => t(key, { defaultValue: fallback });
+  // Fallback to translation
+  const getLabel = (key: string, fallback: string) => t(key);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -86,8 +86,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
         }
       );
       setSuccess(true);
-      toast.success(getLabel('profile.updated', 'Profilen har uppdaterats!'));
-      // Stanna kvar på profilsidan, ingen redirect
+      toast.success(t('profile.updated'));
+      // Stay on profile page, no redirect
 
     } catch (err: any) {
       let errorMsg = "Failed to save profile.";
@@ -103,21 +103,21 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
         errorMsg = err.message;
       }
       setError(errorMsg);
-      // Logga allt till konsolen för felsökning
+      // Log everything to the console for debugging
       console.error("[ProfileForm] Error saving profile:", err);
     } finally {
       setSaving(false);
     }
   };
 
-  // Loading/error/empty states EFTER hooks!
+  // Loading/error/empty states AFTER hooks!
   if (loading) return <div>Loading profile...</div>;
 
 
   if (showOnly === 'status') {
     return (
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
-        <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.statusTitle', 'Din medlemsstatus:')}</label>
+        <label className="block text-base font-normal text-left text-neutral-900">{t('profile.statusTitle')}</label>
         <div
           className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
           onClick={() => {
@@ -127,16 +127,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           }}
         >
           {profile.role === 'ROLE_ADMIN' ? (
-            <span>{getLabel('profile.statusAdmin', 'Admin')}</span>
+            <span>{t('profile.statusAdmin')}</span>
           ) : profile.role === 'ROLE_EDUCATOR' ? (
-            <span>{getLabel('profile.statusEducator', 'Undervisande personal')}</span>
+            <span>{t('profile.statusEducator')}</span>
           ) : isPremium ? (
-            <span>{getLabel('profile.statusPremium', 'Premium-användare')}</span>
+            <span>{t('profile.statusPremium')}</span>
           ) : (
-            <span>{getLabel('profile.statusFree', 'Gratisanvändare')}</span>
+            <span>{t('profile.statusFree')}</span>
           )}
         </div>
-        {/* Betalningsknapp endast för gratisanvändare */}
+        {/* Payment button only for free users */}
         {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
           <PrimaryButton
             type="button"
@@ -147,14 +147,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
                 if (res.data && res.data.url) {
                   window.location.href = res.data.url;
                 } else {
-                  toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                  toast.error(t('profile.paymentError'));
                 }
               } catch {
-                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                toast.error(t('profile.paymentError'));
               }
             }}
           >
-            {getLabel('profile.upgrade', 'Uppgradera till Premium')}
+            {t('profile.upgrade')}
           </PrimaryButton>
         )}
       </div>
@@ -163,12 +163,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   if (showOnly === 'fields') {
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-        {error && !(error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
-  <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>
+        {error && !(error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
+  <div style={{ color: "red" }}>{t('profile.saveError')}</div>
 )}
-        {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
+        {success && <div style={{ color: "green" }}>{t('profile.updated')}</div>}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.username', 'Användarnamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.username')}</label>
           <TextInput
             type="text"
             name="username"
@@ -178,7 +178,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.email', 'E-post')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.email')}</label>
           <TextInput
             type="email"
             className="h-[40px]"
@@ -187,12 +187,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
             onChange={handleChange}
             required
           />
-          {error && (error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+          {error && (error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
             <div style={{ color: 'red', marginTop: 4 }}>{error}</div>
           )}
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.firstName', 'Förnamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.firstName')}</label>
           <TextInput
             type="text"
             name="firstName"
@@ -202,7 +202,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.lastName', 'Efternamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.lastName')}</label>
           <TextInput
             type="text"
             name="lastName"
@@ -214,14 +214,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
         <div className="mb-4 flex items-center justify-center" style={{height:'40px'}}>
           <button type="submit" disabled={saving} style={{background:'none',border:'none',boxShadow:'none',padding:0,margin:0,height:'auto',width:'auto',lineHeight:'normal'}}>
             <span style={{border:'1px solid #bbb',borderRadius:4,padding:'2px 18px',background:'none',fontSize:'1rem',color:'inherit'}}>
-              {saving ? getLabel('profile.saving', 'Sparar...') : getLabel('profile.save', 'Spara')}
+              {saving ? t('profile.saving') : t('profile.save')}
             </span>
           </button>
         </div>
       </form>
     );
   }
-  // Default: visa allt
+  // Default: show all
   return (
     <>
       {paymentSuccess && (
@@ -234,9 +234,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           {t('profile.paymentCanceled')}
         </div>
       )}
-      {/* Medlemsstatus högst upp */}
+      {/* Membership status at the top */}
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
-        <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.statusTitle', 'Din medlemsstatus:')}</label>
+        <label className="block text-base font-normal text-left text-neutral-900">{t('profile.statusTitle')}</label>
         <div
           className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
           onClick={() => {
@@ -246,16 +246,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           }}
         >
           {profile.role === 'ROLE_ADMIN' ? (
-            <span>{getLabel('profile.statusAdmin', 'Admin')}</span>
+            <span>{t('profile.statusAdmin')}</span>
           ) : profile.role === 'ROLE_EDUCATOR' ? (
-            <span>{getLabel('profile.statusEducator', 'Undervisande personal')}</span>
+            <span>{t('profile.statusEducator')}</span>
           ) : isPremium ? (
-            <span>{getLabel('profile.statusPremium', 'Premium-användare')}</span>
+            <span>{t('profile.statusPremium')}</span>
           ) : (
-            <span>{getLabel('profile.statusFree', 'Gratisanvändare')}</span>
+            <span>{t('profile.statusFree')}</span>
           )}
         </div>
-        {/* Betalningsknapp endast för gratisanvändare */}
+        {/* Payment button only for free users */}
         {!isPremium && profile.role !== 'ROLE_EDUCATOR' && profile.role !== 'ROLE_ADMIN' && (
           <PrimaryButton
             type="button"
@@ -266,24 +266,24 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
                 if (res.data && res.data.url) {
                   window.location.href = res.data.url;
                 } else {
-                  toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                  toast.error(t('profile.paymentError'));
                 }
               } catch {
-                toast.error(getLabel('profile.paymentError', 'Kunde inte starta betalning.'));
+                toast.error(t('profile.paymentError'));
               }
             }}
           >
-            {getLabel('profile.upgrade', 'Uppgradera till Premium')}
+            {t('profile.upgrade')}
           </PrimaryButton>
         )}
       </div>
       <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-        {error && !(error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
-  <div style={{ color: "red" }}>{getLabel('profile.saveError', 'Failed to save profile.')}</div>
+        {error && !(error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
+  <div style={{ color: "red" }}>{t('profile.saveError')}</div>
 )}
-        {success && <div style={{ color: "green" }}>{getLabel('profile.updated', 'Profile updated!')}</div>}
+        {success && <div style={{ color: "green" }}>{t('profile.updated')}</div>}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.username', 'Användarnamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.username')}</label>
           <TextInput
             type="text"
             name="username"
@@ -293,7 +293,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.email', 'E-post')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.email')}</label>
           <TextInput
             type="email"
             className="h-[40px]"
@@ -302,12 +302,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
             onChange={handleChange}
             required
           />
-          {error && (error.toLowerCase().includes('e-postadressen') || error.toLowerCase().includes('email')) && (
+          {error && (error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
             <div style={{ color: 'red', marginTop: 4 }}>{error}</div>
           )}
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.firstName', 'Förnamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.firstName')}</label>
           <TextInput
             type="text"
             name="firstName"
@@ -317,7 +317,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{getLabel('profile.lastName', 'Efternamn')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.lastName')}</label>
           <TextInput
             type="text"
             name="lastName"
@@ -329,7 +329,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
         <div className="mb-4 flex items-center justify-center" style={{height:'40px'}}>
           <button type="submit" disabled={saving} style={{background:'none',border:'none',boxShadow:'none',padding:0,margin:0,height:'auto',width:'auto',lineHeight:'normal'}}>
             <span style={{border:'1px solid #bbb',borderRadius:4,padding:'2px 18px',background:'none',fontSize:'1rem',color:'inherit'}}>
-              {saving ? getLabel('profile.saving', 'Sparar...') : getLabel('profile.save', 'Spara')}
+              {saving ? t('profile.saving') : t('profile.save')}
             </span>
           </button>
         </div>

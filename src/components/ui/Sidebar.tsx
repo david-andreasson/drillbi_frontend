@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate, forceChooseGroup = false }) => {
     const navigate = useNavigate();
     const [contentMenuOpen, setContentMenuOpen] = useState(false);
-    // Hjälpfunktion för premiumkontroll
+    // Helper function for premium check
     const isPremiumAllowed = userRole === 'ROLE_ADMIN' || userRole === 'ROLE_EDUCATOR';
     const handlePremiumClick = (destination: string) => {
         if (!isPremiumAllowed) {
@@ -33,52 +33,52 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
     }
     const { t } = useTranslation();
     const handleBlocked = () => {
-        import('react-hot-toast').then(({ toast }) => toast.error('Välj ditt team först!'));
+        import('react-hot-toast').then(({ toast }) => toast.error(t('sidebar.selectTeamFirst')));
     };
 
-    // Refs för att spåra interaktioner
+    // Refs to track interactions
     const menuRef = React.useRef<HTMLDivElement>(null);
     const lastInteractionTime = React.useRef<number>(Date.now());
     const closeTimer = React.useRef<number | null>(null);
     const interactionCheckInterval = React.useRef<number | null>(null);
 
-    // Nollställ tiden för senaste interaktionen
+    // Reset the time for the last interaction
     const handleInteraction = React.useCallback(() => {
         lastInteractionTime.current = Date.now();
     }, []);
 
-    // Starta eller återställ tiden för autostängning
+    // Start or reset the auto-close timer
     const startCloseTimer = React.useCallback(() => {
-        // Rensa eventuell befintlig timer
+        // Clear any existing timer
         if (closeTimer.current) {
             window.clearTimeout(closeTimer.current);
         }
         
-        // Sätt en ny timer för autostängning
+        // Set a new timer for auto-close
         closeTimer.current = window.setTimeout(() => {
             onClose();
-        }, 5000); // 5 sekunder inaktivitet
+        }, 5000); // 5 seconds of inactivity
     }, [onClose]);
 
-    // Hantera musövergång in i menyn
+    // Handle mouse enter into menu
     const handleMouseEnter = React.useCallback(() => {
-        // Rensa eventuell timer när musen är i menyn
+        // Clear timer when mouse is in menu
         if (closeTimer.current) {
             window.clearTimeout(closeTimer.current);
             closeTimer.current = null;
         }
     }, []);
 
-    // Hantera musövergång ut ur menyn
+    // Handle mouse leave from menu
     const handleMouseLeave = React.useCallback(() => {
-        // Starta timern när musen lämnar menyn
+        // Start timer when mouse leaves menu
         startCloseTimer();
     }, [startCloseTimer]);
 
-    // Effekt för att hantera menyns öppnade/stängda tillstånd
+    // Effect to handle menu open/close state
     React.useEffect(() => {
         if (!isOpen) {
-            // Rensa alla timers när menyn stängs
+            // Clear all timers when menu closes
             if (closeTimer.current) {
                 window.clearTimeout(closeTimer.current);
                 closeTimer.current = null;
@@ -90,10 +90,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
             return;
         }
 
-        // Starta initial timer när menyn öppnas
+        // Start initial timer when menu opens
         startCloseTimer();
 
-        // Sätt upp event listeners för interaktioner
+        // Set up event listeners for interactions
         const menu = menuRef.current;
         if (menu) {
             menu.addEventListener('mousemove', handleInteraction);
@@ -105,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
             menu.addEventListener('mouseleave', handleMouseLeave);
         }
 
-        // Rensa upp vid avmontering
+        // Cleanup on unmount
         return () => {
             if (menu) {
                 menu.removeEventListener('mousemove', handleInteraction);
@@ -144,53 +144,53 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
 
             <nav className="flex flex-col gap-3 p-4 text-left">
                 <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('home')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                    Hem
+                    {t('sidebar.home')}
                 </button>
                 <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('courses')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                    Välj kurs
+                    {t('sidebar.selectCourse')}
                 </button>
                 <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('profile')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                    Profil
+                    {t('sidebar.profile')}
                 </button>
                 <button
                   onClick={() => setContentMenuOpen(open => !open)}
                   className="flex items-center justify-between w-full text-left font-semibold hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100 mt-2 mb-1"
                   aria-expanded={contentMenuOpen}
                 >
-                  Hantera innehåll
+                  {t('sidebar.manageContent')}
                 </button>
                 {contentMenuOpen && (
                   <div className="pl-4 pb-2">
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('phototoquiz')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                        Foto till Quiz
+                        {t('sidebar.photoToQuiz')}
                     </button>
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('texttoquiz')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
-                        Text till Quiz
+                        {t('sidebar.textToQuiz')}
                     </button>
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('questioncreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
-                        Skapa fråga
+                        {t('sidebar.createQuestion')}
                     </button>
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('coursecreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
-                        Skapa kurs
+                        {t('sidebar.createCourse')}
                     </button>
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editquestion')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
-                        Redigera fråga
+                        {t('sidebar.editQuestion')}
                     </button>
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editcourse')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
-                        Redigera kurs
+                        {t('sidebar.editCourse')}
                     </button>
                   </div>
                 )}
                 {userRole === 'ROLE_ADMIN' && (
                     <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-red-400 mt-2">
-                        Admin SQL
+                        {t('sidebar.adminSQL')}
                     </button>
                 )}
                 <button
                     onClick={forceChooseGroup ? handleBlocked : () => onNavigate('logout')}
                     className="text-left hover:underline text-neutral-900 dark:text-neutral-100 mt-2"
                 >
-                    Logga ut
+                    {t('sidebar.logout')}
                 </button>
             </nav>
         </div>

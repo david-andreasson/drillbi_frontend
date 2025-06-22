@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography, Paper, IconButton, InputAdornment, Snackbar, Alert } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
@@ -21,6 +21,7 @@ type Question = {
 export default function EditQuestionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [question, setQuestion] = useState<Question>({ questionText: "", options: [], imageUrl: "" });
   const [correctIndex, setCorrectIndex] = useState<number>(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -34,7 +35,7 @@ export default function EditQuestionPage() {
     fetch(`${API_BASE}/api/v2/questions/${id}`,
       { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     )
-      .then(res => res.ok ? res.json() : Promise.reject("Kunde inte hämta fråga"))
+      .then(res => res.ok ? res.json() : Promise.reject(t('editQuestion.fetchError')))
       .then(data => {
         setQuestion({
           questionText: data.questionText,
@@ -43,7 +44,7 @@ export default function EditQuestionPage() {
         });
         setCorrectIndex(Array.isArray(data.options) ? data.options.findIndex((opt: QuestionOption) => opt.correct) : 0);
       })
-      .catch((err: any) => setError(typeof err === 'string' ? err : String(err)))
+      .catch((err: any) => setError(typeof err === 'string' ? err : t('editQuestion.fetchError')))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -84,10 +85,10 @@ export default function EditQuestionPage() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData
       });
-      if (!res.ok) throw new Error("Kunde inte spara fråga");
+      if (!res.ok) throw new Error(t('editQuestion.saveError'));
       setSuccess(true);
-      // Visa grön toast också
-      import('react-hot-toast').then(({ toast }) => toast.success('Frågan har sparats!', { duration: 3500, position: 'top-center' }));
+      // Show green toast as well
+      import('react-hot-toast').then(({ toast }) => toast.success(t('editQuestion.saved'), { duration: 3500, position: 'top-center' }));
     } catch (err) {
       if (err instanceof Error) setError(err.message);
       else setError(String(err));
@@ -96,22 +97,22 @@ export default function EditQuestionPage() {
     }
   };
 
-  if (loading) return <Typography>Laddar...</Typography>;
+  if (loading) return <Typography>{t('editQuestion.loading')}</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <div className="min-h-screen bg-white">
       <Snackbar open={success} autoHideDuration={1500} onClose={() => setSuccess(false)} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert severity="success" sx={{ width: '100%' }}>
-          Frågan har sparats!
+          {t('editQuestion.saved')}
         </Alert>
       </Snackbar>
       <main>
         <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
-          <Typography variant="h5" mb={2}>Redigera fråga</Typography>
+          <Typography variant="h5" mb={2}>{t('editQuestion.title')}</Typography>
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
-              label="Frågetext"
+              label={t('editQuestion.questionText')}
               value={question.questionText}
               onChange={e => setQuestion({ ...question, questionText: e.target.value })}
               fullWidth
@@ -121,7 +122,7 @@ export default function EditQuestionPage() {
             {question.options.map((option, idx) => (
               <Box key={idx} display="flex" alignItems="center" mb={1}>
                 <TextField
-                  label={`Alternativ ${idx + 1}`}
+                  label={t('editQuestion.optionLabel', { num: idx + 1 })}
                   value={option.optionText}
                   onChange={e => handleOptionChange(idx, "optionText", e.target.value)}
                   fullWidth
@@ -133,12 +134,12 @@ export default function EditQuestionPage() {
                   onClick={() => setCorrectIndex(idx)}
                   sx={{ ml: 1 }}
                 >
-                  Rätt svar
+                  {t('editQuestion.correctAnswer')}
                 </Button>
               </Box>
             ))}
             <Box mt={2} mb={2}>
-              <Button variant="outlined" onClick={() => setQuestion(q => ({ ...q, options: [...q.options, { optionText: "", optionLabel: String.fromCharCode(65 + q.options.length), correct: false }] }))}>Lägg till alternativ</Button>
+              <Button variant="outlined" onClick={() => setQuestion(q => ({ ...q, options: [...q.options, { optionText: "", optionLabel: String.fromCharCode(65 + q.options.length), correct: false }] }))}>{t('editQuestion.addOption')}</Button>
             </Box>
             <Box mt={2} mb={2}>
               <Button
@@ -146,7 +147,7 @@ export default function EditQuestionPage() {
                 component="label"
                 startIcon={<PhotoCamera />}
               >
-                Ladda upp bild
+                {t('editQuestion.uploadImage')}
                 <input
                   type="file"
                   accept="image/*"
@@ -158,14 +159,14 @@ export default function EditQuestionPage() {
               {(imagePreview || question.imageUrl) && (
                 <img
                   src={imagePreview || question.imageUrl}
-                  alt="Förhandsvisning"
+                  alt={t('editQuestion.preview')}
                   style={{ maxHeight: 80, borderRadius: 6, marginLeft: 12 }}
                 />
               )}
             </Box>
             <Box mt={2} display="flex" gap={2}>
-              <Button type="submit" variant="contained">Spara</Button>
-              <Button variant="outlined" onClick={() => navigate(-1)}>Avbryt</Button>
+              <Button type="submit" variant="contained">{t('editQuestion.save')}</Button>
+              <Button variant="outlined" onClick={() => navigate(-1)}>{t('editQuestion.cancel')}</Button>
             </Box>
           </Box>
         </Paper>

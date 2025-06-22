@@ -104,7 +104,6 @@ export const QuestionSessionProvider: React.FC<{ children: React.ReactNode }> = 
     );
 });
         } catch (err) {
-            // Fel visas redan för användaren med toast.error
         }
     };
 

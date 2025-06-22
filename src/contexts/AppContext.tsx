@@ -1,22 +1,24 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface AppContextType {
   triggerPaywall: () => void;
 }
 
-// Skapa en default kontext med tom funktion
+// Create a default context with empty function
 const defaultAppContext: AppContextType = {
   triggerPaywall: () => {
-    console.warn('Ingen triggerPaywall funktion satt');
+    console.warn('No triggerPaywall function set');
   },
 };
 
 const AppContext = createContext<AppContextType>(defaultAppContext);
 
 export const useAppContext = (): AppContextType => {
+  const { t } = useTranslation();
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useAppContext måste användas inom en AppProvider');
+    throw new Error(t('context.appContext.useOutsideProvider'));
   }
   return context;
 };
@@ -26,9 +28,9 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const triggerPaywall = () => {
-    // Här kan du lägga till logik för att hantera paywall
-    console.log('Trigger paywall');
+    console.log(t('context.appContext.triggeringPaywall'));
   };
 
   const value = {

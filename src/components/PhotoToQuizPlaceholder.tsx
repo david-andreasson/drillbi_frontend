@@ -1,9 +1,12 @@
 import React from "react";
 
+import { useTranslation } from 'react-i18next';
+
 const PhotoToQuizPlaceholder: React.FC = () => {
+    const { t } = useTranslation();
     return (
         <div style={{ padding: 20, textAlign: 'center', color: '#888' }}>
-            PhotoToQuizPlaceholder komponenten saknas. Lägg till innehåll här.
+            {t('photoToQuiz.placeholder')}
         </div>
     );
 };
