@@ -101,17 +101,17 @@ export default function EditQuestionPage() {
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-neutral-900 dark:text-neutral-100">
       <Snackbar open={success} autoHideDuration={1500} onClose={() => setSuccess(false)} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert severity="success" sx={{ width: '100%' }}>
           {t('editQuestion.saved')}
         </Alert>
       </Snackbar>
       <main>
-        <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
+        <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4, backgroundColor: 'background.paper', boxShadow: 3 }} className="dark:bg-neutral-800 dark:text-neutral-100">
           <Typography variant="h5" mb={2}>{t('editQuestion.title')}</Typography>
           <Box component="form" onSubmit={handleSubmit}>
-            <TextField
+            <TextField InputLabelProps={{ style: { color: 'inherit' } }} InputProps={{ style: { color: 'inherit', backgroundColor: 'inherit' } }} className="dark:bg-neutral-800 dark:text-neutral-100"
               label={t('editQuestion.questionText')}
               value={question.questionText}
               onChange={e => setQuestion({ ...question, questionText: e.target.value })}
@@ -121,14 +121,14 @@ export default function EditQuestionPage() {
             />
             {question.options.map((option, idx) => (
               <Box key={idx} display="flex" alignItems="center" mb={1}>
-                <TextField
+                <TextField InputLabelProps={{ style: { color: 'inherit' } }} InputProps={{ style: { color: 'inherit', backgroundColor: 'inherit' } }} className="dark:bg-neutral-800 dark:text-neutral-100"
                   label={t('editQuestion.optionLabel', { num: idx + 1 })}
                   value={option.optionText}
                   onChange={e => handleOptionChange(idx, "optionText", e.target.value)}
                   fullWidth
                   required
                 />
-                <Button
+                <Button className="dark:text-neutral-100"
                   variant={correctIndex === idx ? "contained" : "outlined"}
                   color={correctIndex === idx ? "success" : "primary"}
                   onClick={() => setCorrectIndex(idx)}
@@ -139,10 +139,10 @@ export default function EditQuestionPage() {
               </Box>
             ))}
             <Box mt={2} mb={2}>
-              <Button variant="outlined" onClick={() => setQuestion(q => ({ ...q, options: [...q.options, { optionText: "", optionLabel: String.fromCharCode(65 + q.options.length), correct: false }] }))}>{t('editQuestion.addOption')}</Button>
+              <Button className="dark:text-neutral-100" variant="outlined" onClick={() => setQuestion(q => ({ ...q, options: [...q.options, { optionText: "", optionLabel: String.fromCharCode(65 + q.options.length), correct: false }] }))}>{t('editQuestion.addOption')}</Button>
             </Box>
             <Box mt={2} mb={2}>
-              <Button
+              <Button className="dark:text-neutral-100"
                 variant="contained"
                 component="label"
                 startIcon={<PhotoCamera />}
@@ -165,8 +165,8 @@ export default function EditQuestionPage() {
               )}
             </Box>
             <Box mt={2} display="flex" gap={2}>
-              <Button type="submit" variant="contained">{t('editQuestion.save')}</Button>
-              <Button variant="outlined" onClick={() => navigate(-1)}>{t('editQuestion.cancel')}</Button>
+              <Button className="dark:text-neutral-100" type="submit" variant="contained">{t('editQuestion.save')}</Button>
+              <Button className="dark:text-neutral-100" variant="outlined" onClick={() => navigate(-1)}>{t('editQuestion.cancel')}</Button>
             </Box>
           </Box>
         </Paper>
