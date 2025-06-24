@@ -73,14 +73,14 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
   };
 
   return (
-    <div className="max-w-xl w-[28rem] mx-auto bg-white p-8 rounded shadow">
+    <div className="max-w-xl w-[28rem] mx-auto bg-white dark:bg-neutral-900 p-8 rounded shadow dark:text-neutral-100">
       <h2 className="text-2xl font-bold mb-4">{t('courseCreate.title')}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-semibold mb-1">{t('courseCreate.courseNameLabel')}</label>
           <input
             type="text"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2 bg-gray-200 text-neutral-900 placeholder-gray-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400 dark:border-neutral-700"
             value={name}
             onChange={e => setName(e.target.value)}
             required
@@ -91,7 +91,7 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
           <label className="block font-semibold mb-1">{t('courseCreate.displayNameLabel')}</label>
           <input
             type="text"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2 bg-gray-200 text-neutral-900 placeholder-gray-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400 dark:border-neutral-700"
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
             required
@@ -101,18 +101,18 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
         <div>
           <label className="block font-semibold mb-1">{t('courseCreate.descriptionLabel')}</label>
           <textarea
-            className="w-full border rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2 bg-gray-200 text-neutral-900 placeholder-gray-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400 dark:border-neutral-700"
             value={description}
             onChange={e => setDescription(e.target.value)}
             required
             placeholder={t('courseCreate.descriptionPlaceholder')}
           />
         </div>
-        {error && <div className="text-red-500">{t('courseCreate.error', error)}</div>}
+        {error && <div className="text-red-500 dark:text-red-400">{t('courseCreate.error', { error })}</div>}
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded mb-2 text-center text-lg font-semibold">
+          <div className="bg-green-100 border border-green-400 text-green-800 dark:bg-green-900 dark:border-green-700 dark:text-green-200 px-4 py-3 rounded mb-2 text-center text-lg font-semibold">
             <div>{t('courseCreate.success')}</div>
-            <div className="text-green-700 text-base mt-1">{t('courseCreate.addQuestionsInfo')}</div>
+            <div className="text-green-700 dark:text-green-300 text-base mt-1">{t('courseCreate.addQuestionsInfo')}</div>
           </div>
         )}
         <PrimaryButton type="submit" className="w-full" disabled={loading}>

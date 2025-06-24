@@ -51,10 +51,10 @@ const ReviewQuestions: React.FC<ReviewQuestionsProps> = ({ courseName, onDone, o
     };
 
     if (loading) return <p className="text-center mt-8">{t('textToQuiz.loading')}</p>;
-    if (error) return <p className="text-center text-red-600 mt-8">{error}</p>;
+    if (error) return <p className="text-center text-red-600 dark:text-red-400 mt-8">{error}</p>;
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-8 text-[#4A4A48]">
+        <div className="max-w-4xl mx-auto px-4 py-8 text-[#4A4A48] dark:bg-neutral-900 dark:text-neutral-100 min-h-screen">
             <h2 className="text-2xl font-bold text-center mb-6">
                 {t('textToQuiz.reviewTitle')} – {selectedCourse ? selectedCourse.displayName : courseName}
             </h2>
@@ -67,7 +67,7 @@ const ReviewQuestions: React.FC<ReviewQuestionsProps> = ({ courseName, onDone, o
                             {q.options.map((opt, i) => (
                                 <li
                                     key={i}
-                                    className={opt.isCorrect ? 'text-green-600 font-semibold' : ''}
+                                    className={opt.isCorrect ? 'text-green-600 dark:text-green-400 font-semibold' : ''}
                                 >
                                     {opt.optionLabel}: {opt.optionText}
                                 </li>

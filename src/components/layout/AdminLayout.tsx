@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../ui/Sidebar';
 import Header from '../ui/Header';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
@@ -11,10 +11,33 @@ interface MainLayoutProps {
   setTheme: (theme: 'light' | 'dark') => void;
 }
 
+const THEME_KEY = 'app_theme';
+
 const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNavigate, forceChooseGroup = false, theme, setTheme }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Sync theme with localStorage and html root for Tailwind dark mode
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
+
+  // Provide a setTheme that updates both state and localStorage
+  const handleSetTheme = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   // Close sidebar when route changes
   React.useEffect(() => {
@@ -32,7 +55,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNaviga
       <div className="sticky top-0 left-0 right-0 z-40">
         <Header
           theme={theme}
-          setTheme={setTheme}
+          setTheme={handleSetTheme}
           onLogout={forceChooseGroup ? handleBlocked : () => _onNavigate('logout')}
           onMenuClick={forceChooseGroup ? handleBlocked : () => setSidebarOpen(true)}
         />

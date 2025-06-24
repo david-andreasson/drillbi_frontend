@@ -225,12 +225,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   return (
     <>
       {paymentSuccess && (
-        <div className="payment-success-message">
+        <div className="payment-success-message dark:text-green-400">
           {t('profile.paymentSuccess')}
         </div>
       )}
       {paymentCanceled && (
-        <div className="payment-canceled-message">
+        <div className="payment-canceled-message dark:text-red-400">
           {t('profile.paymentCanceled')}
         </div>
       )}

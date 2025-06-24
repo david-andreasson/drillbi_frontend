@@ -31,12 +31,12 @@ export default function QuestionListPage() {
   }, [courseId]);
 
   if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
+  if (error) return <Typography color="error" className="dark:text-red-400">{error}</Typography>;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff' }}>
+    <div style={{ minHeight: '100vh' }} className="bg-white dark:bg-neutral-900 dark:text-neutral-100">
       <main>
-        <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
+        <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }} className="dark:bg-neutral-800 dark:text-neutral-100">
           <Typography variant="h5" mb={2}>{t('editQuestion.selectTitle')}</Typography>
           <List>
             {questions.map((question) => (

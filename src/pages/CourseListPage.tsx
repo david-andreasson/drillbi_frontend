@@ -31,23 +31,25 @@ export default function CourseListPage() {
   }, [t]);
 
   if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
+  if (error) return <Typography color="error" className="dark:text-red-400">{error}</Typography>;
 
   return (
-    <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography variant="h5" mb={2}>{t('courseList.editTitle')}</Typography>
-      <List>
-        {courses.map((course) => (
-          <ListItem key={course.id} disablePadding>
-            <ListItemButton onClick={() => navigate(`/courses/${course.id}/edit`)}>
-              <ListItemText
-                primary={course.displayName || course.name}
-                secondary={course.description}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Paper>
+    <div className="bg-white dark:bg-neutral-900 dark:text-neutral-100 min-h-screen">
+      <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }} className="dark:bg-neutral-800 dark:text-neutral-100">
+        <Typography variant="h5" mb={2}>{t('courseList.editTitle')}</Typography>
+        <List>
+          {courses.map((course) => (
+            <ListItem key={course.id} disablePadding>
+              <ListItemButton onClick={() => navigate(`/courses/${course.id}/edit`)}>
+                <ListItemText
+                  primary={course.displayName || course.name}
+                  secondary={course.description}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+    </div>
   );
 }

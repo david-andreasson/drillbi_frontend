@@ -50,18 +50,18 @@ const AdminSqlPage = () => {
 
   const { t } = useTranslation();
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #0001" }}>
-      <h2>{t('adminSql.title')}</h2>
+    <div style={{ maxWidth: 700, margin: "40px auto", padding: 24 }} className="bg-white dark:bg-neutral-900 dark:text-neutral-100 rounded shadow">
+      <h2 className="dark:text-neutral-100">{t('adminSql.title')}</h2>
 
       <form onSubmit={handleSubmit}>
         <textarea
           value={sql}
           onChange={e => setSql(e.target.value)}
           rows={6}
-          style={{ width: "100%", fontFamily: "monospace", marginBottom: 12 }}
+          className="w-full font-mono mb-3 bg-gray-100 text-neutral-900 border border-gray-300 rounded dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 dark:placeholder-gray-400"
           placeholder={t('adminSql.sqlPlaceholder')}
         />
-        <button type="submit" disabled={loading || !sql.trim()} style={{ padding: "8px 24px" }}>
+        <button type="submit" disabled={loading || !sql.trim()} className="px-6 py-2 rounded bg-gray-200 text-neutral-900 hover:bg-gray-300 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600 transition">
           {loading ? t('adminSql.running') : t('adminSql.runSql')}
         </button>
       </form>

@@ -167,22 +167,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, userRole, onNavigate
                     <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('texttoquiz')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                         {t('sidebar.textToQuiz')}
                     </button>
-                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('questioncreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('questioncreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                         {t('sidebar.createQuestion')}
                     </button>
-                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('coursecreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('coursecreate')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                         {t('sidebar.createCourse')}
                     </button>
-                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editquestion')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-orange-600">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editquestion')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                         {t('sidebar.editQuestion')}
                     </button>
-                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editcourse')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-blue-600">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => handlePremiumClick('editcourse')} className="block w-full text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100">
                         {t('sidebar.editCourse')}
                     </button>
                   </div>
                 )}
                 {userRole === 'ROLE_ADMIN' && (
-                    <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-red-400 mt-2">
+                    <button onClick={forceChooseGroup ? handleBlocked : () => onNavigate('adminsql')} className="text-left hover:underline bg-transparent dark:bg-transparent dark:text-neutral-100 mt-2">
                         {t('sidebar.adminSQL')}
                     </button>
                 )}

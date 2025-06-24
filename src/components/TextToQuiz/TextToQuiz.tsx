@@ -226,7 +226,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
   }
 
   return (
-    <div className="relative px-4 py-6 max-w-3xl mx-auto text-[#4A4A48]">
+    <div className="relative px-4 py-6 max-w-3xl mx-auto text-[#4A4A48] dark:bg-neutral-900 dark:text-neutral-100 min-h-screen">
       <Snackbar open={success} autoHideDuration={3500} onClose={handleSuccessClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert
           onClose={handleSuccessClose}
@@ -253,7 +253,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
             setText(e.target.value);
             setEstimatedQuestions(estimateQuestions(e.target.value));
           }}
-          className="w-full mb-4 p-3 border rounded bg-gray-200 text-gray-900 placeholder-gray-700"
+          className="w-full mb-4 p-3 border rounded bg-gray-200 text-gray-900 placeholder-gray-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400"
         />
       </div>
 
@@ -314,7 +314,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
                    setDisplayName(e.target.value);
                    setName(toSlug(e.target.value));
                  }}
-                 className="p-2 border rounded"
+                 className="p-2 border rounded bg-white dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400"
                />
              </div>
             <div className="flex flex-col">
@@ -323,7 +323,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
                  placeholder={t('textToQuiz.namePlaceholder')}
                  value={name}
                  onChange={e => setName(e.target.value)}
-                 className="p-2 border rounded"
+                 className="p-2 border rounded bg-white dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400"
                />
              </div>
             <div className="flex flex-col">
@@ -332,7 +332,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
                  placeholder={t('textToQuiz.descriptionPlaceholder')}
                  value={description}
                  onChange={e => setDescription(e.target.value)}
-                 className="p-2 border rounded"
+                 className="p-2 border rounded bg-white dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400"
                />
              </div>
             <div className="flex justify-center">

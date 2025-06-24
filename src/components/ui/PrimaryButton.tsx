@@ -23,10 +23,10 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 
     return (
         <button
-            className={`px-4 py-2 text-base font-medium rounded ${
-                props.disabled 
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-gray-200 text-neutral-900 hover:bg-gray-300 transition shadow-md hover:shadow-lg cursor-pointer'
+            className={`px-4 py-2 text-base font-medium rounded transition shadow-md hover:shadow-lg cursor-pointer ${
+                props.disabled
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-neutral-700 dark:text-neutral-400'
+                    : 'bg-gray-200 text-neutral-900 hover:bg-gray-300 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600'
             } ${className}`}
             onClick={handleClick}
             {...props}
