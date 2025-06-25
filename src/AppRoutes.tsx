@@ -51,10 +51,10 @@ const AppRoutes = ({
 }: AppRoutesProps) => {
   const navigate = useNavigate();
   
-  // Inget behov av gruppkontroll längre
+  // No need for group control anymore
 
   const handleNavigate = useCallback((destination: string) => {
-    if (isLoggingOut) return; // Förhindra navigering under utloggning
+    if (isLoggingOut) return; // Prevent navigation during logout
     
     switch (destination) {
       case 'logout':
@@ -110,7 +110,7 @@ const AppRoutes = ({
           }}
         />
       }>
-        {/* Index: Hem/WelcomeScreen */}
+        {/* Index: Home/WelcomeScreen */}
         <Route index element={<WelcomeScreen firstName={user?.firstName || ''}
           onStartNew={() => navigate('/courses')}
           onCreateQuestions={() => {
@@ -124,56 +124,51 @@ const AppRoutes = ({
         />} />
         {/* Profile */}
         <Route path="profile" element={<ProfilePage onDone={() => {}} />} />
-        {/* Välj kurs (CourseSelection) */}
+        {/* Select course (CourseSelection) */}
         <Route path="courses" element={<CourseSelection onSelectCourse={(courseName: string) => navigate(`/quiz/${courseName}`)} />} />
-        {/* Skapa kurs */}
+        {/* Create course */}
         <Route path="courses/create" element={<CourseCreatePage />} />
-        {/* Redigera kurs (lista) */}
+        {/* Edit course (list) */}
         <Route path="courses/list" element={<CourseListPage />} />
-        {/* Redigera kurs (edit) */}
+        {/* Edit course (edit) */}
         <Route path="courses/:id/edit" element={<EditCoursePage />} />
-        {/* Text till quiz */}
+        {/* Create question */}
+        <Route path="questions/create" element={<QuestionCreatePage preselectedCourse={new URLSearchParams(window.location.search).get('course') || undefined} />} />
+        {/* Select course for question */}
+        <Route path="questions/course" element={<QuestionCourseSelectPage />} />
+        {/* Question list */}
+        <Route path="questions/course/:courseId" element={<QuestionListPage />} />
+        {/* Edit question */}
+        <Route path="questions/:id/edit" element={<EditQuestionPage />} />
+        {/* Text to quiz */}
         <Route path="texttoquiz" element={<TextToQuiz onReview={() => {}} />} />
-        {/* Foto till quiz */}
+        {/* Photo to quiz */}
         <Route path="phototoquiz" element={<PhotoToQuizPage />} />
         {/* Admin SQL */}
         <Route path="sql" element={<AdminSqlPage />} />
-        {/* Skapa fråga */}
-        <Route 
-          path="questions/create" 
-          element={
-            <QuestionCreatePage 
-              preselectedCourse={new URLSearchParams(window.location.search).get('course') || undefined} 
-            />
-          } 
-        />
-        {/* Välj kurs för fråga */}
-        <Route path="questions/course" element={<QuestionCourseSelectPage />} />
-        {/* Frågelista */}
-        <Route path="questions/course/:courseId" element={<QuestionListPage />} />
         {/* QuizSession */}
         <Route path="quiz/:courseName" element={<QuizSessionRouteWrapper />} />
-        {/* Redigera fråga */}
+        {/* Edit question */}
         <Route path="questions/:id/edit" element={<EditQuestionPage />} />
 
         <Route path="paywall" element={<Paywall />} />
       </Route>
-      {/* Testrutt för kurser */}
+      {/* Test route for courses */}
       <Route path="/test-courses" element={
         <div className="p-4">
-          <h1>Testrutt för kurser</h1>
-          <p>Denna sida visar att navigering fungerar korrekt.</p>
+          <h1>Test route for courses</h1>
+          <p>This page shows that navigation works correctly.</p>
           <button 
             onClick={() => navigate('/')}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
-            Tillbaka till startsidan
+            Back to home
           </button>
         </div>
       } />
       
       <Route path="/login" element={<Login />} />
-      <Route path="/logout" element={null} /> {/* Hantering av direkt URL för utloggning */}
+      <Route path="/logout" element={null} /> {/* Handling direct URL for logout */}
       <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
       <Route path="/educator-contact" element={<EducatorContact />} />
 
@@ -182,7 +177,7 @@ const AppRoutes = ({
   );
 }
 
-// Wrapper-komponent för att ge QuizSession rätt props från route
+// Wrapper component to provide QuizSession with correct props from route
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -192,7 +187,7 @@ const QuizSessionRouteWrapper = () => {
   const [orderType, setOrderType] = useState<'ORDER' | 'RANDOM' | 'REVERSE'>('ORDER');
 
   const handleOrderChange = () => {
-    // Rotera mellan olika ordningstyper
+    // Rotate between different order types
     const orderTypes: Array<'ORDER' | 'RANDOM' | 'REVERSE'> = ['ORDER', 'RANDOM', 'REVERSE'];
     const currentIndex = orderTypes.indexOf(orderType);
     const nextIndex = (currentIndex + 1) % orderTypes.length;
@@ -204,7 +199,7 @@ const QuizSessionRouteWrapper = () => {
   };
 
   const handleSessionId = (id: string) => {
-    // Spara sessionId i localStorage för att kunna återuppta senare om så önskas
+    // Save sessionId in localStorage to be able to resume later if desired
     localStorage.setItem('quizSessionId', id);
   };
 

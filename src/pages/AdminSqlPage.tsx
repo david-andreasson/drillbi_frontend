@@ -69,33 +69,33 @@ const AdminSqlPage = () => {
       {result && (
         <div style={{ marginTop: 24 }}>
           <h4>{t('adminSql.result')}</h4>
-          <pre style={{ background: "#f4f4f4", padding: 12, borderRadius: 4, overflowX: "auto" }}>
+          <pre className="bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-3 rounded overflow-x-auto">
             {typeof result === "object" ? JSON.stringify(result, null, 2) : String(result)}
           </pre>
         </div>
       )}
-      <div style={{ marginTop: 32, background: '#f8f9fa', border: '1px solid #e0e0e0', borderRadius: 6, padding: 16 }}>
-        <h4 style={{ marginBottom: 10 }}>{t('adminSql.commonCommands')}</h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="mt-8 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
+        <h4 className="mb-2 text-neutral-900 dark:text-neutral-100">{t('adminSql.commonCommands')}</h4>
+        <div className="flex flex-col gap-2">
           <div>
             <b>{t('adminSql.listUsers')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM users;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">SELECT * FROM users;</pre>
           </div>
           <div>
             <b>{t('adminSql.listCourses')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM course;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">SELECT * FROM course;</pre>
           </div>
           <div>
             <b>{t('adminSql.deleteUser')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM users WHERE id = 1;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">DELETE FROM users WHERE id = 1;</pre>
           </div>
           <div>
             <b>{t('adminSql.deleteCourse')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM course WHERE id = 1;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">DELETE FROM course WHERE id = 1;</pre>
           </div>
           <div>
             <b>{t('adminSql.deleteOptionsForCourseX')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question_option
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">DELETE FROM question_option
 WHERE question_id IN 
 (
   SELECT id
@@ -106,16 +106,16 @@ WHERE question_id IN
           </div>
           <div>
             <b>{t('adminSql.deleteAllQuestionsForCourseX')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">DELETE FROM question
 WHERE course_id = X;</pre>
           </div>
           <div>
             <b>{t('adminSql.listQuestions')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>SELECT * FROM question;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">SELECT * FROM question;</pre>
           </div>
           <div>
             <b>{t('adminSql.deleteQuestion')}</b>
-            <pre style={{ background: '#f4f4f4', padding: 8, borderRadius: 4, margin: 0 }}>DELETE FROM question WHERE id = 1;</pre>
+            <pre className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 p-2 rounded mb-0">DELETE FROM question WHERE id = 1;</pre>
           </div>
         </div>
       </div>

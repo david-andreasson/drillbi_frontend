@@ -57,7 +57,6 @@
     "instruction": "Klicka på ditt team för att fortsätta",
     "noPermission": "Du har inte behörighet att visa denna sida"
   },
-
   "photoToQuiz.title": "Foto till Quiz",
   "photoToQuiz.instructions": "Ladda upp en bild att extrahera text från. Endast PNG/JPG, max 5 MB.",
   "photoToQuiz.chooseImage": "Välj bild",
@@ -131,17 +130,36 @@
     "cancel": "Avbryt",
     "addQuestions": "Lägg till frågor i kursen"
   },
+  "courseCreate": {
+    "title": "Skapa ny kurs",
+    "courseNameLabel": "Kursnamn",
+    "courseNamePlaceholder": "Ange kursnamn",
+    "displayNameLabel": "Visningsnamn",
+    "displayNamePlaceholder": "Ange visningsnamn (valfritt)",
+    "descriptionLabel": "Beskrivning",
+    "descriptionPlaceholder": "Ange beskrivning (valfritt)",
+    "create": "Skapa kurs",
+    "success": "Kursen har skapats!",
+    "error": "Det gick inte att skapa kursen. Kontrollera alla fält.",
+    "nameTaken": "Kursnamnet är redan upptaget.",
+  "allFieldsRequired": "Alla fält måste fyllas i."
+  },
   "questionCreate": {
     "title": "Lägg till frågor",
     "titleForCourse": "Lägg till frågor i kursen: {{course}}",
-    "questionText": "Frågetext",
+    "selectCourse": "Välj kurs",
+    "selectCoursePlaceholder": "Välj en kurs att lägga till frågor till",
+    "noImageSelected": "Ingen bild har valts",
+    "questionLabel": "Frågetext",
+  "questionText": "Frågetext",
     "questionTextPlaceholder": "Skriv frågan här...",
     "options": "Svarsalternativ",
     "optionPlaceholder": "Alternativ {{label}}",
     "language": "Språk",
+    "create": "Lägg till fråga",
     "success": "Frågan sparades!",
     "error": "Fyll i alla fält och markera rätt svar.",
-    "create": "Lägg till fråga"
+    "image": "Bild (valfritt)"
   },
   "paywall": {
     "back": "Tillbaka"
@@ -191,10 +209,21 @@
     "description": "Här kommer du kunna välja och redigera en kurs."
   },
   "editQuestion": {
+    "title": "Redigera fråga",
+    "questionText": "Frågetext",
+    "optionLabel": "Svarsalternativ",
+    "correctAnswer": "Rätt svar",
+    "addOption": "Lägg till alternativ",
+    "uploadImage": "Ladda upp bild",
+    "cancel": "Avbryt",
+    "preview": "Förhandsgranska bild",
+    "selectTitle": "Välj fråga att redigera",
+    "back": "Tillbaka",
+    "save": "Spara",
+    "saved": "Frågan har sparats!",
     "loading": "Laddar...",
     "fetchError": "Kunde inte hämta fråga",
-    "saveError": "Kunde inte spara fråga",
-    "saved": "Frågan har sparats!"
+    "saveError": "Kunde inte spara fråga"
   },
   "editQuestionPlaceholder": {
     "title": "Redigera fråga",
@@ -214,10 +243,5 @@
     "logout": "Logga ut",
     "adminSQL": "Admin SQL",
     "selectTeamFirst": "Välj ditt team först!"
-  },
-  "themeToggle": {
-    "toggleAriaLabel": "Växla mörkt läge",
-    "enableDark": "Aktivera mörkt läge",
-    "disableDark": "Inaktivera mörkt läge"
   }
 }

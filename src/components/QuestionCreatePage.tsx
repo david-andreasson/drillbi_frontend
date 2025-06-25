@@ -12,6 +12,9 @@ import { useCourses } from './CourseSelection/useCourses';
 
 const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
   const { t, i18n } = useTranslation();
+  // DEBUG: Log i18n instance and language
+  console.log('QuestionCreatePage i18n instance:', i18n);
+  console.log('QuestionCreatePage i18n.language:', i18n.language);
   const [refreshCourses, setRefreshCourses] = useState(0);
   const { courses, loading: loadingCourses, error: errorCourses } = useCourses(refreshCourses);
   const [selectedCourse, setSelectedCourse] = useState<string | undefined>(preselectedCourse);
@@ -185,7 +188,7 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Image upload */}
         <div className="mb-4">
-          <label className="block font-semibold mb-1 dark:text-neutral-100">Bild (valfritt)</label>
+          <label className="block font-semibold mb-1 dark:text-neutral-100">{t('questionCreate.image')}</label>
           <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
           {imageError && (
             <div className="flex items-center text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded px-3 py-2 mb-2 text-sm">
