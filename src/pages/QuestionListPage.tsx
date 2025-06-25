@@ -51,7 +51,7 @@ export default function QuestionListPage() {
                   }
                 }}>
                   <ListItemText
-                    primary={t('editQuestion.questionLabel', { num: question.questionNumber, text: question.questionText })}
+                    primary={question.questionText}
                   />
                 </ListItemButton>
               </ListItem>

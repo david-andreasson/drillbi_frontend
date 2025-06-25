@@ -14,6 +14,9 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ theme, setTheme, onLogout, onMenuClick }) => {
     const { i18n } = useTranslation();
+    // DEBUG: Log i18n instance and language
+    console.log('Header i18n instance:', i18n);
+    console.log('Header i18n.language:', i18n.language);
 
     const changeLanguage = (lang: 'sv' | 'en') => {
         i18n.changeLanguage(lang).catch(() => {});

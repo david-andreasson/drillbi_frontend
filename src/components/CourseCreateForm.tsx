@@ -10,7 +10,10 @@ interface Props {
 }
 
 const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // DEBUG: Log i18n instance and language
+  console.log('CourseCreateForm i18n instance:', i18n);
+  console.log('CourseCreateForm i18n.language:', i18n.language);
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [description, setDescription] = useState('');
