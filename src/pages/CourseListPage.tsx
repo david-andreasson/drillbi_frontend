@@ -34,7 +34,7 @@ export default function CourseListPage() {
   if (error) return <Typography color="error" className="dark:text-red-400">{error}</Typography>;
 
   return (
-    <div className="bg-white dark:bg-neutral-900 dark:text-neutral-100 min-h-screen">
+    <div className="flex flex-col items-center justify-center px-4 py-10 bg-white dark:bg-neutral-900 w-full">
       <Paper sx={{ p: 3, maxWidth: 600, mx: "auto", mt: 4 }} className="dark:bg-neutral-800 dark:text-neutral-100">
         <Typography variant="h5" mb={2}>{t('courseList.editTitle')}</Typography>
         <List>

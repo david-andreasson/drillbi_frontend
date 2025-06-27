@@ -142,7 +142,7 @@ const PhotoToQuizPage: React.FC = () => {
 
 
   return (
-    <Box className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-100 py-4 px-2 sm:px-0">
+    <Box className="flex flex-col items-center justify-center px-4 py-10 bg-white dark:bg-neutral-900 w-full">
       <Paper elevation={3} className="p-4 sm:p-8 w-full max-w-md sm:max-w-lg mx-auto bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100">
         <Typography variant="h4" className="mb-6 text-center">
           {t('photoToQuiz.title')}

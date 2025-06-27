@@ -226,7 +226,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
   }
 
   return (
-    <div className="relative px-4 py-6 max-w-3xl mx-auto text-[#4A4A48] dark:bg-neutral-900 dark:text-neutral-100 min-h-screen">
+    <div className="flex flex-col items-center justify-center px-4 py-10 bg-white dark:bg-neutral-900 w-full">
       <Snackbar open={success} autoHideDuration={3500} onClose={handleSuccessClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert
           onClose={handleSuccessClose}
@@ -245,7 +245,7 @@ const [isPremium, setIsPremium] = useState<boolean>(false);
       </Snackbar>
       <h2 className="text-2xl font-bold mb-6 text-center">{t('textToQuiz.title')}</h2>
 
-      <div className="relative">
+      <div className="relative max-w-3xl w-full mx-auto">
         <Textarea
           placeholder={t('textToQuiz.textPlaceholder') || ''}
           value={text}
