@@ -101,7 +101,7 @@ export default function EditQuestionPage() {
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-900 dark:text-neutral-100">
+    <div className="flex flex-col items-center justify-center px-4 py-10 bg-white dark:bg-neutral-900 w-full">
       <Snackbar open={success} autoHideDuration={1500} onClose={() => setSuccess(false)} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert severity="success" sx={{ width: '100%' }}>
           {t('editQuestion.saved')}

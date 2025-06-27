@@ -23,6 +23,7 @@ import MainLayout from './components/layout/AdminLayout';
 import ReviewQuestions from './components/ReviewQuestions/ReviewQuestions';
 import Paywall from './components/Paywall';
 import EducatorContact from './components/EducatorContact';
+import TestLayoutPage from './pages/TestLayoutPage';
 import PhotoToQuizPlaceholder from './components/PhotoToQuizPlaceholder';
 import PhotoToQuizPage from './pages/PhotoToQuizPage';
 
@@ -169,6 +170,7 @@ const AppRoutes = ({
       
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={null} /> {/* Handling direct URL for logout */}
+      <Route path="/testlayout" element={<TestLayoutPage />} />
       <Route path="/login/oauth2" element={<OAuth2RedirectHandler />} />
       <Route path="/educator-contact" element={<EducatorContact />} />
 

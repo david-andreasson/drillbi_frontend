@@ -67,7 +67,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ userRole, onNavigate: _onNaviga
         onNavigate={forceChooseGroup ? handleBlocked : _onNavigate}
       />
 
-      <main className="min-h-screen w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100 pt-4 pb-8">
+      <main className="w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100 pt-4 pb-8">
         <Outlet />
       </main>
     </div>
