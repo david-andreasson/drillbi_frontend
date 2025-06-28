@@ -117,7 +117,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   if (showOnly === 'status') {
     return (
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
-        <label className="block text-base font-normal text-left text-neutral-900">{t('profile.statusTitle')}</label>
+        <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.statusTitle')}</label>
         <div
           className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
           onClick={() => {
@@ -162,61 +162,62 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
   }
   if (showOnly === 'fields') {
     return (
-      <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
+      <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
         {error && !(error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
-  <div style={{ color: "red" }}>{t('profile.saveError')}</div>
-)}
-        {success && <div style={{ color: "green" }}>{t('profile.updated')}</div>}
+          <div className="text-red-600">{t('profile.saveError')}</div>
+        )}
+        {success && <div className="text-green-600">{t('profile.updated')}</div>}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.username')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.username')}</label>
           <TextInput
             type="text"
             name="username"
             value={profile.username}
             onChange={handleChange}
             required
+            className="h-[40px]"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.email')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.email')}</label>
           <TextInput
             type="email"
-            className="h-[40px]"
             name="email"
             value={profile.email}
             onChange={handleChange}
             required
+            className="h-[40px]"
           />
           {error && (error.toLowerCase().includes('email address') || error.toLowerCase().includes('email')) && (
-            <div style={{ color: 'red', marginTop: 4 }}>{error}</div>
+            <div className="text-red-600 mt-4">{error}</div>
           )}
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.firstName')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.firstName')}</label>
           <TextInput
             type="text"
             name="firstName"
             value={profile.firstName}
             onChange={handleChange}
             required
+            className="h-[40px]"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.lastName')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.lastName')}</label>
           <TextInput
             type="text"
             name="lastName"
             value={profile.lastName}
             onChange={handleChange}
             required
+            className="h-[40px]"
           />
         </div>
-        <div className="mb-4 flex items-center justify-center" style={{height:'40px'}}>
-          <button type="submit" disabled={saving} style={{background:'none',border:'none',boxShadow:'none',padding:0,margin:0,height:'auto',width:'auto',lineHeight:'normal'}}>
-            <span style={{border:'1px solid #bbb',borderRadius:4,padding:'2px 18px',background:'none',fontSize:'1rem',color:'inherit'}}>
-              {saving ? t('profile.saving') : t('profile.save')}
-            </span>
-          </button>
+        <div className="mb-4 flex items-center justify-center h-[40px]">
+          <PrimaryButton type="submit" disabled={saving} className="px-6 py-2 text-base font-medium border border-gray-300 rounded shadow-md hover:shadow-lg bg-gray-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700">
+            {saving ? t('profile.saving') : t('profile.save')}
+          </PrimaryButton>
         </div>
       </form>
     );
@@ -236,7 +237,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
       )}
       {/* Membership status at the top */}
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
-        <label className="block text-base font-normal text-left text-neutral-900">{t('profile.statusTitle')}</label>
+        <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.statusTitle')}</label>
         <div
           className={`w-full px-3 py-2 border rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] justify-center text-center appearance-none ${profile.role === 'ROLE_ADMIN' ? 'text-red-600' : profile.role === 'ROLE_EDUCATOR' ? 'text-red-600' : isPremium ? 'text-green-600' : 'text-blue-600'} mb-4`}
           onClick={() => {
@@ -283,7 +284,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
 )}
         {success && <div style={{ color: "green" }}>{t('profile.updated')}</div>}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.username')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.username')}</label>
           <TextInput
             type="text"
             name="username"
@@ -293,7 +294,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.email')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.email')}</label>
           <TextInput
             type="email"
             className="h-[40px]"
@@ -307,7 +308,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           )}
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.firstName')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.firstName')}</label>
           <TextInput
             type="text"
             name="firstName"
@@ -317,7 +318,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ token, onDone, showOnly }) =>
           />
         </div>
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('profile.lastName')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.lastName')}</label>
           <TextInput
             type="text"
             name="lastName"

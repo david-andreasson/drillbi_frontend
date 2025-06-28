@@ -57,7 +57,7 @@ const AiExplanation: React.FC<Props> = ({
         </button>
 
         {aiState === 'display' && aiExplanation && (
-            <div className="mt-4 p-4 bg-gray-200 rounded-lg border border-gray-200 shadow-md hover:shadow-lg text-gray-900">
+            <div className="mt-4 p-4 bg-gray-200 rounded-lg border border-gray-200 shadow-md hover:shadow-lg text-gray-900 max-w-3xl w-full mx-auto">
                 <p className="whitespace-pre-wrap text-left">{aiExplanation}</p>
             </div>
         )}

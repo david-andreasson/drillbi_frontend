@@ -62,33 +62,52 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
   }
   if (!token) return <Login />;
   if (userLoading) return <div>Loading...</div>;
+
   return (
-    <div style={{ padding: 24, width: '100%', maxWidth: 600, margin: '0 auto' }}>
-      <div style={{ maxWidth: 400, margin: '0 auto' }}>
-        <ProfileForm token={token} onDone={onDone} showOnly="status" />
+    <div className="flex flex-col items-center py-8 w-full min-h-screen">
+      <div className="w-full max-w-md mx-auto">
+        {/* Membership status */}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('settings.language')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.statusTitle')}</label>
+          {(() => {
+            // Consistent premium logic
+            const isPremium = user?.role === 'PREMIUM' || user?.role === 'ROLE_PREMIUM';
+            let statusColor = 'text-blue-600';
+            if (user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_EDUCATOR') statusColor = 'text-red-600';
+            else if (isPremium) statusColor = 'text-green-600';
+            return (
+              <div className={`w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 text-base font-normal h-[40px] shadow-md hover:shadow-lg flex items-center justify-center text-center appearance-none ${statusColor} mb-4`}>
+                {user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN' ? t('profile.statusAdmin') : user?.role === 'ROLE_EDUCATOR' ? t('profile.statusEducator') : isPremium ? t('profile.statusPremium') : t('profile.statusFree')}
+              </div>
+            );
+          })()}
+        </div>
+        {/* Language selector */}
+        <div className="mb-4">
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('settings.language')}</label>
           <input
             type="button"
             value={i18n.language === 'sv' ? 'Svenska' : 'English'}
             onClick={toggleLanguage}
-            className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 text-base font-normal h-[40px] shadow-md hover:shadow-lg appearance-none"
+            className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 text-base font-normal h-[40px] shadow-md hover:shadow-lg appearance-none"
           />
         </div>
+        {/* Theme selector */}
         <div className="mb-4">
-          <label className="block text-base font-normal text-left text-neutral-900">{t('settings.theme')}</label>
+          <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('settings.theme')}</label>
           <input
             type="button"
             value={theme === 'light' ? t('settings.light') : t('settings.dark')}
             onClick={toggleTheme}
-            className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 text-base font-normal h-[40px] shadow-md hover:shadow-lg appearance-none"
+            className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 text-base font-normal h-[40px] shadow-md hover:shadow-lg appearance-none"
           />
         </div>
+        {/* AI model selector */}
         {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
           <div className="mb-4">
-            <label className="block text-base font-normal text-left text-neutral-900">{t('profile.aimodel')}</label>
+            <label className="block text-base font-normal text-left text-neutral-900 dark:text-neutral-100">{t('profile.aimodel')}</label>
             <select
-              className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 text-base font-normal focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-md hover:shadow-lg flex items-center h-[40px] appearance-none"
+              className="w-full px-3 py-2 border rounded bg-gray-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 dark:border-neutral-700 text-base font-normal h-[40px] shadow-md hover:shadow-lg appearance-none"
               value={aiModel}
               onChange={e => setAiModel(e.target.value)}
             >
@@ -98,8 +117,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onDone }) => {
           </div>
         )}
         <ProfileForm token={token} onDone={onDone} showOnly="fields" />
-        {/* --- Version info at the bottom --- */}
-        <div style={{ marginTop: 32, fontSize: 14, color: '#888', textAlign: 'center' }}>
+        {/* Version info */}
+        <div className="mt-8 text-sm text-gray-500 dark:text-gray-400 text-center">
           <div>Backend-version: <code>{backendVersion || "unknown"}</code></div>
           <div>Frontend-version: <code>{frontendVersion || "unknown"}</code></div>
         </div>
