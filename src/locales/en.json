@@ -145,6 +145,7 @@
     "allFieldsRequired": "All fields are required."
   },
   "questionCreate": {
+    "correctAnswer": "Correct answer",
     "title": "Add questions",
     "titleForCourse": "Add questions to course: {{course}}",
     "selectCourse": "Select course",
@@ -159,7 +160,9 @@
     "create": "Add question",
     "success": "Question saved!",
     "error": "Fill all fields and mark the correct answer.",
-    "image": "Image (optional)"
+    "image": "Image (optional)",
+    "uploadImage": "Upload image",
+    "selectedFile": "Selected file: {{file}}"
   },
   "paywall": {
     "back": "Back"
@@ -189,7 +192,7 @@
     "deleteQuestion": "Delete question (enter id)"
   },
   "courseList": {
-    "editTitle": "Select course to edit",
+    "editTitle": "Which course does the question you want to modify belong to?",
     "fetchError": "Failed to fetch courses"
   },
   "editCourse": {

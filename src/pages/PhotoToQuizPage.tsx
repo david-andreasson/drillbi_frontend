@@ -11,6 +11,8 @@ interface FileError {
 const MAX_FILE_SIZE_MB = 5;
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 
+const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+
 const PhotoToQuizPage: React.FC = () => {
   // Simple mobile detection based on userAgent
   const isMobile = /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
@@ -78,7 +80,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/v2/phototoquiz', {
+      const response = await fetchWithAuth('/api/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });
@@ -116,7 +118,7 @@ const PhotoToQuizPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await fetchWithAuth('/v2/phototoquiz', {
+      const response = await fetchWithAuth('/api/v2/phototoquiz', {
         method: 'POST',
         body: formData,
       });

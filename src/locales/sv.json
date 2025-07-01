@@ -145,6 +145,7 @@
   "allFieldsRequired": "Alla fält måste fyllas i."
   },
   "questionCreate": {
+    "correctAnswer": "Rätt svar",
     "title": "Lägg till frågor",
     "titleForCourse": "Lägg till frågor i kursen: {{course}}",
     "selectCourse": "Välj kurs",
@@ -159,7 +160,9 @@
     "create": "Lägg till fråga",
     "success": "Frågan sparades!",
     "error": "Fyll i alla fält och markera rätt svar.",
-    "image": "Bild (valfritt)"
+    "image": "Bild (valfritt)",
+    "uploadImage": "Ladda upp bild",
+    "selectedFile": "Vald fil: {{file}}"
   },
   "paywall": {
     "back": "Tillbaka"
@@ -189,7 +192,7 @@
     "deleteQuestion": "Ta bort fråga (ange id)"
   },
   "courseList": {
-    "editTitle": "Välj kurs att redigera",
+    "editTitle": "Vilken kurs tillhör frågan du vill modifiera?",
     "fetchError": "Kunde inte hämta kurser"
   },
   "editCourse": {

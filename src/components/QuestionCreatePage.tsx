@@ -189,7 +189,25 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
         {/* Image upload */}
         <div className="mb-4">
           <label className="block font-semibold mb-1 dark:text-neutral-100">{t('questionCreate.image')}</label>
-          <input type="file" accept="image/*" className="mb-2" onChange={handleImageChange} />
+          <input
+  id="image-upload"
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={handleImageChange}
+/>
+<PrimaryButton
+  type="button"
+  className="mb-2"
+  onClick={() => document.getElementById('image-upload')?.click()}
+>
+  {t('questionCreate.uploadImage')}
+</PrimaryButton>
+{image && (
+  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+    {t('questionCreate.selectedFile', { file: image.name })}
+  </div>
+)}
           {imageError && (
             <div className="flex items-center text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded px-3 py-2 mb-2 text-sm">
               <svg className="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -198,10 +216,10 @@ const QuestionCreatePage: React.FC<Props> = ({ preselectedCourse }) => {
           )}
           <div className="w-full h-32 bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-400 dark:text-neutral-100 rounded">
             {imagePreview ? (
-              <img src={imagePreview} alt="Preview" className="max-h-32 object-contain" />
-            ) : (
-              <span>{t('questionCreate.noImageSelected')}</span>
-            )}
+  <img src={imagePreview} alt="Preview" className="max-h-32 object-contain" />
+) : (
+  <span>{t('questionCreate.noImageSelected')}</span>
+)}
           </div>
         </div>
         <div>
