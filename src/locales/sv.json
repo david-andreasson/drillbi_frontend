@@ -131,6 +131,12 @@
     "addQuestions": "Lägg till frågor i kursen"
   },
   "courseCreate": {
+    "saving": "Sparar...",
+    "addQuestionsInfo": "Du kan nu lägga till frågor till din nya kurs.",
+    "addQuestions": "Lägg till frågor i kursen",
+    "nameInvalid": "Kursnamnet får endast innehålla små bokstäver, siffror och bindestreck.",
+    "autoSuggestedName": "Ett tekniskt namn föreslås automatiskt utifrån visningsnamnet. Du kan ändra det om du vill.",
+    "displayNameRequired": "Visningsnamn krävs.",
     "title": "Skapa ny kurs",
     "courseNameLabel": "Kursnamn",
     "courseNamePlaceholder": "Ange kursnamn",
