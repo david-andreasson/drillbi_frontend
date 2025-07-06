@@ -20,16 +20,48 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [nameTouched, setNameTouched] = useState(false);
+
+  // Slugify function (copied from TextToQuiz)
+  const toSlug = (input: string) =>
+    input
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-\u036f]/g, '')
+      .replace(/[åä]/g, 'a')
+      .replace(/ö/g, 'o')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  // Auto-generate slug if displayName changes and name not manually edited
+  React.useEffect(() => {
+    if (!displayName) return;
+    const slug = toSlug(displayName);
+    if (!nameTouched) setName(slug);
+  }, [displayName]);
+
+  // Name validation: only allow a-z, 0-9, dash
+  const isNameValid = !name || /^[a-z0-9-]+$/.test(name);
+  const nameError = !isNameValid ? t('courseCreate.nameInvalid') : null;
 
   // Simple validation
   const validate = () => {
-    if (!name.trim() || !displayName.trim() || !description.trim()) {
-      setError(t('courseCreate.allFieldsRequired'));
+    if (!displayName.trim()) {
+      setError(t('courseCreate.displayNameRequired'));
+      return false;
+    }
+    if (!name.trim()) {
+      setError(t('courseCreate.courseNameRequired'));
+      return false;
+    }
+    if (!isNameValid) {
+      setError(t('courseCreate.nameInvalid'));
       return false;
     }
     setError(null);
     return true;
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +94,11 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
       }
       setSuccess(true);
       if (onCreated) onCreated({ name, displayName, description });
-      // Keep values if user wants to add questions directly
+      // Clear form fields after success (unless user is about to add questions)
+      setDisplayName('');
+      setName('');
+      setDescription('');
+      setNameTouched(false);
     } catch (err: any) {
       // If error is a backend error key, translate via t()
       if (err.message && err.message.startsWith('error.')) {
@@ -80,17 +116,6 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
       <h2 className="text-2xl font-bold mb-4">{t('courseCreate.title')}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-semibold mb-1">{t('courseCreate.courseNameLabel')}</label>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2 bg-gray-200 text-neutral-900 placeholder-gray-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400 dark:border-neutral-700"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-            placeholder={t('courseCreate.courseNamePlaceholder')}
-          />
-        </div>
-        <div>
           <label className="block font-semibold mb-1">{t('courseCreate.displayNameLabel')}</label>
           <input
             type="text"
@@ -100,6 +125,23 @@ const CourseCreateForm: React.FC<Props> = ({ onCreated, onCancel, onAddQuestions
             required
             placeholder={t('courseCreate.displayNamePlaceholder')}
           />
+        </div>
+        <div>
+          <label className="block font-semibold mb-1">{t('courseCreate.courseNameLabel')}</label>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 bg-gray-200 text-neutral-900 placeholder-gray-500 border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-gray-400 dark:border-neutral-700"
+            value={name}
+            onChange={e => { setName(e.target.value); setNameTouched(true); }}
+            placeholder={t('courseCreate.courseNamePlaceholder')}
+            aria-invalid={!isNameValid}
+          />
+          {nameError && (
+            <div className="text-sm text-red-500 dark:text-red-400 mt-1">{nameError}</div>
+          )}
+          {!nameTouched && displayName && (
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('courseCreate.autoSuggestedName')}</div>
+          )}
         </div>
         <div>
           <label className="block font-semibold mb-1">{t('courseCreate.descriptionLabel')}</label>

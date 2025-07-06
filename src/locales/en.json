@@ -131,6 +131,12 @@
     "addQuestions": "Add questions to course"
   },
   "courseCreate": {
+    "saving": "Saving...",
+    "addQuestionsInfo": "You can now add questions to your new course.",
+    "addQuestions": "Add questions to course",
+    "nameInvalid": "Course name may only contain lowercase letters, numbers, and dashes.",
+    "autoSuggestedName": "A technical name is suggested automatically based on your display name. You may edit it if needed.",
+    "displayNameRequired": "Display name is required.",
     "title": "Create new course",
     "courseNameLabel": "Course name",
     "courseNamePlaceholder": "Enter course name",
