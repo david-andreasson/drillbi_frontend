@@ -18,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const currency = t('paywall.currency');
 
   return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] px-2 py-4 sm:px-4 sm:py-10 w-full bg-white text-gray-900 dark:bg-neutral-900 dark:text-neutral-100">
@@ -57,7 +56,7 @@ const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
                       } else {
                         toast.error(t('paywall.paymentError'));
                       }
-                    } catch (err) {
+                    } catch {
                       toast.error(t('paywall.paymentError'));
                     }
                   }}
