@@ -56,7 +56,7 @@ const Paywall: React.FC<PaywallProps> = ({ onBack }) => {
                       } else {
                         toast.error(t('paywall.paymentError'));
                       }
-                    } catch (err) {
+                    } catch {
                       toast.error(t('paywall.paymentError'));
                     }
                   }}
