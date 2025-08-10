@@ -171,6 +171,23 @@
     "selectedFile": "Vald fil: {{file}}"
   },
   "paywall": {
+    "title": "Lås upp Drillbi Premium",
+    "intro": "Få ut mer av Drillbi med Premium.",
+    "payingMember": "Individ",
+    "price": "49 kr / $5 per månad",
+    "unlimitedQuestions": "Obegränsade frågor",
+    "aiExplanations": "AI-förklaringar",
+    "saveExport": "Spara och exportera",
+    "prioritySupport": "Prioriterad support",
+    "paymentError": "Betalningen misslyckades. Försök igen.",
+    "becomePayingMember": "Bli premium",
+    "educator": "Lärare / Skola",
+    "forSchools": "För skolor och team",
+    "educatorTier": "{{min}}–{{max}} elever: {{priceSEK}} kr / ${{priceUSD}} per månad",
+    "customSolutions": "Skräddarsydda lösningar",
+    "invoiceOrCard": "Faktura eller kort",
+    "contactUs": "Kontakta oss",
+    "currency": "SEK",
     "back": "Tillbaka"
   },
   "settings": {

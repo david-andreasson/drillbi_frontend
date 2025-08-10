@@ -171,6 +171,23 @@
     "selectedFile": "Selected file: {{file}}"
   },
   "paywall": {
+    "title": "Unlock Drillbi Premium",
+    "intro": "Get more out of Drillbi with Premium.",
+    "payingMember": "Individual",
+    "price": "49 SEK / $5 per month",
+    "unlimitedQuestions": "Unlimited questions",
+    "aiExplanations": "AI explanations",
+    "saveExport": "Save and export",
+    "prioritySupport": "Priority support",
+    "paymentError": "Payment failed. Please try again.",
+    "becomePayingMember": "Become premium",
+    "educator": "Educator / School",
+    "forSchools": "For schools and teams",
+    "educatorTier": "{{min}}–{{max}} students: {{priceSEK}} SEK / ${{priceUSD}} per month",
+    "customSolutions": "Custom solutions",
+    "invoiceOrCard": "Invoice or card",
+    "contactUs": "Contact us",
+    "currency": "SEK",
     "back": "Back"
   },
   "settings": {
