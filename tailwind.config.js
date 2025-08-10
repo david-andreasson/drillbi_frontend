@@ -1,3 +1,5 @@
+import tailwindScrollbarHide from 'tailwind-scrollbar-hide'
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
@@ -5,6 +7,6 @@ export default {
     extend: {},
   },
   plugins: [
-    require('tailwind-scrollbar-hide')
+    tailwindScrollbarHide,
   ],
 };
