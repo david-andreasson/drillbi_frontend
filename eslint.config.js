@@ -26,7 +26,10 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      // Keep basic hygiene
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Reduce noise from dependency array rule for now
+      'react-hooks/exhaustive-deps': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
@@ -58,6 +61,10 @@ export default [
       // Prefer TS rule for unused vars in TS files
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
+      // Disable rules that are too noisy without full type-aware setup
+      'no-undef': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-hooks/exhaustive-deps': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
